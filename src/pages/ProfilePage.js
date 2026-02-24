@@ -27,6 +27,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useOrders } from "../contexts/OrderContext";
+import { useConfig } from "../contexts/ConfigContext";
 import { useUpdateInfo } from "../contexts/UpdateInfoContext"; // Import the new context
 import { toast } from "react-toastify";
 
@@ -64,6 +65,7 @@ const ProfilePage = () => {
     updateResellerProfile,
     clearMessages,
   } = useUpdateInfo(); // Use the update context
+  const { taxRegime: globalTaxRegime } = useConfig();
 
   const theme = useTheme();
   const [localLoading, setLocalLoading] = useState(true);
@@ -841,9 +843,10 @@ const ProfilePage = () => {
                       return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
                     }, 0);
 
-                    // Legacy fallback for old orders
-                    const sBase = 3000;
-                    const sTax = 390;
+                    const currentOrderRegime = order.taxRegime || globalTaxRegime;
+                    const sBaseRaw = 3000;
+                    const sTax = currentOrderRegime === 'simplified' ? 0 : 390;
+                    const sBase = currentOrderRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
 
                     return {
                       itemsSubtotal: iSubtotal,
@@ -858,12 +861,14 @@ const ProfilePage = () => {
                 const shippingCost = breakdown.shippingBase + breakdown.shippingTax;
 
                 const itemsWithTax = order.items.map((item) => {
-                  const iva = parseFloat(item.product?.iva) || 0;
+                  const currentOrderRegime = order.taxRegime || globalTaxRegime;
+                  const iva = currentOrderRegime === 'simplified' ? 0 : (parseFloat(item.product?.iva) || 0);
                   const priceWithTax = Math.round(Number(item.priceAtSale || 0) * (1 + iva / 100));
                   return {
                     ...item,
                     priceWithTax,
                     subtotalWithTax: priceWithTax * item.quantity,
+                    showIvaLabel: currentOrderRegime !== 'simplified'
                   };
                 });
 
@@ -1118,12 +1123,14 @@ const ProfilePage = () => {
                                 Cantidad: {item.quantity} x{" "}
                                 {formatPrice(Number(item.priceAtSale || 0))}
                               </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                Precio con IVA: {formatPrice(item.priceWithTax)}
-                              </Typography>
+                              {item.showIvaLabel && (
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  Precio con IVA: {formatPrice(item.priceWithTax)}
+                                </Typography>
+                              )}
                             </Box>
                             <Typography
                               variant="body1"
@@ -1184,12 +1191,15 @@ const ProfilePage = () => {
                               fontWeight="medium"
                               color="text.primary"
                             >
-                              Costo de envío:
+                              {order.taxRegime === 'simplified' || (!order.taxRegime && globalTaxRegime === 'simplified') ? 'Envío:' : 'Costo de envío:'}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                              {order.customerDetails?.province
-                                ? `Provincia: ${order.customerDetails.province}`
-                                : "Provincia no especificada"}
+                              Destino: {[
+                                order.user?.provincia || order.customerDetails?.province || order.customerDetails?.provincia,
+                                order.user?.canton || order.customerDetails?.canton || order.customerDetails?.city,
+                                order.user?.distrito || order.customerDetails?.distrito,
+                                order.user?.address || order.customerDetails?.address,
+                              ].filter(Boolean).join(", ")}
                             </Typography>
                           </Box>
                           <Typography

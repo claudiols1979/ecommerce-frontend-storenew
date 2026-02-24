@@ -30,6 +30,7 @@ import axios from 'axios';
 import API_URL from '../config';
 import { formatPrice } from '../utils/formatters';
 import { calculatePriceWithTax } from '../utils/taxCalculations';
+import { useConfig } from '../contexts/ConfigContext';
 import { useLocation } from 'react-router-dom';
 
 
@@ -106,6 +107,7 @@ const ProductDetailsPage = () => {
   const { departmentalProducts, currentFilters } = useDepartmental();
   const { addItemToCart, loading: cartLoading, myOrders } = useOrders();
   const { user } = useAuth();
+  const { taxRegime } = useConfig();
 
   const { reviews, loading: reviewsLoading, fetchReviews, createReview } = useReviews();
 
@@ -689,7 +691,7 @@ const ProductDetailsPage = () => {
 
   const displayPrice = getPriceAtSale(getSelectedVariantFunction());
   const priceWithTax = getSelectedVariant && displayPrice !== null ?
-    calculatePriceWithTax(displayPrice, getSelectedVariant.iva) : null;
+    (taxRegime === 'simplified' ? Math.round(displayPrice) : calculatePriceWithTax(displayPrice, getSelectedVariant.iva)) : null;
 
 
 
@@ -1120,9 +1122,11 @@ const ProductDetailsPage = () => {
               <Typography variant="h4" color="secondary" sx={{ mb: 2, fontWeight: 800 }}>
                 {priceWithTax !== null ? formatPrice(priceWithTax) : 'Precio no disponible'}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                IVA incluido
-              </Typography>
+              {taxRegime !== 'simplified' && (
+                <Typography variant="body2" color="text.secondary">
+                  IVA incluido
+                </Typography>
+              )}
               <Typography variant="body1" color={isOutOfStock ? 'error.main' : 'text.primary'} sx={{ mb: 2, fontWeight: 600 }}>
                 Stock Disponible: {getSelectedVariantFunction().countInStock} {isOutOfStock && '(Agotado)'}
               </Typography>

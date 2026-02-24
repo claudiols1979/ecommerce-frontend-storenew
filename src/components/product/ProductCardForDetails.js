@@ -5,6 +5,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useConfig } from '../../contexts/ConfigContext';
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../utils/formatters';
 import { calculatePriceWithTax } from '../../utils/taxCalculations';
@@ -12,6 +13,7 @@ import { calculatePriceWithTax } from '../../utils/taxCalculations';
 const ProductCard = ({ product, onAddToCart, isAdding }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const { taxRegime } = useConfig();
   const theme = useTheme();
 
   const displayPrice = React.useMemo(() => {
@@ -22,18 +24,18 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
     return product.resellerPrices.cat1;
   }, [product, user, isAuthenticated]);
 
-  // CALCULAR PRECIO CON IVA
-  const priceWithTax = displayPrice !== null ? 
-    calculatePriceWithTax(displayPrice, product.iva) : null;
+  // CALCULAR PRECIO CON IVA (0% si es simplificado)
+  const priceWithTax = displayPrice !== null ?
+    (taxRegime === 'simplified' ? Math.round(displayPrice) : calculatePriceWithTax(displayPrice, product.iva)) : null;
 
   // --- LÓGICA DE PRECIO TACHADO ---
   const originalPrice = React.useMemo(() => {
     if (!priceWithTax || !product.promotionalLabels || product.promotionalLabels.length === 0) {
       return null;
     }
-    
+
     const discountLabel = product.promotionalLabels.find(label => label.name.includes('% OFF'));
-    
+
     if (discountLabel) {
       const percentageMatch = discountLabel.name.match(/\d+/);
       if (percentageMatch) {
@@ -43,7 +45,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         }
       }
     }
-    
+
     return null;
   }, [displayPrice, product.promotionalLabels]);
 
@@ -73,38 +75,38 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   };
 
   return (
-    <Card sx={{ 
-      height: '100%', 
+    <Card sx={{
+      height: '100%',
       width: 250,
-      display: 'flex', 
-      flexDirection: 'column', 
-      borderRadius: 4, 
-      boxShadow: theme.shadows[4], 
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: 4,
+      boxShadow: theme.shadows[4],
       transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
       '&:hover': {
-        transform: 'translateY(-8px)', 
-        boxShadow: theme.shadows[8], 
+        transform: 'translateY(-8px)',
+        boxShadow: theme.shadows[8],
       },
-      bgcolor: 'background.default', 
+      bgcolor: 'background.default',
       border: `1px solid ${theme.palette.grey[200]}`,
       position: 'relative',
       overflow: 'hidden',
     }}>
-      
+
       {product.promotionalLabels && product.promotionalLabels.length > 0 && (
         <Box
-          sx={{            
+          sx={{
             position: 'absolute', top: '18px', left: '-35px',
             transform: 'rotate(-45deg)', zIndex: 1, width: '150px',
             py: 0.5, background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, #FFD700 90%)`,
             boxShadow: '0 4px 10px rgba(0,0,0,0.5)', textAlign: 'center',
           }}
         >
-          <Typography 
-            variant="caption" 
-            sx={{ 
-              fontWeight: 'bold', 
-              color: 'common.black', 
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 'bold',
+              color: 'common.black',
               textTransform: 'uppercase',
               fontSize: ['Últimas Unidades', 'Nuevo Ingreso', '10% OFF', '15% OFF', '20% OFF'].includes(product.promotionalLabels[0].name) ? '0.55rem' : '0.7rem'
             }}
@@ -112,28 +114,28 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             {product.promotionalLabels[0].name.replace('OFF', 'Descuento')}
           </Typography>
         </Box>
-      )}      
+      )}
 
-      
+
       <CardMedia
         component="img"
-        height="140"        
+        height="140"
         image={product.imageUrls?.[0]?.secure_url || 'https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image'}
         alt={product.name}
-        sx={{ 
-          objectFit: 'contain', p: 1, bgcolor: 'background.default', 
+        sx={{
+          objectFit: 'contain', p: 1, bgcolor: 'background.default',
           borderRadius: '12px 12px 0 0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
           cursor: 'pointer'
         }}
         onClick={handleViewDetails}
       />
-     
+
       <CardContent sx={{ flexGrow: 1, p: 1.5, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <Typography 
-          gutterBottom variant="h6" 
+        <Typography
+          gutterBottom variant="h6"
           onClick={handleViewDetails}
-          sx={{ 
-            fontWeight: 700, minHeight: 40, overflow: 'hidden', textOverflow: 'ellipsis', 
+          sx={{
+            fontWeight: 700, minHeight: 40, overflow: 'hidden', textOverflow: 'ellipsis',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
             fontSize: '0.95rem', color: 'primary.main', textDecoration: 'none',
             cursor: 'pointer',
@@ -145,10 +147,10 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
 
         {/* Show variant count if this product has variants */}
         {product.variantCount > 1 && (
-          <Chip 
-            label={`${product.variantCount} variantes`} 
-            size="small" 
-            color="secondary" 
+          <Chip
+            label={`${product.variantCount} variantes`}
+            size="small"
+            color="secondary"
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the card's onClick
               handleViewDetails();
@@ -192,58 +194,60 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           </Box>
         )}
 
-        <Typography 
-          variant="body2" color="text.secondary" 
-          sx={{ 
-            minHeight: 30, overflow: 'hidden', textOverflow: 'ellipsis', 
+        <Typography
+          variant="body2" color="text.secondary"
+          sx={{
+            minHeight: 30, overflow: 'hidden', textOverflow: 'ellipsis',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-            mb: 1, fontSize: '0.8rem', 
+            mb: 1, fontSize: '0.8rem',
           }}
         >
           {product.shortDescription || (product.description ? product.description.substring(0, 60) + '...' : 'No description available.')}
         </Typography>
-        
+
         {/* --- JSX DE PRECIOS --- */}
         <Box sx={{ mt: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
-                <Typography variant="h6" color="primary" sx={{ fontWeight: 800, lineHeight: 1.2 }}> 
-                  {priceWithTax !== null ? formatPrice(priceWithTax) : 'Precio no disponible'}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  IVA incluido
-                </Typography>
-                {originalPrice && (
-                    <Typography variant="body2" sx={{ color: 'text.secondary', textDecoration: 'line-through', lineHeight: 1.1 }}>
-                        {formatPrice(originalPrice)}
-                    </Typography>
-                )}
-            </Box>
-            {isOutOfStock && (
-                <Typography variant="body2" color="error" sx={{ fontWeight: 700, ml: 1 }}>
-                    Sin Stock
-                </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
+            <Typography variant="h6" color="primary" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+              {priceWithTax !== null ? formatPrice(priceWithTax) : 'Precio no disponible'}
+            </Typography>
+            {taxRegime !== 'simplified' && (
+              <Typography variant="body2" color="text.secondary">
+                IVA incluido
+              </Typography>
             )}
+            {originalPrice && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', textDecoration: 'line-through', lineHeight: 1.1 }}>
+                {formatPrice(originalPrice)}
+              </Typography>
+            )}
+          </Box>
+          {isOutOfStock && (
+            <Typography variant="body2" color="error" sx={{ fontWeight: 700, ml: 1 }}>
+              Sin Stock
+            </Typography>
+          )}
         </Box>
       </CardContent>
       <CardActions sx={{ p: 1.5, pt: 1, justifyContent: 'space-between', borderTop: `1px solid ${theme.palette.grey[100]}` }}>
         <Button
           size="small"
           onClick={handleViewDetails}
-          variant="outlined"           
+          variant="outlined"
           startIcon={<VisibilityIcon />}
-          sx={{ 
-          borderRadius: 2, 
-          textTransform: 'none', 
-          fontSize: '0.75rem', 
-          py: 0.5, 
-          backgroundColor: '#ffffffff', 
-          color: 'black',
-          '&:hover': { 
-            backgroundColor: '#263C5C',
-            color: '#ffffffff',
-            border: '1px solid #263C5C'
-          } 
-        }}
+          sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontSize: '0.75rem',
+            py: 0.5,
+            backgroundColor: '#ffffffff',
+            color: 'black',
+            '&:hover': {
+              backgroundColor: '#263C5C',
+              color: '#ffffffff',
+              border: '1px solid #263C5C'
+            }
+          }}
         >
           Ver
         </Button>
@@ -252,23 +256,23 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             <Button
               size="small"
               variant="contained"
-              color="primary" 
+              color="primary"
               onClick={handleAddToCartClick}
               startIcon={isAdding ? <CircularProgress size={18} color="inherit" /> : (isAuthenticated ? <ShoppingCartIcon sx={{ fontSize: '1rem' }} /> : <LoginIcon sx={{ fontSize: '1rem' }} />)}
               disabled={isAdding || isOutOfStock || !displayPrice || displayPrice <= 0}
-              sx={{ 
+              sx={{
                 ml: 1, borderRadius: 2, textTransform: 'none',
-                fontSize: '0.75rem', py: 0.5, 
+                fontSize: '0.75rem', py: 0.5,
                 background: `linear-gradient(45deg, #bb4343ff 30%, #bb4343ff 90%)`,
-                boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`, 
-                color: 'white', 
+                boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`,
+                color: 'white',
                 '&:hover': {
                   background: `linear-gradient(45deg, #ff0000ff 30%, #ff0000ff 90%)`,
                   boxShadow: `0 3px 8px 3px rgba(33, 33, 33, .4)`,
-                  transform: 'translateY(-2px)', 
+                  transform: 'translateY(-2px)',
                 },
                 '&:active': {
-                  transform: 'translateY(0)', 
+                  transform: 'translateY(0)',
                 },
               }}
             >

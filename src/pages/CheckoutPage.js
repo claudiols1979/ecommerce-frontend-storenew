@@ -7,6 +7,7 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useOrders } from '../contexts/OrderContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfig } from '../contexts/ConfigContext';
 import { useUpdateInfo } from '../contexts/UpdateInfoContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -17,10 +18,12 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import CRAddressSelector from '../components/CRAddressSelector';
 
 const CheckoutPage = () => {
     const { cartItems, loading, initiateTilopayPayment } = useOrders();
     const { user } = useAuth();
+    const { taxRegime } = useConfig();
     const { updateResellerProfile } = useUpdateInfo();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -36,6 +39,8 @@ const CheckoutPage = () => {
     const [orderPlaced, setOrderPlaced] = useState(false);
     const [placedOrderDetails, setPlacedOrderDetails] = useState(null);
     const [selectedProvince, setSelectedProvince] = useState('');
+    const [selectedCanton, setSelectedCanton] = useState('');
+    const [selectedDistrito, setSelectedDistrito] = useState('');
     const [shippingCost, setShippingCost] = useState(0);
     const [shippingMessage, setShippingMessage] = useState('');
     const [provinceTouched, setProvinceTouched] = useState(false);
@@ -65,7 +70,7 @@ const CheckoutPage = () => {
 
     const totalCartPrice = cartItems.reduce((acc, item) => {
         const priceWithTax = item.product ?
-            calculatePriceWithTax(item.priceAtSale, item.product.iva) :
+            (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
             item.priceAtSale;
         return acc + (item.quantity * priceWithTax);
     }, 0);
@@ -139,13 +144,16 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         const iSubtotal = cartItems.reduce((acc, item) => acc + (item.quantity * item.priceAtSale), 0);
-        const iTax = cartItems.reduce((acc, item) => {
+        const iTax = taxRegime === 'simplified' ? 0 : cartItems.reduce((acc, item) => {
             const iva = parseFloat(item.product?.iva) || 0;
             return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
         }, 0);
 
-        const sBase = calculateShippingFee(selectedProvince, shippingDetails.city, cartItems);
-        const sTax = Math.round(sBase * 0.13);
+        const currentCanton = selectedCanton || shippingDetails.city;
+
+        const sBaseRaw = calculateShippingFee(selectedProvince, currentCanton, cartItems);
+        const sTax = taxRegime === 'simplified' ? 0 : Math.round(sBaseRaw * 0.13);
+        const sBase = taxRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
 
         setBreakdown({
             itemsSubtotal: iSubtotal,
@@ -162,7 +170,7 @@ const CheckoutPage = () => {
             setShippingCost(0);
             setShippingMessage('');
         }
-    }, [selectedProvince, shippingDetails.city, cartItems]);
+    }, [selectedProvince, selectedCanton, shippingDetails.city, cartItems]);
 
     useEffect(() => {
         if (!loading && cartItems.length === 0 && !orderPlaced) {
@@ -184,10 +192,16 @@ const CheckoutPage = () => {
                 city: user.city || prev.city, // ✅ Ahora sí carga la ciudad
             }));
 
-            // ✅ CORREGIDO: Cargar provincia del usuario si existe
-            if (user.province) {
-                setSelectedProvince(user.province);
-                setProvinceTouched(true); // Marcar como tocado para que se muestre el costo de envío
+            // ✅ CORREGIDO: Cargar provincia, cantón y distrito del usuario si existen
+            if (user.provincia || user.province) {
+                setSelectedProvince(user.provincia || user.province);
+                setProvinceTouched(true);
+            }
+            if (user.canton || user.city) {
+                setSelectedCanton(user.canton || user.city);
+            }
+            if (user.distrito) {
+                setSelectedDistrito(user.distrito);
             }
         }
     }, [user]);
@@ -218,8 +232,11 @@ const CheckoutPage = () => {
                 email: shippingDetails.email,
                 phoneNumber: shippingDetails.phone,
                 address: shippingDetails.address,
-                city: shippingDetails.city,
-                province: selectedProvince
+                city: selectedCanton || shippingDetails.city,
+                province: selectedProvince,
+                provincia: selectedProvince,
+                canton: selectedCanton || shippingDetails.city,
+                distrito: selectedDistrito
             };
 
             await updateResellerProfile(user._id, updatedData);
@@ -254,7 +271,11 @@ const CheckoutPage = () => {
 
             const finalShippingDetails = {
                 ...shippingDetails,
-                province: selectedProvince
+                province: selectedProvince,
+                provincia: selectedProvince,
+                canton: selectedCanton || shippingDetails.city,
+                distrito: selectedDistrito,
+                city: selectedCanton || shippingDetails.city,
             };
 
             const paymentUrl = await initiateTilopayPayment(finalShippingDetails);
@@ -394,7 +415,7 @@ const CheckoutPage = () => {
                                 <List sx={{ mb: 2 }}>
                                     {cartItems.map((item) => {
                                         const priceWithTax = item.product ?
-                                            calculatePriceWithTax(item.priceAtSale, item.product.iva) :
+                                            (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
                                             item.priceAtSale;
 
                                         return (
@@ -470,11 +491,13 @@ const CheckoutPage = () => {
                                     ) : (
                                         <Box>
                                             <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                Envío base: {formatPrice(breakdown.shippingBase)}
+                                                {taxRegime === 'simplified' ? 'Envío' : 'Envío base'}: {formatPrice(breakdown.shippingBase)}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                Impuesto (13%): {formatPrice(breakdown.shippingTax)}
-                                            </Typography>
+                                            {taxRegime !== 'simplified' && (
+                                                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                                                    Impuesto (13%): {formatPrice(breakdown.shippingTax)}
+                                                </Typography>
+                                            )}
                                             <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, mt: 1 }}>
                                                 Total envío: {formatPrice(shippingCost)}
                                             </Typography>
@@ -492,22 +515,26 @@ const CheckoutPage = () => {
                                 </Box>
 
                                 <Box sx={{ mb: 3 }}>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>Subtotal Productos</Typography>
+                                    <Box display="flex" justifyContent="space-between" mb={1.5}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{taxRegime === 'simplified' ? 'Productos' : 'Subtotal Productos'}</Typography>
                                         <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsSubtotal)}</Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Productos</Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsTax)}</Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>Envío (Base)</Typography>
+                                    {taxRegime !== 'simplified' && (
+                                        <Box display="flex" justifyContent="space-between" mb={1.5}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Productos</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsTax)}</Typography>
+                                        </Box>
+                                    )}
+                                    <Box display="flex" justifyContent="space-between" mb={1.5}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{taxRegime === 'simplified' ? 'Envío' : 'Envío (Base)'}</Typography>
                                         <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingBase)}</Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Envío (13%)</Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingTax)}</Typography>
-                                    </Box>
+                                    {taxRegime !== 'simplified' && (
+                                        <Box display="flex" justifyContent="space-between" mb={1.5}>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Envío (13%)</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingTax)}</Typography>
+                                        </Box>
+                                    )}
                                 </Box>
 
                                 <Divider sx={{ my: 2 }} />
@@ -605,51 +632,23 @@ const CheckoutPage = () => {
                                             sx={{ mb: 2 }}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <FormControl
-                                            fullWidth
-                                            required
-                                            size="medium"
-                                            sx={{ mb: 2 }}
-                                            error={shouldShowError('province', selectedProvince)}
-                                        >
-                                            <InputLabel sx={{
-                                                backgroundColor: 'white',
-                                                px: 1
-                                            }}>
-                                                Provincia *
-                                            </InputLabel>
-                                            <Select
-                                                value={selectedProvince}
-                                                label="Provincia *"
-                                                onChange={handleProvinceChange}
-                                                onBlur={() => handleFieldBlur('province')}
-                                                displayEmpty
-                                                sx={{
-                                                    '& .MuiSelect-select': {
-                                                        padding: '16.5px 14px'
-                                                    }
-                                                }}
-                                            >
-                                                <MenuItem value="">
-                                                    <em>Seleccionar provincia</em>
-                                                </MenuItem>
-                                                {provinces.map((prov) => (
-                                                    <MenuItem key={prov} value={prov} sx={{ py: 1.5 }}>
-                                                        {prov}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                            {shouldShowError('province', selectedProvince) && (
-                                                <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block' }}>
-                                                    Por favor selecciona tu provincia
-                                                </Typography>
-                                            )}
-                                        </FormControl>
+                                    <Grid item xs={12}>
+                                        <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                                            Provincia, Cantón y Distrito *
+                                        </Typography>
+                                        <CRAddressSelector
+                                            provincia={selectedProvince}
+                                            setProvincia={setSelectedProvince}
+                                            canton={selectedCanton}
+                                            setCanton={setSelectedCanton}
+                                            distrito={selectedDistrito}
+                                            setDistrito={setSelectedDistrito}
+                                            icon={null}
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
-                                            label="Dirección completa"
+                                            label="Otras señas (Calle, número, urbanización, punto de referencia, etc.)"
                                             name="address"
                                             value={shippingDetails.address}
                                             onChange={handleShippingChange}
@@ -660,23 +659,8 @@ const CheckoutPage = () => {
                                             required
                                             variant="outlined"
                                             size="medium"
-                                            placeholder="Calle, número, urbanización, punto de referencia, etc."
-                                            sx={{ mb: 2 }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Ciudad"
-                                            name="city"
-                                            value={shippingDetails.city}
-                                            onChange={handleShippingChange}
-                                            onBlur={() => handleFieldBlur('city')}
-                                            error={shouldShowError('city', shippingDetails.city)}
-                                            helperText={shouldShowError('city', shippingDetails.city) ? "Este campo es requerido" : ""}
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            size="medium"
+                                            multiline
+                                            rows={2}
                                             sx={{ mb: 2 }}
                                         />
                                     </Grid>

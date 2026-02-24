@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useOrders } from '../contexts/OrderContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfig } from '../contexts/ConfigContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { formatPrice } from '../utils/formatters';
@@ -20,13 +21,14 @@ const CartPage = () => {
   const { cartItems, loading, error, updateCartItemQuantity, removeCartItem, clearCart } = useOrders();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { taxRegime } = useConfig();
 
   const [confirmClearCartOpen, setConfirmClearCartOpen] = useState(false);
 
   // Calcular el total del carrito con IVA incluido
   const totalCartPrice = cartItems.reduce((acc, item) => {
     const priceWithTax = item.product ?
-      calculatePriceWithTax(item.priceAtSale, item.product.iva) :
+      (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
       item.priceAtSale;
     return acc + (item.quantity * priceWithTax);
   }, 0);
@@ -142,7 +144,7 @@ const CartPage = () => {
                 {cartItems.map((item) => {
                   // Calcular precio con IVA para este producto
                   const priceWithTax = item.product ?
-                    calculatePriceWithTax(item.priceAtSale, item.product.iva) :
+                    (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
                     item.priceAtSale;
 
                   // Calcular el stock total disponible por ítem
@@ -168,7 +170,9 @@ const CartPage = () => {
                         <Typography variant="body2" color="text.secondary">Volumen: {item.product?.volume || 'N/A'}</Typography>
                         <Typography variant="body2" color="text.secondary">
                           Precio Unitario: <Typography component="span" sx={{ fontWeight: 600 }}>{formatPrice(priceWithTax)}</Typography>
-                          <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>IVA incluido</Typography>
+                          {taxRegime !== 'simplified' && (
+                            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>IVA incluido</Typography>
+                          )}
                         </Typography>
                       </Box>
 
@@ -215,7 +219,7 @@ const CartPage = () => {
               <CardContent>
                 <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>Resumen del Pedido</Typography>
                 <Box display="flex" justifyContent="space-between" mb={1}>
-                  <Typography variant="body1">Subtotal ({cartItems.length} artículos):</Typography>
+                  <Typography variant="body1">{taxRegime === 'simplified' ? 'Productos' : 'Subtotal'} ({cartItems.length} artículos):</Typography>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatPrice(totalCartPrice)}</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between" mb={2}>
