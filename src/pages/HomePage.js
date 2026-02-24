@@ -30,48 +30,33 @@ const getBaseCode = (code) => {
 
 // Helper function to extract base name based on attribute count
 const extractBaseNameFromAttributes = (productName, productCode) => {
-  // Contar número de atributos en el código
-  const attributeCount = (productCode.match(/_/g) || []).length;
-  
-  if (attributeCount === 0) {
-    return productName; // No hay atributos, devolver nombre completo
-  }
-  
-  // Dividir el nombre en palabras
-  const words = productName.split(' ');
-  
-  // Remover la cantidad de palabras igual al número de atributos
-  if (words.length > attributeCount) {
-    return words.slice(0, words.length - attributeCount).join(' ');
-  }
-  
-  return productName; // Si tiene menos palabras que atributos, devolver completo
+  return productName;
 };
 
 // Function to group products by their base product
 const groupProductsByBase = (products) => {
   const groups = {};
-  
+
   products.forEach(product => {
     const baseCode = getBaseCode(product.code);
-    
+
     if (!groups[baseCode]) {
       groups[baseCode] = [];
     }
-    
+
     groups[baseCode].push(product);
   });
-  
+
   return groups;
 };
 
 // Function to select one random variant from each product group
 const selectRandomVariantFromEachGroup = (groupedProducts) => {
   const displayProducts = [];
-  
+
   for (const baseCode in groupedProducts) {
     const variants = groupedProducts[baseCode];
-    
+
     if (variants.length === 1) {
       const baseName = extractBaseNameFromAttributes(variants[0].name, variants[0].code);
       displayProducts.push({
@@ -83,9 +68,9 @@ const selectRandomVariantFromEachGroup = (groupedProducts) => {
     } else {
       const randomIndex = Math.floor(Math.random() * variants.length);
       const selectedVariant = variants[randomIndex];
-      
+
       const baseName = extractBaseNameFromAttributes(selectedVariant.name, selectedVariant.code);
-      
+
       displayProducts.push({
         ...selectedVariant,
         baseCode: baseCode,
@@ -94,7 +79,7 @@ const selectRandomVariantFromEachGroup = (groupedProducts) => {
       });
     }
   }
-  
+
   return displayProducts;
 };
 
@@ -112,15 +97,15 @@ const HomePage = () => {
   // }, [fetchProducts]);
 
   // Cambiar el useEffect que carga los productos
-useEffect(() => {
-  // Pedir más productos para compensar la agrupación
-  // Si quieres 20 productos finales y tienes en promedio 2 variantes por producto,
-  // pedir 40 productos (20 * 2)
-  const estimatedVariantsPerProduct = 10; // Ajusta este valor según tu caso
-  const productsToFetch = 20 * estimatedVariantsPerProduct;
-  
-  fetchProducts(1, productsToFetch, 'random'); 
-}, [fetchProducts]);
+  useEffect(() => {
+    // Pedir más productos para compensar la agrupación
+    // Si quieres 20 productos finales y tienes en promedio 2 variantes por producto,
+    // pedir 40 productos (20 * 2)
+    const estimatedVariantsPerProduct = 10; // Ajusta este valor según tu caso
+    const productsToFetch = 20 * estimatedVariantsPerProduct;
+
+    fetchProducts(1, productsToFetch, 'random');
+  }, [fetchProducts]);
 
   // Process products when they change
   useEffect(() => {
@@ -158,28 +143,28 @@ useEffect(() => {
 
     // Price Calculation Logic
     const getPriceForCart = () => {
-        let calculatedPrice = null;
-        if (user && user.role === 'Revendedor' && user.resellerCategory && product.resellerPrices) {
-            const priceForCategory = product.resellerPrices[user.resellerCategory];
-            if (typeof priceForCategory === 'number' && priceForCategory > 0) {
-                calculatedPrice = priceForCategory;
-            }
+      let calculatedPrice = null;
+      if (user && user.role === 'Revendedor' && user.resellerCategory && product.resellerPrices) {
+        const priceForCategory = product.resellerPrices[user.resellerCategory];
+        if (typeof priceForCategory === 'number' && priceForCategory > 0) {
+          calculatedPrice = priceForCategory;
         }
-        if (calculatedPrice === null && product.resellerPrices && typeof product.resellerPrices.cat1 === 'number' && product.resellerPrices.cat1 > 0) {
-            calculatedPrice = product.resellerPrices.cat1;
-        }
-        return calculatedPrice || 0;
+      }
+      if (calculatedPrice === null && product.resellerPrices && typeof product.resellerPrices.cat1 === 'number' && product.resellerPrices.cat1 > 0) {
+        calculatedPrice = product.resellerPrices.cat1;
+      }
+      return calculatedPrice || 0;
     };
 
     const priceToPass = getPriceForCart();
     if (priceToPass <= 0) {
-        toast.error("No se puede añadir al carrito: precio no disponible.");
-        setAddingProductId(null);
-        return;
+      toast.error("No se puede añadir al carrito: precio no disponible.");
+      setAddingProductId(null);
+      return;
     }
 
     try {
-      await addItemToCart(product._id, 1, priceToPass);      
+      await addItemToCart(product._id, 1, priceToPass);
     } catch (err) {
       toast.error(err.message || "No se pudo añadir el producto.");
     } finally {
@@ -207,11 +192,11 @@ useEffect(() => {
     { title: 'Calidad Garantizada', description: 'Productos seleccionados con los más altos estándares.', icon: <SecurityIcon sx={{ fontSize: 40, color: 'primary.main' }} /> },
     { title: 'Innovación Constante', description: 'Siempre con las últimas tendencias del mercado.', icon: <EmojiEventsIcon sx={{ fontSize: 40, color: 'primary.main' }} /> },
     { title: 'Atención Personalizada', description: 'Un equipo dedicado a tus necesidades y consultas.', icon: <SupportAgentIcon sx={{ fontSize: 40, color: 'primary.main' }} /> },
-    { 
-      title: 'Únete a Nuestra Red', 
-      description: 'Forma parte de nuestro selecto grupo de WhatsApp.', 
+    {
+      title: 'Únete a Nuestra Red',
+      description: 'Forma parte de nuestro selecto grupo de WhatsApp.',
       icon: <GroupAddIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
-      link: 'https://chat.whatsapp.com/KDAzFEvMzpn8MnTBtmntaD', 
+      link: 'https://chat.whatsapp.com/KDAzFEvMzpn8MnTBtmntaD',
     },
   ];
 
@@ -237,10 +222,10 @@ useEffect(() => {
         <ProductFilters onFilterSubmit={handleFilterAndNavigate} />
       </Container> */}
 
-      <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>   
+      <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>
         {/* Hero Carousel */}
         <HeroCarousel />
-      
+
         {/* Top Widgets Section */}
         <Box sx={{ my: 6, textAlign: 'center' }}>
           <Grid container spacing={4} justifyContent="center">
@@ -325,12 +310,12 @@ useEffect(() => {
         {/* Explore All Products Button */}
         <Box sx={{ textAlign: 'center', my: 6 }}>
           <Button
-            variant="contained"            
+            variant="contained"
             size="large"
             onClick={() => navigate('/products')}
-            sx={{ 
-              borderRadius: 8, 
-              px: 5, 
+            sx={{
+              borderRadius: 8,
+              px: 5,
               py: 1.5,
               boxShadow: '0 4px 15px rgba(247, 245, 239, 0.4)',
               transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
@@ -378,8 +363,8 @@ useEffect(() => {
               </Grid>
             ))} */}
             {groupedProducts.slice(0, 20).map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={3} lg={3}> 
-                <ProductCard 
+              <Grid item key={product._id} xs={12} sm={6} md={3} lg={3}>
+                <ProductCard
                   product={{
                     ...product,
                     name: product.baseName || product.name,
@@ -396,12 +381,12 @@ useEffect(() => {
         {/* Call to action button */}
         <Box sx={{ textAlign: 'center', my: 6 }}>
           <Button
-            variant="contained"           
+            variant="contained"
             size="large"
             onClick={() => navigate('/products')}
-            sx={{ 
-              borderRadius: 8, 
-              px: 5, 
+            sx={{
+              borderRadius: 8,
+              px: 5,
               py: 1.5,
               boxShadow: '0 4px 15px rgba(238, 235, 225, 0.4)',
               transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
@@ -430,9 +415,9 @@ useEffect(() => {
           <Grid container spacing={4} justifyContent="center">
             {middleWidgetData.map((widget, index) => (
               <Grid item key={index} xs={12} sm={6} md={3}>
-                <Box 
-                  sx={{ 
-                    p: 3, 
+                <Box
+                  sx={{
+                    p: 3,
                     bgcolor: 'transparent',
                     boxShadow: 'none',
                     border: 'none',
@@ -441,17 +426,17 @@ useEffect(() => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    height: '100%', 
+                    height: '100%',
                     textAlign: 'center',
-                    cursor: widget.link ? 'pointer' : 'default', 
+                    cursor: widget.link ? 'pointer' : 'default',
                     transition: 'transform 0.2s ease-in-out',
                     '&:hover': {
-                      transform: widget.link ? 'translateY(-5px)' : 'none', 
+                      transform: widget.link ? 'translateY(-5px)' : 'none',
                     }
                   }}
                   onClick={() => {
                     if (widget.link) {
-                      window.open(widget.link, '_blank'); 
+                      window.open(widget.link, '_blank');
                     }
                   }}
                 >
@@ -469,14 +454,14 @@ useEffect(() => {
         </Box>
 
         {/* "Why Choose Us" Section */}
-        <Box sx={{ 
-          my: 8, 
-          textAlign: 'center', 
-          bgcolor: 'background.default', 
-          color: 'text.primary', 
-          p: { xs: 4, sm: 6 }, 
+        <Box sx={{
+          my: 8,
+          textAlign: 'center',
+          bgcolor: 'background.default',
+          color: 'text.primary',
+          p: { xs: 4, sm: 6 },
           borderRadius: 3,
-          boxShadow: '0 4px 15px rgba(0,0,0,0.05)', 
+          boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
         }}>
           <Typography variant="h5" sx={{ mb: 4, fontWeight: 700, color: 'primary.main' }}>
             Por Qué Elegirnos
@@ -485,7 +470,7 @@ useEffect(() => {
             {features.map((feature, index) => (
               <Grid item xs={12} sm={4} key={index}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
-                  {feature.icon} 
+                  {feature.icon}
                   <Typography variant="h6" sx={{ mt: 2, fontWeight: 600, color: 'primary.main' }}>
                     {feature.title}
                   </Typography>

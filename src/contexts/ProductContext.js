@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import { useAuth } from './AuthContext'; 
+import { useAuth } from './AuthContext';
 import axios from 'axios';
 import API_URL from '../config';
 
@@ -10,7 +10,7 @@ const ProductContext = createContext();
 export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
-  const { api } = useAuth(); 
+  const { api } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -42,11 +42,12 @@ export const ProductProvider = ({ children }) => {
         selectedGender,
         minPrice: minPrice.toString(),
         maxPrice: maxPrice.toString(),
+        _t: new Date().getTime().toString(),
       }).toString();
 
       // Usamos la instancia 'api' que ya tiene la lógica de autenticación
       const response = await api.get(`/api/products-filtered?${queryParams}`);
-      
+
       if (page === 1) {
         // Si es la primera página (o una nueva búsqueda), reemplaza la lista.
         setProducts(response.data.products);
@@ -54,7 +55,7 @@ export const ProductProvider = ({ children }) => {
         // Si es una página subsiguiente, añade los nuevos productos a la lista existente.
         setProducts(prevProducts => [...prevProducts, ...response.data.products]);
       }
-      
+
       setCurrentPage(response.data.page);
       setTotalPages(response.data.pages);
       setTotalProducts(response.data.totalProducts);
@@ -87,5 +88,5 @@ export const ProductProvider = ({ children }) => {
 };
 
 ProductProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };

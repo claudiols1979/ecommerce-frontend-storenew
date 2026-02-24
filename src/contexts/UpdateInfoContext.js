@@ -28,12 +28,12 @@ export const UpdateInfoProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
       // Obtener el token del objeto user en localStorage
       const storedUser = localStorage.getItem("user");
       let token = null;
-      
+
       if (storedUser) {
         try {
           const userData = JSON.parse(storedUser);
@@ -43,7 +43,7 @@ export const UpdateInfoProvider = ({ children }) => {
           throw new Error('Error al obtener información de usuario');
         }
       }
-      
+
       if (!token) {
         throw new Error('No se encontró token de autenticación. Por favor, inicie sesión nuevamente.');
       }
@@ -63,14 +63,14 @@ export const UpdateInfoProvider = ({ children }) => {
 
       console.log('✅ Backend response data:', response.data);
       console.log('✅ Campos nuevos en response:', {
-          tipoIdentificacion: response.data.tipoIdentificacion,
-          cedula: response.data.cedula, 
-          codigoActividadReceptor: response.data.codigoActividadReceptor
+        tipoIdentificacion: response.data.tipoIdentificacion,
+        cedula: response.data.cedula,
+        codigoActividadReceptor: response.data.codigoActividadReceptor
       });
 
       if (response.status === 200) {
         setSuccess(true);
-        
+
         if (updateUser) {
           updateUser({
             firstName: response.data.firstName,
@@ -80,22 +80,25 @@ export const UpdateInfoProvider = ({ children }) => {
             address: response.data.address,
             city: response.data.city,
             province: response.data.province,
+            provincia: response.data.provincia,
+            canton: response.data.canton,
+            distrito: response.data.distrito,
             resellerCategory: response.data.resellerCategory,
             // ✅ AGREGAR ESTOS 3 CAMPOS NUEVOS
             tipoIdentificacion: response.data.tipoIdentificacion,
             cedula: response.data.cedula,
             codigoActividadReceptor: response.data.codigoActividadReceptor
-        });
-      }
-        
+          });
+        }
+
         return response.data;
       }
     } catch (err) {
       let errorMessage = 'Error al actualizar el perfil';
-      
+
       if (err.response) {
         errorMessage = err.response.data?.message || errorMessage;
-        
+
         switch (err.response.status) {
           case 400:
             errorMessage = err.response.data?.message || 'Datos inválidos';
@@ -114,7 +117,7 @@ export const UpdateInfoProvider = ({ children }) => {
       } else {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

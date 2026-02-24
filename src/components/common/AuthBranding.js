@@ -12,8 +12,9 @@ import '@fontsource/lato/300.css';           // Importa el peso 300 (Light)
  * Componente de Branding para las páginas de autenticación.
  * Muestra el nombre de la tienda "Look & Smell" con un estilo profesional y minimalista.
  */
-const AuthBranding = () => {
+const AuthBranding = ({ lightMode = false }) => {
   const theme = useTheme();
+  const textColor = lightMode ? '#ffffff' : '#263C5C';
 
   return (
     // Box principal que centra el contenido y añade margen vertical (my: 4)
@@ -24,14 +25,14 @@ const AuthBranding = () => {
         sx={{
           fontFamily: '"Playfair Display", serif', // Tipografía elegante y clásica para "Look" y "Smell"
           fontWeight: 700, // Bold
-          color: '#263C5C', // Se adapta automáticamente al modo claro/oscuro
+          color: textColor,
           letterSpacing: '0.1em', // Espaciado entre letras para un look más refinado
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
-        Software 
+        Software
         <Typography
           component="span"
           variant="h3" // Ligeramente más pequeño
@@ -40,18 +41,18 @@ const AuthBranding = () => {
             fontWeight: 300, // Light
             fontStyle: 'italic', // Cursiva para darle un toque especial
             mx: 2, // Margen horizontal para separarlo
-            color: '#263C5C', // Un color secundario sutil
+            color: textColor,
           }}
         >
           Factory
         </Typography>
-        
+
       </Typography>
 
       {/* Un subtítulo o eslogan opcional */}
-      <Typography 
-        variant="body2"         
-        sx={{ mt: 1, letterSpacing: '0.05em', color: '#263C5C' }}
+      <Typography
+        variant="body2"
+        sx={{ mt: 1, letterSpacing: '0.05em', color: lightMode ? 'rgba(255,255,255,0.8)' : '#263C5C' }}
       >
         ERP
       </Typography>

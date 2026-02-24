@@ -8,8 +8,7 @@ import { toast } from 'react-toastify';
 
 // Helper function to extract base product name (without variant details)
 const extractBaseProductName = (name) => {
-  // This regex removes color and size information from the end of the name
-  return name.replace(/\s+(Azul|Rojo|Verde|L|M|S|XL)$/gi, '').trim();
+  return name;
 };
 
 const ProductCard = ({ product, onAddToCart, isAdding }) => {
@@ -41,7 +40,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
       toast.info('Por favor, inicia sesión para añadir productos al carrito.');
       return;
     }
-    
+
     // 1. Calculamos el precio de venta en el momento del clic
     const priceToPass = getPriceForProduct(product);
 
@@ -80,17 +79,17 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 600 }}>
           {extractBaseProductName(product.name)}
         </Typography>
-        
+
         {/* Show variant count if this product has variants */}
         {product.variantCount > 1 && (
-          <Chip 
-            label={`${product.variantCount} variantes disponibles`} 
-            size="small" 
-            color="secondary" 
+          <Chip
+            label={`${product.variantCount} variantes disponibles`}
+            size="small"
+            color="secondary"
             sx={{ mb: 1 }}
           />
         )}
-        
+
         <Typography variant="body2" color="text.secondary" sx={{ minHeight: 40 }}>
           {product.shortDescription || (product.description ? product.description.substring(0, 70) + '...' : 'No description available.')}
         </Typography>

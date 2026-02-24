@@ -28,7 +28,7 @@ const NavBranding = () => {
             // No se especifica color para que herede el de la AppBar
           }}
         >
-          Software
+          Tienda
           <Typography
             component="span"
             variant="h4" // Mantenemos el mismo tamaño para el '&'
@@ -40,9 +40,9 @@ const NavBranding = () => {
               mx: 1, // Margen horizontal reducido para un look más compacto
             }}
           >
-          Factory
+          Linea 
           </Typography>
-          ERP
+          (Demo)
         </Typography>
       </Box>
     </RouterLink>

@@ -316,15 +316,8 @@ const ProductDetailsPage = () => {
     console.log('BaseCode:', currentVariantAttributes.baseCode);
 
     // VERIFICAR SI ES PRODUCTO SIMPLE
-    if (currentVariantAttributes.attributes.length === 0) {
-      console.log('✅ Producto simple - sin atributos');
-      setAttributeOptions([]);
-      setAvailableOptions(new Map());
-      setSelectedAttributes({});
-      setLoadingAttributes(false);
-      setAllAttributesLoaded(true);
-      return;
-    }
+    // Se elimina el early return para que los productos base 
+    // puedan consultar también si tienen variantes asociadas.
 
     setLoadingAttributes(true);
     setAllAttributesLoaded(false);
@@ -345,11 +338,10 @@ const ProductDetailsPage = () => {
       const allVariants = response.data.variants || [];
       console.log('📊 Variantes encontradas via API:', allVariants.length);
 
-      // ✅ FILTRAR SOLO VARIANTES CON STOCK Y MISMA ESTRUCTURA
+      // ✅ FILTRAR SOLO VARIANTES DE LA MISMA ESTRUCTURA (IGNORANDO STOCK)
       const validVariants = allVariants.filter(variant => {
         const variantAttributes = extractVariantAttributes(variant.code);
-        return variantAttributes.baseCode === currentVariantAttributes.baseCode &&
-          variant.countInStock > 0;
+        return variantAttributes.baseCode === currentVariantAttributes.baseCode;
       });
 
       console.log('📊 Variantes válidas (con stock y misma estructura):', validVariants.length);
@@ -379,8 +371,7 @@ const ProductDetailsPage = () => {
           const localVariants = productsToUse.filter(p => {
             const attr = extractVariantAttributes(p.code);
             return attr.baseCode === currentVariantAttributes.baseCode &&
-              attr.attributes.length === currentVariantAttributes.attributes.length &&
-              p.countInStock > 0;
+              attr.attributes.length === currentVariantAttributes.attributes.length;
           });
 
           if (localVariants.length > 0) {
@@ -514,37 +505,28 @@ const ProductDetailsPage = () => {
         const currentVariantAttributes = extractVariantAttributes(data.code);
 
         // SOLO PROCESAR SI TIENE ATRIBUTOS (es variante)
-        if (currentVariantAttributes.attributes.length > 0) {
-          const cacheKey = `attributeOptions_${currentVariantAttributes.baseCode}`;
-          const cachedData = localStorage.getItem(cacheKey);
+        const cacheKey = `attributeOptions_${currentVariantAttributes.baseCode}`;
+        const cachedData = localStorage.getItem(cacheKey);
 
-          if (cachedData) {
-            try {
-              const parsedData = JSON.parse(cachedData);
+        if (cachedData) {
+          try {
+            const parsedData = JSON.parse(cachedData);
 
-              // ✅ LEER EL ESTADO DE FILTROS GUARDADO
-              const savedHasActiveFilters = parsedData.hasActiveFilters;
-              console.log('✅ Estado de filtros cargado desde cache:', savedHasActiveFilters);
+            // ✅ LEER EL ESTADO DE FILTROS GUARDADO
+            const savedHasActiveFilters = parsedData.hasActiveFilters;
+            console.log('✅ Estado de filtros cargado desde cache:', savedHasActiveFilters);
 
-              setAttributeOptions(parsedData.finalAttributeOptions);
-              setAvailableOptions(new Map(parsedData.optionsMap));
-              setSelectedAttributes(parsedData.initialSelections || {});
-              setAllAttributesLoaded(true);
-            } catch (error) {
-              console.error('Error parsing cached data:', error);
-              localStorage.removeItem(cacheKey);
-              buildAttributeOptionsFromScratch(data, currentVariantAttributes);
-            }
-          } else {
+            setAttributeOptions(parsedData.finalAttributeOptions);
+            setAvailableOptions(new Map(parsedData.optionsMap));
+            setSelectedAttributes(parsedData.initialSelections || {});
+            setAllAttributesLoaded(true);
+          } catch (error) {
+            console.error('Error parsing cached data:', error);
+            localStorage.removeItem(cacheKey);
             buildAttributeOptionsFromScratch(data, currentVariantAttributes);
           }
         } else {
-          // PRODUCTO SIMPLE
-          setAttributeOptions([]);
-          setAvailableOptions(new Map());
-          setSelectedAttributes({});
-          setLoadingAttributes(false);
-          setAllAttributesLoaded(true);
+          buildAttributeOptionsFromScratch(data, currentVariantAttributes);
         }
 
         // ✅ FALTABA ESTA PARTE: Cargar reviews y related products
@@ -819,7 +801,7 @@ const ProductDetailsPage = () => {
     },
     {
       question: '4. ¿Realizan envíos fuera de la GAM?',
-      answer: 'Sí. Para las provincias de Guanacaste, Puntarenas y Limón, los envíos se gestionan a través de Correos de Costa Rica. El costo del envio es de 3000 colones más iva'
+      answer: 'Sí. Los envíos se gestionan a través de Correos de Costa Rica a todo el territorio nacional. El costo se calcula automáticamente según el peso de su pedido y su ubicación exacta.'
     },
   ];
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Container, Box, Typography, Button, Grid, TextField,
-    CircularProgress, Divider, List, ListItem, Paper, FormControl, 
+    CircularProgress, Divider, List, ListItem, Paper, FormControl,
     Select, MenuItem, useTheme, InputLabel, alpha
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -23,7 +23,7 @@ const CheckoutPage = () => {
     const { user } = useAuth();
     const { updateResellerProfile } = useUpdateInfo();
     const navigate = useNavigate();
-    const theme = useTheme();   
+    const theme = useTheme();
 
     const [shippingDetails, setShippingDetails] = useState({
         name: '',
@@ -64,29 +64,105 @@ const CheckoutPage = () => {
     };
 
     const totalCartPrice = cartItems.reduce((acc, item) => {
-        const priceWithTax = item.product ? 
-            calculatePriceWithTax(item.priceAtSale, item.product.iva) : 
+        const priceWithTax = item.product ?
+            calculatePriceWithTax(item.priceAtSale, item.product.iva) :
             item.priceAtSale;
         return acc + (item.quantity * priceWithTax);
     }, 0);
-    
+
     const finalTotalPrice = totalCartPrice + shippingCost;
 
     const provinces = ["Alajuela", "Cartago", "Guanacaste", "Heredia", "Limón", "Puntarenas", "San José"];
 
+    // List of GAM Cantons (Mirror of backend logic)
+    const GAM_CANTONS = {
+        "san jose": ["central", "escazu", "desamparados", "aserri", "mora", "goicoechea", "santa ana", "alajuelita", "vazquez de coronado", "tibas", "moravia", "montes de oca", "curridabat", "puriscal"],
+        "alajuela": ["central", "atenas", "grecia", "naranjo", "palmares", "poas", "orotina", "sarchi", "zarcero"],
+        "cartago": ["central", "paraiso", "la union", "jimenez", "alvarado", "oreamuno", "el guarco"],
+        "heredia": ["central", "barva", "santo domingo", "santa barbara", "san rafael", "san isidro", "belen", "flores", "san pablo"]
+    };
+
+    const normalize = (str) =>
+        str
+            ? str
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim()
+            : "";
+
+    const isGAM = (prov, cant) => {
+        if (!prov || !cant) return false;
+        const nProv = normalize(prov);
+        const nCant = normalize(cant);
+        const gamProv = GAM_CANTONS[nProv];
+        return gamProv ? gamProv.includes(nCant) : false;
+    };
+
+    const calculateShippingFee = (prov, cant, items) => {
+        if (!prov || !cant) return 0;
+
+        const totalWeight = items.reduce((sum, item) => sum + (item.quantity * (item.product?.weight || 100)), 0);
+        const inGAM = isGAM(prov, cant);
+
+        // Matriz Correos 2025
+        const tariffs = [
+            { maxW: 250, gam: 1850, resto: 2150 },
+            { maxW: 500, gam: 1950, resto: 2500 },
+            { maxW: 1000, gam: 2350, resto: 3450 }
+        ];
+
+        const rate = tariffs.find(t => totalWeight <= t.maxW);
+        let base = 0;
+
+        if (rate) {
+            base = inGAM ? rate.gam : rate.resto;
+        } else {
+            // Dynamic formula for weight > 1000g
+            const base1kg = inGAM ? 2350 : 3450;
+            const extraKiloRate = 1100;
+            const totalKilos = totalWeight / 1000;
+            const extraKilos = Math.ceil(totalKilos - 1);
+            base = base1kg + (extraKilos * extraKiloRate);
+        }
+
+        return base;
+    };
+
+    const [breakdown, setBreakdown] = useState({
+        itemsSubtotal: 0,
+        itemsTax: 0,
+        shippingBase: 0,
+        shippingTax: 0,
+        total: 0
+    });
+
     useEffect(() => {
-        // SIEMPRE cobrar envío sin importar la provincia
-        if (selectedProvince) {
-            const baseShippingCost = 3000;
-            const shippingTax = baseShippingCost * 0.13; // 13% de impuesto
-            const totalShippingCost = baseShippingCost + shippingTax;
-            setShippingCost(totalShippingCost);
-            setShippingMessage('Envío a todo Costa Rica');
+        const iSubtotal = cartItems.reduce((acc, item) => acc + (item.quantity * item.priceAtSale), 0);
+        const iTax = cartItems.reduce((acc, item) => {
+            const iva = parseFloat(item.product?.iva) || 0;
+            return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
+        }, 0);
+
+        const sBase = calculateShippingFee(selectedProvince, shippingDetails.city, cartItems);
+        const sTax = Math.round(sBase * 0.13);
+
+        setBreakdown({
+            itemsSubtotal: iSubtotal,
+            itemsTax: iTax,
+            shippingBase: sBase,
+            shippingTax: sTax,
+            total: Math.round(iSubtotal + iTax + sBase + sTax)
+        });
+
+        if (selectedProvince && shippingDetails.city) {
+            setShippingCost(sBase + sTax);
+            setShippingMessage(isGAM(selectedProvince, shippingDetails.city) ? 'Tarifa GAM (EMS Nacional)' : 'Tarifa Resto del País (EMS Nacional)');
         } else {
             setShippingCost(0);
             setShippingMessage('');
         }
-    }, [selectedProvince]);
+    }, [selectedProvince, shippingDetails.city, cartItems]);
 
     useEffect(() => {
         if (!loading && cartItems.length === 0 && !orderPlaced) {
@@ -98,7 +174,7 @@ const CheckoutPage = () => {
         if (user) {
             // ✅ CORREGIDO: Cargar todos los datos del usuario incluyendo provincia y ciudad
             const fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : '';
-            
+
             setShippingDetails(prev => ({
                 ...prev,
                 name: fullName || prev.name,
@@ -107,7 +183,7 @@ const CheckoutPage = () => {
                 address: user.address || prev.address,
                 city: user.city || prev.city, // ✅ Ahora sí carga la ciudad
             }));
-            
+
             // ✅ CORREGIDO: Cargar provincia del usuario si existe
             if (user.province) {
                 setSelectedProvince(user.province);
@@ -171,7 +247,7 @@ const CheckoutPage = () => {
         }
 
         setPaymentButtonLoading(true);
-        
+
         try {
             // ✅ NUEVO: Actualizar perfil del usuario antes de proceder al pago
             await updateUserProfileWithShippingInfo();
@@ -194,25 +270,25 @@ const CheckoutPage = () => {
 
     if (orderPlaced) {
         return (
-            <Container maxWidth="sm" sx={{ 
+            <Container maxWidth="sm" sx={{
                 py: 8,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: '80vh'
             }}>
-                <Paper elevation={0} sx={{ 
-                    p: 6, 
+                <Paper elevation={0} sx={{
+                    p: 6,
                     textAlign: 'center',
                     background: 'transparent'
                 }}>
-                    <CheckCircleOutlineIcon sx={{ 
-                        fontSize: 80, 
-                        color: 'success.main', 
+                    <CheckCircleOutlineIcon sx={{
+                        fontSize: 80,
+                        color: 'success.main',
                         mb: 3,
                         opacity: 0.9
                     }} />
-                    <Typography variant="h4" gutterBottom sx={{ 
+                    <Typography variant="h4" gutterBottom sx={{
                         fontWeight: 400,
                         color: 'text.primary',
                         mb: 2,
@@ -220,25 +296,25 @@ const CheckoutPage = () => {
                     }}>
                         Pedido confirmado
                     </Typography>
-                    <Typography variant="body1" sx={{ 
+                    <Typography variant="body1" sx={{
                         color: 'text.secondary',
                         mb: 4,
                         fontSize: '1.1rem',
                         lineHeight: 1.6
                     }}>
-                        Su pedido ha sido procesado exitosamente. 
+                        Su pedido ha sido procesado exitosamente.
                         Será redirigido al portal de pago seguro.
                     </Typography>
-                    
+
                     {placedOrderDetails && (
-                        <Box sx={{ 
+                        <Box sx={{
                             mb: 4,
                             p: 3,
                             backgroundColor: alpha(theme.palette.success.main, 0.05),
                             border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
                             borderRadius: 2
                         }}>
-                            <Typography variant="body2" sx={{ 
+                            <Typography variant="body2" sx={{
                                 fontWeight: 500,
                                 color: 'text.primary',
                                 mb: 1
@@ -250,13 +326,13 @@ const CheckoutPage = () => {
                             </Typography>
                         </Box>
                     )}
-                    
-                    <Button 
+
+                    <Button
                         variant="outlined"
-                        onClick={() => navigate('/profile')} 
-                        sx={{ 
-                            px: 5, 
-                            py: 1.5, 
+                        onClick={() => navigate('/profile')}
+                        sx={{
+                            px: 5,
+                            py: 1.5,
                             borderRadius: 1,
                             borderWidth: 2,
                             '&:hover': {
@@ -272,12 +348,12 @@ const CheckoutPage = () => {
     }
 
     return (
-        <Container maxWidth="xl" sx={{ 
+        <Container maxWidth="xl" sx={{
             py: 6,
             minHeight: '100vh'
         }}>
             <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
-                <Typography variant="h1" sx={{ 
+                <Typography variant="h1" sx={{
                     fontSize: '2.5rem',
                     fontWeight: 400,
                     color: 'text.primary',
@@ -291,25 +367,25 @@ const CheckoutPage = () => {
                 <Grid container spacing={6}>
                     {/* Order Summary - LEFT SIDE */}
                     <Grid item xs={12} lg={5}>
-                        <Box sx={{ 
+                        <Box sx={{
                             position: 'sticky',
                             top: 24
                         }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <ReceiptIcon sx={{ 
-                                    color: 'primary.main', 
+                                <ReceiptIcon sx={{
+                                    color: 'primary.main',
                                     mr: 2,
                                     fontSize: 28
                                 }} />
-                                <Typography variant="h5" sx={{ 
+                                <Typography variant="h5" sx={{
                                     fontWeight: 600,
                                     color: 'text.primary'
                                 }}>
                                     Resumen del pedido
                                 </Typography>
                             </Box>
-                            
-                            <Paper elevation={3} sx={{ 
+
+                            <Paper elevation={3} sx={{
                                 p: 4,
                                 borderRadius: 3,
                                 backgroundColor: 'white',
@@ -317,37 +393,37 @@ const CheckoutPage = () => {
                             }}>
                                 <List sx={{ mb: 2 }}>
                                     {cartItems.map((item) => {
-                                        const priceWithTax = item.product ? 
-                                            calculatePriceWithTax(item.priceAtSale, item.product.iva) : 
+                                        const priceWithTax = item.product ?
+                                            calculatePriceWithTax(item.priceAtSale, item.product.iva) :
                                             item.priceAtSale;
-                                        
+
                                         return (
-                                            <ListItem key={item.product._id} disablePadding sx={{ 
+                                            <ListItem key={item.product._id} disablePadding sx={{
                                                 py: 2,
                                                 borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`
                                             }}>
-                                                <Box sx={{ 
-                                                    display: 'flex', 
-                                                    justifyContent: 'space-between', 
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
                                                     alignItems: 'flex-start',
-                                                    width: '100%' 
+                                                    width: '100%'
                                                 }}>
                                                     <Box sx={{ flex: 1 }}>
-                                                        <Typography variant="body1" sx={{ 
+                                                        <Typography variant="body1" sx={{
                                                             fontWeight: 600,
                                                             color: 'text.primary',
                                                             mb: 0.5
                                                         }}>
                                                             {item.name}
                                                         </Typography>
-                                                        <Typography variant="caption" sx={{ 
+                                                        <Typography variant="caption" sx={{
                                                             color: 'text.secondary',
                                                             display: 'block'
                                                         }}>
                                                             Cantidad: {item.quantity} • {formatPrice(priceWithTax)} c/u
                                                         </Typography>
                                                     </Box>
-                                                    <Typography variant="body1" sx={{ 
+                                                    <Typography variant="body1" sx={{
                                                         fontWeight: 700,
                                                         color: 'text.primary'
                                                     }}>
@@ -358,11 +434,11 @@ const CheckoutPage = () => {
                                         );
                                     })}
                                 </List>
-                                
+
                                 <Divider sx={{ my: 3 }} />
-                                
+
                                 {/* Shipping Cost Info */}
-                                <Box sx={{ 
+                                <Box sx={{
                                     mb: 3,
                                     p: 2,
                                     backgroundColor: alpha(theme.palette.primary.main, 0.03),
@@ -370,22 +446,22 @@ const CheckoutPage = () => {
                                     border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                        <LocalShippingIcon sx={{ 
-                                            fontSize: 20, 
-                                            color: 'primary.main', 
-                                            mr: 1 
+                                        <LocalShippingIcon sx={{
+                                            fontSize: 20,
+                                            color: 'primary.main',
+                                            mr: 1
                                         }} />
                                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
                                             Costo de envío
                                         </Typography>
                                     </Box>
-                                    
+
                                     {!selectedProvince ? (
                                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                            <WarningAmberIcon sx={{ 
-                                                fontSize: 16, 
-                                                color: 'warning.main', 
-                                                mr: 1 
+                                            <WarningAmberIcon sx={{
+                                                fontSize: 16,
+                                                color: 'warning.main',
+                                                mr: 1
                                             }} />
                                             <Typography variant="caption" sx={{ color: 'warning.main' }}>
                                                 Selecciona tu provincia para calcular el envío
@@ -394,16 +470,19 @@ const CheckoutPage = () => {
                                     ) : (
                                         <Box>
                                             <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                Envío base: {formatPrice(3000)}
+                                                Envío base: {formatPrice(breakdown.shippingBase)}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                Impuesto (13%): {formatPrice(3000 * 0.13)}
+                                                Impuesto (13%): {formatPrice(breakdown.shippingTax)}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, mt: 1 }}>
-                                                Total envío: {formatPrice(shippingCost)} - Entrega en 24-48 horas en la GAM
+                                                Total envío: {formatPrice(shippingCost)}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, mt: 1 }}>
-                                                Envio por Correos de Costa Rica fuera de la GAM
+                                                Envío por Correos de Costa Rica a todo el territorio nacional.
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                                                Datos calculados por Correos de Costa Rica.
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 500, display: 'block', mt: 1 }}>
                                                 {shippingMessage}
@@ -411,58 +490,42 @@ const CheckoutPage = () => {
                                         </Box>
                                     )}
                                 </Box>
-                                
+
                                 <Box sx={{ mb: 3 }}>
-                                    <Box sx={{ 
-                                        display: 'flex', 
-                                        justifyContent: 'space-between', 
-                                        alignItems: 'center',
-                                        mb: 2
-                                    }}>
-                                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                            Subtotal
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                            {formatPrice(totalCartPrice)}
-                                        </Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>Subtotal Productos</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsSubtotal)}</Typography>
                                     </Box>
-                                    <Box sx={{ 
-                                        display: 'flex', 
-                                        justifyContent: 'space-between', 
-                                        alignItems: 'center',
-                                        mb: 2
-                                    }}>
-                                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                                            Envío
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ 
-                                            fontWeight: 600,
-                                            color: selectedProvince ? 'text.primary' : 'warning.main'
-                                        }}>
-                                            {selectedProvince ? formatPrice(shippingCost) : 'Por calcular'}
-                                        </Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Productos</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsTax)}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>Envío (Base)</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingBase)}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Envío (13%)</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingTax)}</Typography>
                                     </Box>
                                 </Box>
-                                
+
                                 <Divider sx={{ my: 2 }} />
-                                
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'space-between', 
+
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
                                     alignItems: 'center',
                                     mb: 4
                                 }}>
-                                    <Typography variant="h5" sx={{ 
+                                    <Typography variant="h5" sx={{
                                         fontWeight: 700,
                                         color: 'text.primary'
                                     }}>
                                         Total
                                     </Typography>
-                                    <Typography variant="h5" sx={{ 
-                                        fontWeight: 700,
-                                        color: 'primary.main'
-                                    }}>
-                                        {selectedProvince ? formatPrice(finalTotalPrice) : formatPrice(totalCartPrice)}
+                                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                                        {formatPrice(breakdown.total)}
                                     </Typography>
                                 </Box>
                             </Paper>
@@ -473,20 +536,20 @@ const CheckoutPage = () => {
                     <Grid item xs={12} lg={7}>
                         <Box sx={{ mb: 5 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <LocalShippingIcon sx={{ 
-                                    color: 'primary.main', 
+                                <LocalShippingIcon sx={{
+                                    color: 'primary.main',
                                     mr: 2,
                                     fontSize: 28
                                 }} />
-                                <Typography variant="h5" sx={{ 
+                                <Typography variant="h5" sx={{
                                     fontWeight: 600,
                                     color: 'text.primary'
                                 }}>
                                     Información de envío
                                 </Typography>
                             </Box>
-                            
-                            <Paper elevation={3} sx={{ 
+
+                            <Paper elevation={3} sx={{
                                 p: 4,
                                 borderRadius: 3,
                                 backgroundColor: 'white',
@@ -502,7 +565,7 @@ const CheckoutPage = () => {
                                             onBlur={() => handleFieldBlur('name')}
                                             error={shouldShowError('name', shippingDetails.name)}
                                             helperText={shouldShowError('name', shippingDetails.name) ? "Este campo es requerido" : ""}
-                                            fullWidth 
+                                            fullWidth
                                             required
                                             variant="outlined"
                                             size="medium"
@@ -519,7 +582,7 @@ const CheckoutPage = () => {
                                             onBlur={() => handleFieldBlur('email')}
                                             error={shouldShowError('email', shippingDetails.email)}
                                             helperText={shouldShowError('email', shippingDetails.email) ? "Este campo es requerido" : ""}
-                                            fullWidth 
+                                            fullWidth
                                             required
                                             variant="outlined"
                                             size="medium"
@@ -535,7 +598,7 @@ const CheckoutPage = () => {
                                             onBlur={() => handleFieldBlur('phone')}
                                             error={shouldShowError('phone', shippingDetails.phone)}
                                             helperText={shouldShowError('phone', shippingDetails.phone) ? "Este campo es requerido" : ""}
-                                            fullWidth 
+                                            fullWidth
                                             required
                                             variant="outlined"
                                             size="medium"
@@ -543,14 +606,14 @@ const CheckoutPage = () => {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <FormControl 
-                                            fullWidth 
-                                            required 
-                                            size="medium" 
+                                        <FormControl
+                                            fullWidth
+                                            required
+                                            size="medium"
                                             sx={{ mb: 2 }}
                                             error={shouldShowError('province', selectedProvince)}
                                         >
-                                            <InputLabel sx={{ 
+                                            <InputLabel sx={{
                                                 backgroundColor: 'white',
                                                 px: 1
                                             }}>
@@ -593,7 +656,7 @@ const CheckoutPage = () => {
                                             onBlur={() => handleFieldBlur('address')}
                                             error={shouldShowError('address', shippingDetails.address)}
                                             helperText={shouldShowError('address', shippingDetails.address) ? "Este campo es requerido" : ""}
-                                            fullWidth 
+                                            fullWidth
                                             required
                                             variant="outlined"
                                             size="medium"
@@ -610,7 +673,7 @@ const CheckoutPage = () => {
                                             onBlur={() => handleFieldBlur('city')}
                                             error={shouldShowError('city', shippingDetails.city)}
                                             helperText={shouldShowError('city', shippingDetails.city) ? "Este campo es requerido" : ""}
-                                            fullWidth 
+                                            fullWidth
                                             required
                                             variant="outlined"
                                             size="medium"
@@ -623,32 +686,32 @@ const CheckoutPage = () => {
 
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <PaymentIcon sx={{ 
-                                    color: 'primary.main', 
+                                <PaymentIcon sx={{
+                                    color: 'primary.main',
                                     mr: 2,
                                     fontSize: 28
                                 }} />
-                                <Typography variant="h5" sx={{ 
+                                <Typography variant="h5" sx={{
                                     fontWeight: 600,
                                     color: 'text.primary'
                                 }}>
                                     Método de pago
                                 </Typography>
                             </Box>
-                            
-                            <Paper elevation={3} sx={{ 
+
+                            <Paper elevation={3} sx={{
                                 p: 4,
                                 borderRadius: 3,
                                 backgroundColor: 'white',
                                 border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
                             }}>
-                                <Box sx={{ 
-                                    p: 3, 
+                                <Box sx={{
+                                    p: 3,
                                     backgroundColor: alpha(theme.palette.primary.main, 0.03),
                                     border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                                     borderRadius: 2
                                 }}>
-                                    <Typography variant="h6" sx={{ 
+                                    <Typography variant="h6" sx={{
                                         fontWeight: 600,
                                         color: 'primary.main',
                                         mb: 2,
@@ -658,12 +721,12 @@ const CheckoutPage = () => {
                                         <PaymentIcon sx={{ mr: 1.5, fontSize: 24 }} />
                                         Tarjeta de crédito/débito
                                     </Typography>
-                                    <Typography variant="body1" sx={{ 
+                                    <Typography variant="body1" sx={{
                                         color: 'text.secondary',
                                         mb: 2,
                                         lineHeight: 1.6
                                     }}>
-                                        Será redirigido a una plataforma de pago segura para completar su transacción. 
+                                        Será redirigido a una plataforma de pago segura para completar su transacción.
                                         Todos los datos están protegidos con encriptación SSL.
                                     </Typography>
                                 </Box>
@@ -683,7 +746,8 @@ const CheckoutPage = () => {
                                 !shippingDetails.address ||
                                 !shippingDetails.email ||
                                 !shippingDetails.city ||
-                                !selectedProvince
+                                !selectedProvince ||
+                                user?.isBlocked
                             }
                             sx={{
                                 mt: 4,
@@ -705,22 +769,22 @@ const CheckoutPage = () => {
                                 }
                             }}
                         >
-                            {paymentButtonLoading  ? (
+                            {paymentButtonLoading ? (
                                 <CircularProgress size={24} sx={{ color: 'black' }} />
                             ) : (
                                 'Proceder al pago seguro'
                             )}
 
-                            {paymentButtonLoading  ? (
-                               console.log("procesando pago")
+                            {paymentButtonLoading ? (
+                                console.log("procesando pago")
                             ) : (
-                               <PaymentIcon sx={{ 
-                                color: 'black', 
-                                ml: 2,
-                                fontSize: 28
-                            }} />
+                                <PaymentIcon sx={{
+                                    color: 'black',
+                                    ml: 2,
+                                    fontSize: 28
+                                }} />
                             )}
-                            
+
                         </Button>
                     </Grid>
                 </Grid>

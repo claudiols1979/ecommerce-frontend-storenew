@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }) => {
         // La lógica de forzar el cierre de sesión SOLO debe ejecutarse si
         // había un usuario logueado en primer lugar.
         if (user && error.response && error.response.status === 401) {
-            console.error("Token inválido o expirado para el usuario logueado. Forzando cierre de sesión.");
-            logout();
+          console.error("Token inválido o expirado para el usuario logueado. Forzando cierre de sesión.");
+          logout();
         }
         // Si no hay un usuario, simplemente se rechaza la promesa
         // para que el componente que hizo la llamada maneje el error, sin forzar un logout global.
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   }, [user, logout]);
 
   // Tu función login original (con código)
-  const login = async (resellerCode) => { 
+  const login = async (resellerCode) => {
     try {
       const userData = await authService.loginReseller(resellerCode);
       setUser(userData);
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithEmail = useCallback(async (email, password) => {
     try {
       const userData = await authService.login({ email, password });
-      setUser(userData);      
+      setUser(userData);
       navigate("/");
       return { success: true };
     } catch (error) {
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
   const register = useCallback(async (userData) => {
     try {
       const data = await authService.register(userData);
-      setUser(data);      
+      setUser(data);
       navigate("/login");
       return { success: true };
     } catch (error) {
@@ -139,33 +139,56 @@ export const AuthProvider = ({ children }) => {
   const updateUser = useCallback((updatedUserData) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
-      
+
       const updatedUser = {
         ...prevUser,
         ...updatedUserData,
         // Mantén el token intacto
         token: prevUser.token
       };
-      
+
       // Actualiza también localStorage
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      
+
       return updatedUser;
     });
   }, []);
 
-  const value = { 
-    user, 
-    api, 
-    login, 
-    logout, 
+  const refreshProfile = useCallback(async () => {
+    if (user && user.token) {
+      try {
+        const freshData = await authService.getMe(user.token);
+        updateUser(freshData);
+      } catch (error) {
+        console.error("Failed to refresh user profile:", error);
+        if (error.response && error.response.status === 401) {
+          logout();
+        }
+      }
+    }
+  }, [user, updateUser, logout]);
+
+  // Refrescar perfil al montar la app si ya hay sesión
+  useEffect(() => {
+    if (user && user.token) {
+      refreshProfile();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo al montar
+
+  const value = {
+    user,
+    api,
+    login,
+    logout,
     API_URL,
     isAuthenticated: !!user,
     register,
     loginWithEmail,
     forgotPassword,
     resetPassword,
-    updateUser
+    updateUser,
+    refreshProfile
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

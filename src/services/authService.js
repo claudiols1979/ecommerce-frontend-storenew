@@ -28,7 +28,7 @@ const login = async (credentials) => {
 // Función para el login de revendedor (solo con resellerCode)
 const loginReseller = async (resellerCode) => {
   const response = await axios.post(`${API_AUTH_URL}/reseller-login`, { resellerCode });
-  
+
   // Si el login es exitoso y se recibe un token, guarda el OBJETO DE USUARIO COMPLETO
   // tal como lo devuelve el backend (que incluye el token)
   if (response.data.token) {
@@ -49,12 +49,12 @@ const logout = () => {
       keysToRemove.push(key);
     }
   }
-  
+
   // Remove all found attributeOptions keys
   keysToRemove.forEach(key => {
     localStorage.removeItem(key);
   });
-  
+
   console.log('User logged out and all attributeOptions removed');
 };
 
@@ -69,6 +69,15 @@ const resetPassword = async (token, passwordData) => {
   return response.data;
 };
 
+const getMe = async (token) => {
+  const response = await axios.get(`${API_URL}/api/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return response.data;
+};
+
 const authService = {
   register,
   login, // with username and password
@@ -76,8 +85,7 @@ const authService = {
   logout,
   forgotPassword,
   resetPassword,
-  // Podrías añadir otras funciones de autenticación aquí si las necesitas
-  // por ejemplo, register (si permites a los revendedores registrarse), etc.
+  getMe
 };
 
 

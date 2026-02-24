@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   Container, Box, Typography, Button, Grid, Card, CardContent, IconButton,
   TextField, CircularProgress, Alert, Dialog, DialogTitle, DialogContent, DialogActions,
-  Link as MuiLink, Divider, useTheme 
+  Link as MuiLink, Divider, useTheme
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete'; 
+import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -16,17 +16,17 @@ import { formatPrice } from '../utils/formatters';
 import { calculatePriceWithTax } from '../utils/taxCalculations';
 
 const CartPage = () => {
-  const theme = useTheme(); 
-  const { cartItems, loading, error, updateCartItemQuantity, removeCartItem, clearCart } = useOrders(); 
+  const theme = useTheme();
+  const { cartItems, loading, error, updateCartItemQuantity, removeCartItem, clearCart } = useOrders();
   const navigate = useNavigate();
-  const { user } = useAuth(); 
+  const { user } = useAuth();
 
-  const [confirmClearCartOpen, setConfirmClearCartOpen] = useState(false); 
+  const [confirmClearCartOpen, setConfirmClearCartOpen] = useState(false);
 
   // Calcular el total del carrito con IVA incluido
   const totalCartPrice = cartItems.reduce((acc, item) => {
-    const priceWithTax = item.product ? 
-      calculatePriceWithTax(item.priceAtSale, item.product.iva) : 
+    const priceWithTax = item.product ?
+      calculatePriceWithTax(item.priceAtSale, item.product.iva) :
       item.priceAtSale;
     return acc + (item.quantity * priceWithTax);
   }, 0);
@@ -37,18 +37,18 @@ const CartPage = () => {
     }
   }, [cartItems, loading]);
 
-  const handleQuantityChange = async (item, changeType) => { 
-    const productId = item.product?._id; 
+  const handleQuantityChange = async (item, changeType) => {
+    const productId = item.product?._id;
     if (!productId) {
-      console.error("CartPage: Product ID is missing for quantity change.", item);       
+      console.error("CartPage: Product ID is missing for quantity change.", item);
       return;
     }
 
     // Calcular el stock total disponible
     const totalAvailableStock = (item.product?.countInStock || 0) + item.quantity;
     if (totalAvailableStock === undefined) {
-        toast.error("No se pudo verificar el stock del producto.");
-        return;
+      toast.error("No se pudo verificar el stock del producto.");
+      return;
     }
 
     let newQuantity;
@@ -56,33 +56,33 @@ const CartPage = () => {
       newQuantity = item.quantity + 1;
       // Validar contra el stock total
       if (newQuantity > totalAvailableStock) {
-          toast.warn(`No puedes agregar más. Stock máximo: ${totalAvailableStock} unidades.`);
-          return;
+        toast.warn(`No puedes agregar más. Stock máximo: ${totalAvailableStock} unidades.`);
+        return;
       }
     } else if (changeType === 'decrement') {
       newQuantity = item.quantity - 1;
-      if (newQuantity < 1) newQuantity = 1; 
+      if (newQuantity < 1) newQuantity = 1;
     } else {
-        newQuantity = parseInt(changeType, 10);
-        if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
-        // Validar contra el stock total
-        if (newQuantity > totalAvailableStock) {
-            toast.warn(`El stock máximo es ${totalAvailableStock}. Se ajustó la cantidad.`);
-            newQuantity = totalAvailableStock;
-        }
+      newQuantity = parseInt(changeType, 10);
+      if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
+      // Validar contra el stock total
+      if (newQuantity > totalAvailableStock) {
+        toast.warn(`El stock máximo es ${totalAvailableStock}. Se ajustó la cantidad.`);
+        newQuantity = totalAvailableStock;
+      }
     }
 
-    if(newQuantity !== item.quantity) {
-        await updateCartItemQuantity(productId, newQuantity);
+    if (newQuantity !== item.quantity) {
+      await updateCartItemQuantity(productId, newQuantity);
     }
   };
 
-  const handleRemoveItem = async (item) => { 
-    const productId = item.product?._id; 
+  const handleRemoveItem = async (item) => {
+    const productId = item.product?._id;
     if (productId) {
       await removeCartItem(productId);
     } else {
-      console.error("CartPage: Could not remove item, product ID is missing or invalid for item:", item);       
+      console.error("CartPage: Could not remove item, product ID is missing or invalid for item:", item);
     }
   };
 
@@ -92,7 +92,7 @@ const CartPage = () => {
 
   const confirmClearCart = async () => {
     setConfirmClearCartOpen(false);
-    await clearCart(); 
+    await clearCart();
   };
 
   const cancelClearCart = () => {
@@ -113,13 +113,21 @@ const CartPage = () => {
         Tu Carrito de Compras
       </Typography>
 
+      {user?.isBlocked && (
+        <Alert severity="error" sx={{ mb: 4, borderRadius: 2 }}>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+            Su cuenta se encuentra restringida para realizar compras. Por favor, contacte al administrador.
+          </Typography>
+        </Alert>
+      )}
+
       {cartItems.length === 0 ? (
-        <Alert 
-          severity="info" 
+        <Alert
+          severity="info"
           sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', justifyContent: 'space-between', borderRadius: 3, boxShadow: 2 }}
         >
           <Typography variant="h6" sx={{ mb: { xs: 2, sm: 0 } }}>Tu carrito está vacío. ¡Añade algunos productos!</Typography>
-          <Button 
+          <Button
             variant="contained" onClick={() => navigate('/products')}
             sx={{ backgroundColor: '#bb4343ff', '&:hover': { backgroundColor: '#ff0000ff' } }}
           >
@@ -127,27 +135,27 @@ const CartPage = () => {
           </Button>
         </Alert>
       ) : (
-        <Grid container spacing={4}> 
+        <Grid container spacing={4}>
           <Grid item xs={12} md={8}>
             <Card sx={{ borderRadius: 3, boxShadow: 5, p: { xs: 2, sm: 3 } }}>
               <CardContent>
                 {cartItems.map((item) => {
                   // Calcular precio con IVA para este producto
-                  const priceWithTax = item.product ? 
-                    calculatePriceWithTax(item.priceAtSale, item.product.iva) : 
+                  const priceWithTax = item.product ?
+                    calculatePriceWithTax(item.priceAtSale, item.product.iva) :
                     item.priceAtSale;
-                  
+
                   // Calcular el stock total disponible por ítem
                   const totalAvailableStock = (item.product?.countInStock || 0) + item.quantity;
-                  
+
                   return (
                     <Box
-                      key={item.product?._id || item._id} 
-                      sx={{ 
+                      key={item.product?._id || item._id}
+                      sx={{
                         display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center',
-                        mb: 3, pb: 3, borderBottom: `1px solid ${theme.palette.divider}`, 
+                        mb: 3, pb: 3, borderBottom: `1px solid ${theme.palette.divider}`,
                         '&:last-child': { borderBottom: 'none', mb: 0, pb: 0 },
-                        gap: { xs: 2, sm: 3 }, 
+                        gap: { xs: 2, sm: 3 },
                       }}
                     >
                       <Box
@@ -163,7 +171,7 @@ const CartPage = () => {
                           <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>IVA incluido</Typography>
                         </Typography>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: { xs: 2, sm: 0 } }}>
                         <IconButton onClick={() => handleQuantityChange(item, 'decrement')} color="primary" size="small" disabled={item.quantity <= 1} sx={{ border: `1px solid ${theme.palette.primary.main}`, borderRadius: '50%' }}>
                           <RemoveIcon fontSize="small" />
@@ -171,9 +179,9 @@ const CartPage = () => {
                         <Typography sx={{ width: '2ch', textAlign: 'center', fontWeight: 600, fontSize: '1.1rem' }}>
                           {item.quantity}
                         </Typography>
-                        <IconButton 
-                          onClick={() => handleQuantityChange(item, 'increment')} 
-                          color="primary" 
+                        <IconButton
+                          onClick={() => handleQuantityChange(item, 'increment')}
+                          color="primary"
                           size="small"
                           disabled={item.quantity >= totalAvailableStock}
                           sx={{ border: `1px solid ${theme.palette.primary.main}`, borderRadius: '50%' }}
@@ -186,7 +194,7 @@ const CartPage = () => {
                         {formatPrice(item.quantity * priceWithTax)}
                       </Typography>
                       <IconButton onClick={() => handleRemoveItem(item)} color="error" aria-label="remove item" sx={{ mt: { xs: 2, sm: 0 }, ml: { xs: 0, sm: 2 } }}>
-                        <DeleteIcon /> 
+                        <DeleteIcon />
                       </IconButton>
                     </Box>
                   )
@@ -222,9 +230,9 @@ const CartPage = () => {
                   variant="contained" color="secondary" fullWidth
                   sx={{ mt: 3, p: 1.5, borderRadius: 2 }}
                   onClick={() => navigate('/checkout')}
-                  disabled={cartItems.length === 0 || loading}
+                  disabled={cartItems.length === 0 || loading || user?.isBlocked}
                 >
-                  Proceder al checkout
+                  {user?.isBlocked ? 'Acción Restringida' : 'Proceder al checkout'}
                 </Button>
               </CardContent>
             </Card>
