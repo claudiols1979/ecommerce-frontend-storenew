@@ -27,8 +27,9 @@ const Footer = () => {
         px: 2,
         mt: 'auto',
         //backgroundColor: 'rgba(38, 60, 92, 0.9)',
-        background: 'linear-gradient(135deg, rgba(38,60,92,0.95) 25%, rgba(17, 24, 103, 0.59) 100%)',
-        color: 'grey.500',
+        background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(168, 85, 247, 0.85) 50%, rgba(247, 37, 133, 0.85) 100%) !important',
+        backdropFilter: 'blur(8px)',
+        color: 'rgba(255, 255, 255, 0.8)',
       }}
     >
       <Container maxWidth="lg">
@@ -57,22 +58,22 @@ const Footer = () => {
           <Grid item xs={6} sm={4} md={3}>
             <Typography variant="h6" sx={{ color: 'common.white', fontWeight: 'bold', mb: 2 }}>Navegación</Typography>
             <MuiLink href="/" sx={linkStyle}>Inicio</MuiLink>
-            <MuiLink href="/products" sx={linkStyle}>Productos</MuiLink>   
-            
+            <MuiLink href="/products" sx={linkStyle}>Productos</MuiLink>
+
           </Grid>
 
           {/* Columna 3: Legal */}
           <Grid item xs={6} sm={4} md={3}>
             <Typography variant="h6" sx={{ color: 'common.white', fontWeight: 'bold', mb: 2 }}>Legal</Typography>
             <MuiLink href="/privacy" sx={linkStyle}>Política de Privacidad</MuiLink>
-            <MuiLink href="/conditions" sx={linkStyle}>Términos de Servicio</MuiLink>            
+            <MuiLink href="/conditions" sx={linkStyle}>Términos de Servicio</MuiLink>
           </Grid>
 
           {/* Columna 4: Contacto (con placeholders) */}
           <Grid item xs={12} sm={4} md={3}>
-             <Typography variant="h6" sx={{ color: 'common.white', fontWeight: 'bold', mb: 2 }}>Contacto</Typography>
-             <Typography variant="body2" sx={{...linkStyle, cursor: 'default'}}>Alajuela, Costa Rica</Typography>             
-             <Typography variant="body2" sx={{...linkStyle, cursor: 'default'}}>(506) 7231-7420</Typography>
+            <Typography variant="h6" sx={{ color: 'common.white', fontWeight: 'bold', mb: 2 }}>Contacto</Typography>
+            <Typography variant="body2" sx={{ ...linkStyle, cursor: 'default' }}>Alajuela, Costa Rica</Typography>
+            <Typography variant="body2" sx={{ ...linkStyle, cursor: 'default' }}>(506) 7231-7420</Typography>
           </Grid>
         </Grid>
 

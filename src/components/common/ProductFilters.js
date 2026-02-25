@@ -64,23 +64,21 @@ const ProductFilters = ({ initialFilters = {}, onFilterSubmit }) => {
           />
         </Grid>
 
-
-        
         {/* Botón de Búsqueda */}
         <Grid item xs={12} md={4} lg={4}>
-           <Button
-             type="submit"
-             variant="contained"
-             fullWidth
-             sx={{
-               height: '40px', borderRadius: '8px', color: '#faf8f8ff',
-               backgroundColor: '#bb4343ff', '&:hover': { backgroundColor: '#ff0000ff' },
-               fontWeight: 'bold'
-             }}
-             startIcon={<SearchIcon />}
-           >
-             Buscar
-           </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              height: '40px', borderRadius: '8px', color: '#faf8f8ff',
+              backgroundColor: '#bb4343ff', '&:hover': { backgroundColor: '#ff0000ff' },
+              fontWeight: 'bold'
+            }}
+            startIcon={<SearchIcon />}
+          >
+            Buscar
+          </Button>
         </Grid>
       </Grid>
     </Paper>

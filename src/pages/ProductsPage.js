@@ -1,11 +1,8 @@
 // components/ProductsPage.js
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Container, Box, Typography, Button, Grid, CircularProgress, Alert,
-  TextField, FormControl, InputLabel, Select, MenuItem,
-  Paper
+  Container, Box, Typography, Button, Grid, CircularProgress, Alert
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
 import { useProducts } from '../contexts/ProductContext';
@@ -16,38 +13,34 @@ import { useOrders } from '../contexts/OrderContext';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 
-
 const ProductsPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // --- CONTEXTOS EXISTENTES Y NUEVOS ---
+  // --- CONTEXTOS ---
   const { products: standardProducts, loading: standardLoading, error: standardError,
-    fetchProducts, currentPage, totalPages } = useProducts();
-
-
+    fetchProducts, clearProducts, currentPage, totalPages } = useProducts();
 
   const { departmentalProducts, departmentalLoading, departmentalError,
-    departmentalHasMore, fetchDepartmentalProducts, currentFilters, resetSearch, handleClearAllFilters } = useDepartmental();
-
+    departmentalHasMore, fetchDepartmentalProducts, currentFilters, resetSearch } = useDepartmental();
 
   const { addItemToCart } = useOrders();
   const { user } = useAuth();
 
-  // --- ESTADOS Y DETECCIÓN DE MODO ---
-  const hasDepartmentalFilters = Object.keys(currentFilters).length > 0;
-  const isDepartmentalMode = hasDepartmentalFilters;
+  // --- MODO DE VISUALIZACIÓN ---
+  const isDepartmentalMode = useMemo(() => Object.keys(currentFilters).length > 0, [currentFilters]);
 
-  // Decidir qué productos y estados usar
   const products = isDepartmentalMode ? departmentalProducts : standardProducts;
   const loading = isDepartmentalMode ? departmentalLoading : standardLoading;
   const error = isDepartmentalMode ? departmentalError : standardError;
   const hasMore = isDepartmentalMode ? departmentalHasMore : (currentPage < totalPages);
 
-  // --- LÓGICA DE BÚSQUEDA EXISTENTE ---
-  const [searchTerm, setSearchTerm] = useState(() => new URLSearchParams(location.search).get('search') || '');
-  const [submittedSearchTerm, setSubmittedSearchTerm] = useState(() => new URLSearchParams(location.search).get('search') || '');
+  // --- ESTADOS DE FILTRADO ---
+  const getSearchFromUrl = useCallback(() => new URLSearchParams(location.search).get('search') || '', [location.search]);
+
+  const [searchTerm, setSearchTerm] = useState(getSearchFromUrl());
+  const [submittedSearchTerm, setSubmittedSearchTerm] = useState(getSearchFromUrl());
   const [selectedGender, setSelectedGender] = useState('');
   const [priceRange, setPriceRange] = useState([0, 300000]);
   const [sortOrder, setSortOrder] = useState('updatedAt_desc');
@@ -56,219 +49,113 @@ const ProductsPage = () => {
   const [groupedProducts, setGroupedProducts] = useState([]);
   const [groupingProducts, setGroupingProducts] = useState(false);
 
-  const availableGenders = [
-    { value: 'men', label: 'Hombre' }, { value: 'women', label: 'Mujer' },
-    { value: 'unisex', label: 'Unisex' }, { value: 'children', label: 'Niños' },
-    { value: 'elderly', label: 'Ancianos' }, { value: 'other', label: 'Otro' },];
-
-
+  const availableGenders = useMemo(() => [
+    { value: 'men', label: 'Hombre' },
+    { value: 'women', label: 'Mujer' },
+    { value: 'unisex', label: 'Unisex' },
+    { value: 'children', label: 'Niños' },
+    { value: 'elderly', label: 'Ancianos' },
+    { value: 'other', label: 'Otro' },
+  ], []);
 
   // --- FUNCIONES DE AGRUPAMIENTO ---
-  const getBaseCode = (code) => {
+  const getBaseCode = useCallback((code) => {
     const firstUnderscoreIndex = code.indexOf('_');
     return firstUnderscoreIndex === -1 ? code : code.substring(0, firstUnderscoreIndex);
-  };
+  }, []);
 
-  const getAttributes = (code) => {
+  const getAttributes = useCallback((code) => {
     const firstUnderscoreIndex = code.indexOf('_');
     if (firstUnderscoreIndex === -1) return [];
+    return code.substring(firstUnderscoreIndex + 1).split('_');
+  }, []);
 
-    const attributesPart = code.substring(firstUnderscoreIndex + 1);
-    return attributesPart.split('_');
-  };
-
-  const extractBaseNameFromAttributes = (productName, productCode) => {
-    return productName;
-  };
-
-  const groupProductsByBase = (products) => {
+  const groupProductsByBase = useCallback((productsToGroup) => {
     const groups = {};
-
-    products.forEach(product => {
+    productsToGroup.forEach(product => {
       const baseCode = getBaseCode(product.code);
-
-      if (!groups[baseCode]) {
-        groups[baseCode] = [];
-      }
-
+      if (!groups[baseCode]) groups[baseCode] = [];
       groups[baseCode].push({
         ...product,
         attributes: getAttributes(product.code)
       });
     });
-
     return groups;
-  };
+  }, [getBaseCode, getAttributes]);
 
-  const selectRandomVariantFromEachGroup = (groupedProducts) => {
-    const displayProducts = [];
-
-    for (const baseCode in groupedProducts) {
-      const variants = groupedProducts[baseCode];
-
-      if (variants.length === 1) {
-        const baseName = extractBaseNameFromAttributes(variants[0].name, variants[0].code);
-        displayProducts.push({
-          ...variants[0],
-          baseCode: baseCode,
-          baseName: baseName,
-          variantCount: 1
-        });
-      } else {
-        const randomIndex = Math.floor(Math.random() * variants.length);
-        const selectedVariant = variants[randomIndex];
-
-        const baseName = extractBaseNameFromAttributes(selectedVariant.name, selectedVariant.code);
-
-        displayProducts.push({
-          ...selectedVariant,
-          baseCode: baseCode,
-          baseName: baseName,
-          variantCount: variants.length
-        });
-      }
+  const selectRepresentativeVariantFromEachGroup = useCallback((grouped) => {
+    const displayItems = [];
+    for (const baseCode in grouped) {
+      const variants = grouped[baseCode];
+      // Determinista: siempre elegir la primera variante (que suele ser la base)
+      const selectedVariant = variants[0];
+      displayItems.push({
+        ...selectedVariant,
+        baseCode: baseCode,
+        variantCount: variants.length
+      });
     }
+    return displayItems;
+  }, []);
 
-    return displayProducts;
-  };
-
-  // En tu ProductsPage.js, agrega este useEffect después de los otros useEffects
+  // --- REINICIO AL MONTAR O CAMBIAR RUTA ---
   useEffect(() => {
-    // Este efecto se ejecuta cuando cambia location.search (parámetros de URL)
-    const searchParams = new URLSearchParams(location.search);
-    const searchTermFromUrl = searchParams.get('search') || '';
-
-    console.log('🔍 URL search parameter changed:', searchTermFromUrl);
-
-    // Solo procesar si estamos en modo estándar (no departamental)
-    if (!isDepartmentalMode && searchTermFromUrl !== submittedSearchTerm) {
-      console.log('🔄 Actualizando búsqueda desde URL');
-      setSearchTerm(searchTermFromUrl);
-      setSubmittedSearchTerm(searchTermFromUrl);
-
-      // Forzar recarga de productos con el nuevo término de búsqueda
-      fetchProducts(
-        1, // Siempre empezar desde página 1
-        20,
-        sortOrder,
-        searchTermFromUrl,
-        selectedGender,
-        priceRange[0],
-        priceRange[1]
-      );
+    const searchFromUrl = getSearchFromUrl();
+    if (location.pathname === '/products' && !searchFromUrl && !isDepartmentalMode) {
+      console.log('✨ Fresh visit, clearing state...');
+      clearProducts();
+      setSearchTerm('');
+      setSubmittedSearchTerm('');
+      setPage(1);
+    } else if (searchFromUrl !== submittedSearchTerm) {
+      console.log('🔍 Syncing search term from URL:', searchFromUrl);
+      setSearchTerm(searchFromUrl);
+      setSubmittedSearchTerm(searchFromUrl);
+      setPage(1);
     }
-  }, [location.search, isDepartmentalMode]); // Se ejecuta cuando cambian los parámetros de URL
+  }, [location.pathname, getSearchFromUrl, isDepartmentalMode, clearProducts, submittedSearchTerm]);
 
-  // --- EFFECT PARA MODO DEPARTAMENTAL ---
+  // --- EFFECT DE CARGA DE DATOS ---
   useEffect(() => {
+    const limit = 80;
     if (isDepartmentalMode) {
-      console.log('🔄 Modo departamental activado con filtros:', currentFilters);
-      setPage(1); // Resetear a página 1 cuando cambian los filtros
-    }
-  }, [isDepartmentalMode, currentFilters]);
-
-  // --- EFFECT PRINCIPAL SEPARADO POR MODO ---
-  useEffect(() => {
-    const limit = 20;
-
-    if (isDepartmentalMode) {
-      // Modo departamental
-      console.log('📦 Fetching productos departamentales, página:', page);
       fetchDepartmentalProducts(currentFilters, page, limit);
     } else {
-      // Modo estándar
-      console.log('📦 Fetching productos estándar, página:', page);
       fetchProducts(page, limit, sortOrder, submittedSearchTerm, selectedGender, priceRange[0], priceRange[1]);
     }
-  }, [page, isDepartmentalMode]); // Solo dependencias esenciales
+  }, [page, isDepartmentalMode, sortOrder, submittedSearchTerm, selectedGender, priceRange, fetchProducts, fetchDepartmentalProducts, currentFilters]);
 
-  // --- EFFECT SEPARADO PARA BÚSQUEDA ESTÁNDAR ---
+  // --- EFFECT DE AGRUPAMIENTO (DETERMINISTA) ---
   useEffect(() => {
-    if (!isDepartmentalMode) {
-      console.log('🔍 Actualizando búsqueda estándar');
-      setPage(1);
-
-      // Calcular cuántos productos pedir considerando la agrupación
-      const estimatedVariantsPerProduct = 2; // Ajusta este valor según tu caso
-      const productsToFetch = 20 * estimatedVariantsPerProduct;
-
-      fetchProducts(1, productsToFetch, sortOrder, submittedSearchTerm, selectedGender, priceRange[0], priceRange[1]);
-    }
-  }, [sortOrder, submittedSearchTerm, selectedGender, priceRange, isDepartmentalMode, fetchProducts]);
-
-
-  // --- EFFECT MEJORADO PARA AGRUPAMIENTO ---
-  useEffect(() => {
-    // No procesar si estamos en modo departamental y aún está cargando
-    if (isDepartmentalMode && departmentalLoading) {
-      console.log('⏳ Esperando a que carguen productos departamentales...');
-      return;
-    }
-
-    // No procesar si está cargando en modo estándar
-    if (!isDepartmentalMode && standardLoading && products.length === 0) {
-      console.log('⏳ Esperando a que carguen productos estándar...');
-      return;
-    }
+    if (loading && products.length === 0) return;
 
     if (products && products.length > 0) {
-      console.log('📊 Agrupando productos:', products.length, 'en modo:', isDepartmentalMode ? 'departamental' : 'estándar');
-
-      // Verificar que los productos tengan la estructura esperada
-      const validProducts = products.filter(product =>
-        product && product.code && typeof product.code === 'string'
-      );
-
+      const validProducts = products.filter(p => p && p.code);
       if (validProducts.length === 0) {
-        console.warn('⚠️ No hay productos válidos para agrupar');
         setGroupedProducts([]);
         return;
       }
 
-      // Log detallado para debugging
-      if (isDepartmentalMode) {
-        console.log('🔍 Productos departamentales para agrupar:', validProducts);
-        validProducts.forEach((product, index) => {
-          console.log(`Producto ${index + 1}:`, {
-            name: product.name,
-            code: product.code,
-            baseCode: getBaseCode(product.code),
-            attributes: getAttributes(product.code)
-          });
-        });
-      }
-
       try {
+        setGroupingProducts(true);
         const grouped = groupProductsByBase(validProducts);
-        console.log('🏷️ Grupos creados:', Object.keys(grouped).length);
-
-        const displayProducts = selectRandomVariantFromEachGroup(grouped);
-        console.log('🎯 Productos para mostrar:', displayProducts.length);
-
-        setGroupedProducts(displayProducts);
-      } catch (error) {
-        console.error('❌ Error en el agrupamiento:', error);
-        // Fallback: mostrar productos sin agrupar
-        setGroupedProducts(validProducts.map(product => ({
-          ...product,
-          baseCode: getBaseCode(product.code),
-          baseName: extractBaseNameFromAttributes(product.name, product.code),
-          variantCount: 1
-        })));
+        const displayItems = selectRepresentativeVariantFromEachGroup(grouped);
+        setGroupedProducts(displayItems);
+        setGroupingProducts(false);
+      } catch (err) {
+        console.error('❌ Error grouping:', err);
+        setGroupingProducts(false);
+        setGroupedProducts(validProducts); // Fallback
       }
     } else {
       setGroupedProducts([]);
     }
-  }, [products, departmentalLoading, standardLoading, isDepartmentalMode]); // ✅ Added standardLoading here
+  }, [products, loading, isDepartmentalMode, groupProductsByBase, selectRepresentativeVariantFromEachGroup]);
 
-  // --- SCROLL INFINITO MEJORADO ---
+  // --- SCROLL INFINITO ---
   const handleScroll = useCallback(() => {
-    if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 500 || loading) {
-      return;
-    }
-    if (hasMore) {
-      setPage(prevPage => prevPage + 1);
-    }
+    if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 500 || loading) return;
+    if (hasMore) setPage(prev => prev + 1);
   }, [loading, hasMore]);
 
   useEffect(() => {
@@ -276,32 +163,20 @@ const ProductsPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // --- HANDLERS EXISTENTES ---
+  // --- HANDLERS ---
   const handleAddToCart = useCallback(async (product) => {
-    if (typeof addItemToCart !== 'function') {
-      toast.error("La funcionalidad para añadir al carrito no está disponible.");
-      return;
-    }
-
+    if (typeof addItemToCart !== 'function') return;
     setAddingProductId(product._id);
 
-    const getPriceForCart = () => {
-      let calculatedPrice = null;
-      if (user && user.role === 'Revendedor' && user.resellerCategory && product.resellerPrices) {
-        const priceForCategory = product.resellerPrices[user.resellerCategory];
-        if (typeof priceForCategory === 'number' && priceForCategory > 0) {
-          calculatedPrice = priceForCategory;
-        }
-      }
-      if (calculatedPrice === null && product.resellerPrices && typeof product.resellerPrices.cat1 === 'number' && product.resellerPrices.cat1 > 0) {
-        calculatedPrice = product.resellerPrices.cat1;
-      }
-      return calculatedPrice || 0;
-    };
+    let priceToPass = 0;
+    if (user && user.role === 'Revendedor' && user.resellerCategory && product.resellerPrices) {
+      priceToPass = product.resellerPrices[user.resellerCategory] || product.resellerPrices.cat1 || 0;
+    } else if (product.resellerPrices) {
+      priceToPass = product.resellerPrices.cat1 || 0;
+    }
 
-    const priceToPass = getPriceForCart();
     if (priceToPass <= 0) {
-      toast.error("No se puede añadir al carrito: precio no disponible o inválido.");
+      toast.error("Precio no disponible.");
       setAddingProductId(null);
       return;
     }
@@ -309,30 +184,11 @@ const ProductsPage = () => {
     try {
       await addItemToCart(product._id, 1, priceToPass);
     } catch (err) {
-      toast.error(err.message || "No se pudo añadir el producto.");
+      toast.error(err.message || "Error al añadir.");
     } finally {
       setAddingProductId(null);
     }
   }, [addItemToCart, user]);
-
-
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    setSubmittedSearchTerm(searchTerm);
-  };
-
-  const handleGenderChange = (event) => {
-    setSelectedGender(event.target.value);
-  };
-
-  const handleSortChange = (event) => {
-    setSortOrder(event.target.value);
-  };
 
   const handleClearSearch = () => {
     setSearchTerm('');
@@ -341,71 +197,30 @@ const ProductsPage = () => {
     navigate('/products', { replace: true });
   };
 
-  const handleClearDepartmentalFilters = useCallback(() => {
-    console.log('🧹 Limpiando filtros departamentales...');
-
-    // 1. Usar la función que YA EXISTE en el contexto
+  const handleClearDepartmentalFilters = () => {
     resetSearch();
-
-    // 2. Navegar a la página base de productos
     navigate('/products', { replace: true });
+  };
 
-  }, [resetSearch, navigate]);
-
-
-
-
-
-  // --- LÓGICA DE VISUALIZACIÓN MEJORADA ---
-  const shouldShowNoProductsMessage = !loading && products.length === 0 &&
+  const shouldShowNoProductsMessage = !loading && !groupingProducts && groupedProducts.length === 0 &&
     (isDepartmentalMode || submittedSearchTerm || selectedGender);
 
   const getNoProductsMessage = () => {
-    if (isDepartmentalMode) {
-      const activeFilters = Object.entries(currentFilters)
-        .map(([key, value]) => {
-          const labels = {
-            department: 'Departamento',
-            brand: 'Marca',
-            category: 'Categoría',
-            subcategory: 'Subcategoría'
-          };
-          return `${labels[key]}: ${value}`;
-        })
-        .join(', ');
-
-      return `No se encontraron productos con los filtros: ${activeFilters}`;
-    }
-    if (submittedSearchTerm && selectedGender) {
-      return `No se encontraron productos con el término "${submittedSearchTerm}" y para el género "${availableGenders.find(g => g.value === selectedGender)?.label}"`;
-    }
-    if (submittedSearchTerm) {
-      return `No se encontraron productos con el término "${submittedSearchTerm}"`;
-    }
-    if (selectedGender) {
-      return `No se encontraron productos para el género "${availableGenders.find(g => g.value === selectedGender)?.label}"`;
-    }
-    return 'No hay productos disponibles en este momento.';
+    if (isDepartmentalMode) return "No se encontraron productos con estos filtros.";
+    if (submittedSearchTerm) return `No hay resultados para "${submittedSearchTerm}".`;
+    return 'No hay productos disponibles.';
   };
-
 
   return (
     <>
       <Helmet>
-        <title>Catálogo de Productos - Software Factory ERP</title>
-        <meta name="description" content="Explora nuestro catálogo completo de perfumes, cosméticos y sets de regalo." />
+        <title>Catálogo - Software Factory</title>
       </Helmet>
 
       <Container maxWidth="xl" sx={{ my: 1, flexGrow: 1 }}>
-
-
-        {submittedSearchTerm && !isDepartmentalMode && (
+        {(submittedSearchTerm && !isDepartmentalMode) && (
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Button
-              variant="contained"
-              onClick={handleClearSearch}
-              sx={{ fontWeight: 'bold', backgroundColor: '#bb4343ff', '&:hover': { backgroundColor: '#ff0000ff' } }}
-            >
+            <Button variant="contained" onClick={handleClearSearch} sx={{ color: 'white', background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important', borderRadius: 10 }}>
               Mostrar Todos los Productos
             </Button>
           </Box>
@@ -413,16 +228,7 @@ const ProductsPage = () => {
 
         {isDepartmentalMode && (
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Button
-              variant="contained"
-              onClick={handleClearDepartmentalFilters}
-              sx={{
-                fontWeight: 'bold',
-                backgroundColor: '#bb4343ff',
-                '&:hover': { backgroundColor: '#ff0000ff' },
-                mt: submittedSearchTerm ? 2 : 0 // Espacio si ambos botones están presentes
-              }}
-            >
+            <Button variant="contained" onClick={handleClearDepartmentalFilters} sx={{ color: 'white', background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important', borderRadius: 10 }}>
               Mostrar Todos los Productos
             </Button>
           </Box>
@@ -433,34 +239,22 @@ const ProductsPage = () => {
         ) : error ? (
           <Alert severity="error">{error.message}</Alert>
         ) : shouldShowNoProductsMessage ? (
-          <Alert severity="info" sx={{ p: 3 }}>
-            {getNoProductsMessage()}
-          </Alert>
-        ) : groupedProducts.length === 0 ? (
-          // <Alert severity="info" sx={{ p: 3 }}></Alert>
-          console.log("No hay productos disponibles")
+          <Alert severity="info">{getNoProductsMessage()}</Alert>
         ) : (
           <>
             <Grid container spacing={4} justifyContent="center">
               {groupedProducts.map((product) => (
                 <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
                   <ProductCard
-                    product={{
-                      ...product,
-                      name: product.baseName,
-                      variantCount: product.variantCount
-                    }}
+                    product={product}
                     onAddToCart={() => handleAddToCart(product)}
                     isAdding={addingProductId === product._id}
                   />
                 </Grid>
               ))}
             </Grid>
-
             {loading && products.length > 0 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                <CircularProgress color="primary" />
-              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress /></Box>
             )}
           </>
         )}

@@ -300,7 +300,7 @@ const handleClearFilter = useCallback(async (filterType) => {
         mx: 'auto',
         py: 1.5,
         borderRadius: 10,
-        background: 'linear-gradient(135deg, rgba(38,60,92,0.95) 25%, rgba(17, 24, 103, 0.59) 100%)',
+        background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(168, 85, 247, 0.85) 100%) !important',
         backdropFilter: 'blur(10px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         mt: 2,
@@ -453,7 +453,7 @@ const handleClearFilter = useCallback(async (filterType) => {
                 height: '40px',
                 borderRadius: 2,
                 fontWeight: 600,
-                background: 'linear-gradient(45deg, #bb4343 30%, #d32f2f 90%)',
+                background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
               }}
             >
               {isLoading ? 'Cargando...' : 'Buscar'}

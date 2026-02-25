@@ -248,65 +248,6 @@ const HomePage = () => {
         {/* ad secion 4 pics in 2x2 frame*/}
         <PictureGrid />
 
-        {/* Search Section */}
-        {/* <Paper
-          elevation={8}
-          sx={{
-            p: { xs: 2, sm: 3 },
-            my: 6,
-            borderRadius: 4,
-            background: 'linear-gradient(135deg, rgba(38,60,92,0.95) 60%, rgba(233, 229, 209, 0.6) 100%)',
-            backdropFilter: 'blur(10px)',            
-          }}
-        >
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 700, textAlign: 'center', mb: 2 }}>
-            Encuentra tu producto
-          </Typography>
-          <Box component="form" onSubmit={handleSearchSubmit} sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label=""
-              variant="outlined"
-              fullWidth
-              size="medium"
-              value={homeSearchTerm}
-              onChange={(e) => setHomeSearchTerm(e.target.value)}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
-                  color: 'white',
-                  '& fieldset': { borderColor: '#afb4c5ff' },
-                  '&:hover fieldset': { borderColor: '#cfd3dfff' },
-                  '&.Mui-focused fieldset': { borderColor: '#ffffffff' },
-                },
-                '& .MuiInputLabel-root': { color: 'rgba(255, 255, 255, 0.7)' },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#FFD700' },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: 'white' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                px: 4,
-                borderRadius: '8px',
-                color: 'white',
-                backgroundColor: '#bb4343ff',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: '#ff0000ff' },
-                
-              }}
-            >
-              Buscar
-            </Button>
-          </Box>
-        </Paper> */}
-
         {/* Explore All Products Button */}
         <Box sx={{ textAlign: 'center', my: 6 }}>
           <Button
@@ -317,13 +258,13 @@ const HomePage = () => {
               borderRadius: 8,
               px: 5,
               py: 1.5,
-              boxShadow: '0 4px 15px rgba(247, 245, 239, 0.4)',
+              boxShadow: '0 4px 15px rgba(247, 37, 133, 0.4)',
               transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-              backgroundColor: '#263C5C',
+              background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
               '&:hover': {
                 transform: 'translateY(-3px)',
-                boxShadow: '0 6px 20px rgba(238, 236, 230, 0.6)',
-                backgroundColor: '#1E2F4A',
+                boxShadow: '0 6px 20px rgba(247, 37, 133, 0.6) !important',
+                opacity: 0.9,
               },
               '&:active': {
                 transform: 'translateY(0)',
@@ -349,19 +290,6 @@ const HomePage = () => {
           <Alert severity="info" sx={{ p: 3 }}>No hay productos destacados disponibles.</Alert>
         ) : (
           <Grid container spacing={2} justifyContent="center">
-            {/* {groupedProducts.map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={3} lg={3}> 
-                <ProductCard 
-                  product={{
-                    ...product,
-                    name: product.baseName || product.name,
-                    variantCount: product.variantCount
-                  }}
-                  onAddToCart={() => handleAddToCart(product)}
-                  isAdding={addingProductId === product._id}
-                />
-              </Grid>
-            ))} */}
             {groupedProducts.slice(0, 20).map((product) => (
               <Grid item key={product._id} xs={12} sm={6} md={3} lg={3}>
                 <ProductCard
@@ -388,13 +316,13 @@ const HomePage = () => {
               borderRadius: 8,
               px: 5,
               py: 1.5,
-              boxShadow: '0 4px 15px rgba(238, 235, 225, 0.4)',
+              boxShadow: '0 4px 15px rgba(247, 37, 133, 0.4)',
               transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-              backgroundColor: '#263C5C',
+              background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
               '&:hover': {
                 transform: 'translateY(-3px)',
-                boxShadow: '0 6px 20px rgba(235, 232, 222, 0.6)',
-                backgroundColor: '#1E2F4A',
+                boxShadow: '0 6px 20px rgba(247, 37, 133, 0.6) !important',
+                opacity: 0.9,
               },
               '&:active': {
                 transform: 'translateY(0)',

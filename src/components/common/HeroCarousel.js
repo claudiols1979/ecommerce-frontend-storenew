@@ -36,11 +36,11 @@ const HeroCarousel = () => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        width: '100%', 
-        height: { xs: 250, sm: 350, md: 500 }, 
-        display: 'flex', 
-        justifyContent: 'center', 
+      <Box sx={{
+        width: '100%',
+        height: { xs: 250, sm: 350, md: 500 },
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f5f5f5'
       }}>
@@ -73,49 +73,53 @@ const HeroCarousel = () => {
               component="img"
               src={slide.image}
               alt={slide.alt}
-              sx={{ 
-                width: '100%', 
-                height: { xs: 250, sm: 350, md: 500 }, 
-                objectFit: 'cover' 
+              sx={{
+                width: '100%',
+                height: { xs: 250, sm: 350, md: 500 },
+                objectFit: 'cover'
               }}
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/1200x500/cccccc/969696?text=Imagen+no+disponible';
               }}
             />
             <CarouselSlideContent>
-              <Typography 
-                variant="h4" 
-                component="h2" 
-                sx={{ 
-                  mb: 1, 
-                  fontWeight: 700, 
-                  fontSize: { xs: '1.5rem', sm: '2.5rem', md: '3rem' } 
+              <Typography
+                variant="h4"
+                component="h2"
+                sx={{
+                  mb: 1,
+                  fontWeight: 700,
+                  fontSize: { xs: '1.5rem', sm: '2.5rem', md: '3rem' }
                 }}
               >
                 {slide.title}
               </Typography>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  mb: 2, 
-                  maxWidth: { xs: '90%', md: '60%' }, 
-                  fontSize: { xs: '0.9rem', sm: '1.1rem' } 
+              <Typography
+                variant="body1"
+                sx={{
+                  mb: 2,
+                  maxWidth: { xs: '90%', md: '60%' },
+                  fontSize: { xs: '0.9rem', sm: '1.1rem' }
                 }}
               >
                 {slide.description}
               </Typography>
               <Button
-                variant="contained"                
+                variant="contained"
                 size="large"
                 onClick={() => navigate(slide.buttonLink)}
                 sx={{
-                  px: { xs: 3, sm: 5 }, 
-                  py: { xs: 1, sm: 1.5 }, 
-                  borderRadius: 8, 
-                  backgroundColor: '#bb4343ff', 
-                  color: 'white', 
+                  px: { xs: 3, sm: 5 },
+                  py: { xs: 1, sm: 1.5 },
+                  borderRadius: 10,
+                  background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
+                  color: 'white',
+                  boxShadow: '0 4px 15px rgba(247, 37, 133, 0.4) !important',
+                  transition: 'all 0.3s ease !important',
                   '&:hover': {
-                    backgroundColor: '#ff0000ff',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 20px rgba(247, 37, 133, 0.6) !important',
+                    opacity: 0.9,
                   },
                   '& *': {
                     pointerEvents: 'none'

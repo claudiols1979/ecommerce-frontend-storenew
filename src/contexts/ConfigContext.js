@@ -39,6 +39,7 @@ export const ConfigProvider = ({ children }) => {
     const value = {
         configs,
         taxRegime: configs.TAX_REGIME || "traditional",
+        promotionBannerMessage: configs.PROMOTION_BANNER_MESSAGE || "Aprovecha todas nuestras ofertas de apertura",
         loading,
         refreshConfigs: fetchConfigs,
     };

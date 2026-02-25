@@ -1,9 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { useAuth } from './AuthContext';
-import axios from 'axios';
-import API_URL from '../config';
 
 const ProductContext = createContext();
 
@@ -18,6 +16,15 @@ export const ProductProvider = ({ children }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
 
+  const isLoadingRef = useRef(false);
+
+  const clearProducts = useCallback(() => {
+    setProducts([]);
+    setCurrentPage(1);
+    setTotalPages(1);
+    setTotalProducts(0);
+  }, []);
+
   const fetchProducts = useCallback(async (
     page = 1,
     limit = 18,
@@ -27,10 +34,9 @@ export const ProductProvider = ({ children }) => {
     minPrice = 0,
     maxPrice = 300000
   ) => {
-    // Si es una nueva búsqueda, se indica que se está cargando.
-    // Si es para cargar más (page > 1) y ya está cargando, se detiene.
-    if (page > 1 && loading) return;
+    if (isLoadingRef.current) return;
 
+    isLoadingRef.current = true;
     setLoading(true);
     setError(null);
     try {
@@ -45,14 +51,11 @@ export const ProductProvider = ({ children }) => {
         _t: new Date().getTime().toString(),
       }).toString();
 
-      // Usamos la instancia 'api' que ya tiene la lógica de autenticación
       const response = await api.get(`/api/products-filtered?${queryParams}`);
 
       if (page === 1) {
-        // Si es la primera página (o una nueva búsqueda), reemplaza la lista.
         setProducts(response.data.products);
       } else {
-        // Si es una página subsiguiente, añade los nuevos productos a la lista existente.
         setProducts(prevProducts => [...prevProducts, ...response.data.products]);
       }
 
@@ -67,10 +70,11 @@ export const ProductProvider = ({ children }) => {
       toast.error(errorMessage);
     } finally {
       setLoading(false);
+      isLoadingRef.current = false;
     }
-  }, [api]); // --- CORRECCIÓN CLAVE: La dependencia es solo 'api', que es estable.
+  }, [api]);
 
-  const value = {
+  const value = useMemo(() => ({
     products,
     loading,
     error,
@@ -78,7 +82,8 @@ export const ProductProvider = ({ children }) => {
     totalPages,
     totalProducts,
     fetchProducts,
-  };
+    clearProducts,
+  }), [products, loading, error, currentPage, totalPages, totalProducts, fetchProducts, clearProducts]);
 
   return (
     <ProductContext.Provider value={value}>
@@ -90,3 +95,5 @@ export const ProductProvider = ({ children }) => {
 ProductProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+export default ProductContext;

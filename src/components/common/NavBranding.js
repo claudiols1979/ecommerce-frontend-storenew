@@ -40,7 +40,7 @@ const NavBranding = () => {
               mx: 1, // Margen horizontal reducido para un look más compacto
             }}
           >
-          Linea 
+            Linea
           </Typography>
           (Demo)
         </Typography>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import { useConfig } from '../../contexts/ConfigContext';
 
 // --- ANIMACIÓN CORREGIDA Y MEJORADA ---
 // La animación mueve el contenedor del texto de su posición inicial (0%)
@@ -13,6 +13,8 @@ const marqueeAnimation = {
 };
 
 const PromotionalBanner = () => {
+  const { promotionBannerMessage } = useConfig();
+
   // El texto de la promoción, para poder duplicarlo fácilmente.
   const promoText = (
     <Typography
@@ -20,7 +22,7 @@ const PromotionalBanner = () => {
       component="span" // Usamos span para que sea parte del flujo del texto
       sx={{
         // Cada instancia del texto ocupa el 50% del contenedor animado
-        width: '50%', 
+        width: '50%',
         color: '#ffffffff',
         fontWeight: 600,
         textTransform: 'uppercase',
@@ -31,25 +33,24 @@ const PromotionalBanner = () => {
         flexShrink: 0, // Evita que el texto se encoja
       }}
     >
-      {/* <StarBorderIcon sx={{ mx: 3, fontSize: '1.2rem' }} /> */}
-      Aprovecha todas nuestras ofertas de apertura
-      {/* <StarBorderIcon sx={{ mx: 3, fontSize: '1.2rem' }} /> */}
+      {promotionBannerMessage}
     </Typography>
   );
 
   return (
     <Box sx={{
-      //background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      background: 'linear-gradient(155deg, rgba(204, 21, 164, 0.9) 40%, rgba(75, 51, 150, 0.95) 80%, rgba(167, 178, 214, 0.95) 100%)',
-      width: '98%',      
+      background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(168, 85, 247, 0.85) 50%, rgba(247, 37, 133, 0.85) 100%) !important',
+      backdropFilter: 'blur(8px) !important',
+      width: '98%',
       py: 1.5,
       mx: 'auto',
       overflow: 'hidden',
       whiteSpace: 'whitespace-nowrap',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.3) !important',
       mb: 1,
       mt: 1,
-      borderRadius: 20
+      borderRadius: 10,
+      zIndex: (theme) => theme.zIndex.drawer + 2,
     }}>
       {/* --- CONTENEDOR DE LA ANIMACIÓN --- */}
       <Box

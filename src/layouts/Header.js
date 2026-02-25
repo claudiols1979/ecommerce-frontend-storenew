@@ -170,7 +170,7 @@ const Header = () => {
         width: '98%',
         mx: 'auto',
         //background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        background: 'linear-gradient(135deg, rgba(38,60,92,0.95) 25%, rgba(17, 24, 103, 0.59) 100%)',
+        background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important',
         //backgroundColor: 'rgba(38, 60, 92, 0.9)', 
         backgroundImage: `linear-gradient(to bottom, transparent, ${amber[0]})`,
         boxShadow: 0,
