@@ -1162,11 +1162,11 @@ const ProductDetailsPage = () => {
                     ml: { xs: 0.5, sm: 1 }, // Reducir margen izquierdo en móviles
                     fontSize: { xs: '0.75rem', sm: '0.875rem' }, // Tamaño de fuente responsive
                     minWidth: { xs: 'auto', sm: '64px' }, // Ancho mínimo ajustable
-                    background: '#bb4343ff',
+                    background: 'rgb(249, 201, 8)',
                     boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`,
                     color: 'white',
                     '&:hover': {
-                      background: '#ff0000ff',
+                      background: 'rgb(249, 201, 8)',
                       boxShadow: `0 3px 8px 3px rgba(33, 33, 33, .4)`,
                       transform: 'translateY(-2px)',
                     },

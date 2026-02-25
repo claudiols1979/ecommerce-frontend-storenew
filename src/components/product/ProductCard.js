@@ -315,7 +315,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
               backgroundColor: '#ffffffff',
               color: 'black',
               '&:hover': {
-                backgroundColor: '#263C5C',
+                backgroundColor: 'rgb(239, 216, 120)',
                 color: '#ffffffff',
                 border: '1px solid #263C5C'
               }
@@ -341,11 +341,11 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
                   fontSize: '0.75rem',
                   py: 0.5,
                   minWidth: '80px',
-                  background: `linear-gradient(45deg, #bb4343ff 30%, #bb4343ff 90%)`,
+                  background: 'rgb(249, 201, 8)',
                   boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`,
                   color: 'white',
                   '&:hover': {
-                    background: `linear-gradient(45deg, #ff0000ff 30%, #ff0000ff 90%)`,
+                    background: 'rgba(241, 202, 45, 0.87)',
                     boxShadow: `0 3px 8px 3px rgba(33, 33, 33, .4)`,
                     transform: 'translateY(-2px)',
                   },
@@ -375,11 +375,11 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
                 fontSize: '0.75rem',
                 py: 0.5,
                 minWidth: '110px',
-                background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, ${theme.palette.secondary.dark} 90%)`,
+                background: 'rgb(249, 201, 8)',
                 boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`,
                 color: 'white',
                 '&:hover': {
-                  background: `linear-gradient(45deg, ${theme.palette.secondary.dark} 30%, ${theme.palette.secondary.dark} 90%)`,
+                  background: 'rgb(246, 208, 56)',
                   boxShadow: `0 3px 8px 3px rgba(33, 33, 33, .4)`,
                   transform: 'translateY(-2px)',
                 },

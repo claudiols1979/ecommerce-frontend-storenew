@@ -104,7 +104,7 @@ const HeroCarouselVideo = () => {
             py: { xs: 1.5, sm: 2 }, 
             borderRadius: 8,
             fontWeight: 'bold',
-            backgroundColor: '#bb4343ff', 
+            background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
             color: 'white', 
             '&:hover': { backgroundColor: '#ff0000ff' },
             fontSize: { xs: '0.9rem', sm: '1rem' },
