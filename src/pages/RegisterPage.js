@@ -188,13 +188,15 @@ const RegisterPage = () => {
     fontSize: "1rem",
     borderRadius: "12px",
     color: "white",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #c471ed 100%)",
+    background:
+      "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #c471ed 100%)",
     boxShadow: "0 4px 20px 0 rgba(118, 75, 162, 0.4)",
     transition: "all 0.3s ease",
     textTransform: "none",
     letterSpacing: "0.5px",
     "&:hover": {
-      background: "linear-gradient(135deg, #764ba2 0%, #c471ed 50%, #f64f59 100%)",
+      background:
+        "linear-gradient(135deg, #764ba2 0%, #c471ed 50%, #f64f59 100%)",
       boxShadow: "0 6px 30px 0 rgba(118, 75, 162, 0.6)",
       transform: "translateY(-2px)",
     },
@@ -300,7 +302,8 @@ const RegisterPage = () => {
           width: "700px",
           height: "700px",
           borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%",
-          background: "radial-gradient(ellipse at center, rgba(220, 40, 160, 0.7) 0%, rgba(180, 30, 200, 0.4) 40%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, rgba(220, 40, 160, 0.7) 0%, rgba(180, 30, 200, 0.4) 40%, transparent 70%)",
           top: "-200px",
           right: "-150px",
           animation: "floatOrb1 12s ease-in-out infinite",
@@ -314,7 +317,8 @@ const RegisterPage = () => {
           width: "600px",
           height: "600px",
           borderRadius: "60% 40% 30% 70% / 50% 60% 40% 50%",
-          background: "radial-gradient(ellipse at center, rgba(80, 60, 230, 0.7) 0%, rgba(120, 80, 255, 0.4) 40%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, rgba(80, 60, 230, 0.7) 0%, rgba(120, 80, 255, 0.4) 40%, transparent 70%)",
           bottom: "-150px",
           left: "-120px",
           animation: "floatOrb2 14s ease-in-out infinite",
@@ -330,7 +334,8 @@ const RegisterPage = () => {
           width: "500px",
           height: "500px",
           borderRadius: "50% 40% 60% 40% / 60% 30% 70% 40%",
-          background: "radial-gradient(ellipse at center, rgba(255, 150, 220, 0.5) 0%, rgba(255, 100, 180, 0.2) 50%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, rgba(255, 150, 220, 0.5) 0%, rgba(255, 100, 180, 0.2) 50%, transparent 70%)",
           top: "30%",
           left: "10%",
           animation: "floatOrb3 10s ease-in-out infinite",
@@ -345,7 +350,8 @@ const RegisterPage = () => {
           width: "400px",
           height: "400px",
           borderRadius: "30% 70% 50% 50% / 50% 40% 60% 50%",
-          background: "radial-gradient(ellipse at center, rgba(255, 220, 255, 0.45) 0%, rgba(200, 150, 255, 0.15) 50%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, rgba(255, 220, 255, 0.45) 0%, rgba(200, 150, 255, 0.15) 50%, transparent 70%)",
           top: "10%",
           left: "40%",
           animation: "floatOrb2 16s ease-in-out infinite",
@@ -362,11 +368,13 @@ const RegisterPage = () => {
             backgroundColor: "rgba(255, 255, 255, 0.1)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+            boxShadow:
+              "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
             "&:hover": {
               transform: "none",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+              boxShadow:
+                "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
             },
           }}
         >
@@ -439,8 +447,15 @@ const RegisterPage = () => {
 
                 {/* ✅ TIPO DE IDENTIFICACIÓN */}
                 <Grid item xs={12}>
-                  <FormControl fullWidth variant="outlined" sx={textFieldStyle} error={!!fieldErrors.tipoIdentificacion}>
-                    <InputLabel id="tipoIdentificacion-label">Tipo de Identificación</InputLabel>
+                  <FormControl
+                    fullWidth
+                    variant="outlined"
+                    sx={textFieldStyle}
+                    error={!!fieldErrors.tipoIdentificacion}
+                  >
+                    <InputLabel id="tipoIdentificacion-label">
+                      Tipo de Identificación
+                    </InputLabel>
                     <Select
                       labelId="tipoIdentificacion-label"
                       required
@@ -462,7 +477,9 @@ const RegisterPage = () => {
                       ))}
                     </Select>
                     {fieldErrors.tipoIdentificacion && (
-                      <FormHelperText>{fieldErrors.tipoIdentificacion}</FormHelperText>
+                      <FormHelperText>
+                        {fieldErrors.tipoIdentificacion}
+                      </FormHelperText>
                     )}
                   </FormControl>
                 </Grid>
@@ -488,9 +505,7 @@ const RegisterPage = () => {
                     helperText={fieldErrors.cedula}
                     InputProps={{
                       startAdornment: (
-                        <BadgeOutlinedIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <BadgeOutlinedIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                     placeholder={
@@ -520,9 +535,7 @@ const RegisterPage = () => {
                     }
                     InputProps={{
                       startAdornment: (
-                        <BusinessCenterIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <BusinessCenterIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                     placeholder="Ej: 620100, 461000, etc."
@@ -544,9 +557,7 @@ const RegisterPage = () => {
                     sx={textFieldStyle}
                     InputProps={{
                       startAdornment: (
-                        <EmailOutlinedIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <EmailOutlinedIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                   />
@@ -566,9 +577,7 @@ const RegisterPage = () => {
                     sx={textFieldStyle}
                     InputProps={{
                       startAdornment: (
-                        <LockOutlinedIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <LockOutlinedIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                   />
@@ -587,9 +596,7 @@ const RegisterPage = () => {
                     sx={textFieldStyle}
                     InputProps={{
                       startAdornment: (
-                        <LockOutlinedIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <LockOutlinedIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                   />
@@ -609,9 +616,7 @@ const RegisterPage = () => {
                     sx={textFieldStyle}
                     InputProps={{
                       startAdornment: (
-                        <PhoneOutlinedIcon
-                          sx={{ mr: 1, color: iconColor }}
-                        />
+                        <PhoneOutlinedIcon sx={{ mr: 1, color: iconColor }} />
                       ),
                     }}
                   />
@@ -709,7 +714,11 @@ const RegisterPage = () => {
                   component={RouterLink}
                   to="/login"
                   underline="hover"
-                  sx={{ fontWeight: "bold", color: "#ffffff", "&:hover": { color: "rgba(255, 255, 255, 0.9)" } }}
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#ffffff",
+                    "&:hover": { color: "rgba(255, 255, 255, 0.9)" },
+                  }}
                 >
                   Inicia sesión aquí
                 </MuiLink>
@@ -723,4 +732,3 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
-

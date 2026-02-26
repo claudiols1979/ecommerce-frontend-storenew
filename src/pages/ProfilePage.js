@@ -89,8 +89,10 @@ const ProfilePage = () => {
   });
 
   // Modern Styles with requested gradients
-  const mainGradient = "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important";
-  const buttonGradient = "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important";
+  const mainGradient =
+    "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important";
+  const buttonGradient =
+    "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important";
 
   const glassStyle = {
     background: "rgba(255, 255, 255, 0.1)",
@@ -100,7 +102,8 @@ const ProfilePage = () => {
     borderRadius: "24px",
     color: "white",
     boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
-    transition: "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+    transition:
+      "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
     "&:hover": {
       transform: "translateY(-5px)",
       boxShadow: "0 12px 40px 0 rgba(0, 0, 0, 0.45)",
@@ -339,14 +342,16 @@ const ProfilePage = () => {
 
   if (authError || ordersError) {
     return (
-      <Box sx={{
-        minHeight: "100vh",
-        background: mainGradient,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        p: 3
-      }}>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          background: mainGradient,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+        }}
+      >
         <Container maxWidth="sm">
           <Card sx={{ ...glassStyle, p: 4, textAlign: "center" }}>
             <Alert severity="error" sx={{ borderRadius: 3, mb: 3 }}>
@@ -369,14 +374,16 @@ const ProfilePage = () => {
 
   if (!user) {
     return (
-      <Box sx={{
-        minHeight: "100vh",
-        background: mainGradient,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        p: 3
-      }}>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          background: mainGradient,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+        }}
+      >
         <Container maxWidth="sm">
           <Card sx={{ ...glassStyle, p: 4, textAlign: "center" }}>
             <Alert severity="warning" sx={{ borderRadius: 3, mb: 3 }}>
@@ -415,42 +422,46 @@ const ProfilePage = () => {
     return categories[category] || category;
   };
 
-
   return (
-    <Box sx={{
-      minHeight: "100vh",
-      background: mainGradient,
-      pt: { xs: 12, sm: 16 },
-      pb: { xs: 6, sm: 10 },
-      position: "relative",
-      overflow: "hidden"
-    }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: mainGradient,
+        pt: { xs: 12, sm: 16 },
+        pb: { xs: 6, sm: 10 },
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       {/* Background patterns */}
-      <Box sx={{
-        position: "absolute",
-        top: -100,
-        right: -100,
-        width: 400,
-        height: 400,
-        background: "radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(168, 85, 247, 0) 70%)",
-        borderRadius: "50%",
-        zIndex: 0
-      }} />
-      <Box sx={{
-        position: "absolute",
-        bottom: -50,
-        left: -50,
-        width: 300,
-        height: 300,
-        background: "radial-gradient(circle, rgba(247, 37, 133, 0.3) 0%, rgba(247, 37, 133, 0) 70%)",
-        borderRadius: "50%",
-        zIndex: 0
-      }} />
+      <Box
+        sx={{
+          position: "absolute",
+          top: -100,
+          right: -100,
+          width: 400,
+          height: 400,
+          background:
+            "radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(168, 85, 247, 0) 70%)",
+          borderRadius: "50%",
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: -50,
+          left: -50,
+          width: 300,
+          height: 300,
+          background:
+            "radial-gradient(circle, rgba(247, 37, 133, 0.3) 0%, rgba(247, 37, 133, 0) 70%)",
+          borderRadius: "50%",
+          zIndex: 0,
+        }}
+      />
 
-      <Container
-        maxWidth="lg"
-        sx={{ position: "relative", zIndex: 1 }}
-      >
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
         <style>
           {`
             @keyframes fadeInUp {
@@ -480,8 +491,8 @@ const ProfilePage = () => {
               border: "1px solid rgba(255, 255, 255, 0.2)",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
               overflow: "hidden",
-              color: "white"
-            }
+              color: "white",
+            },
           }}
         >
           <DialogTitle
@@ -494,20 +505,22 @@ const ProfilePage = () => {
               py: 4,
               px: { xs: 3, sm: 5 },
               borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-              letterSpacing: "-0.02em"
+              letterSpacing: "-0.02em",
             }}
           >
-            <Box sx={{
-              width: 40,
-              height: 40,
-              borderRadius: "12px",
-              background: buttonGradient,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              mr: 2,
-              boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
-            }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "12px",
+                background: buttonGradient,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mr: 2,
+                boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+              }}
+            >
               <EditIcon sx={{ fontSize: 20 }} />
             </Box>
             Editar Información Personal
@@ -516,12 +529,30 @@ const ProfilePage = () => {
           <form onSubmit={handleEditSubmit}>
             <DialogContent sx={{ pt: 5, px: { xs: 3, sm: 5 }, pb: 2 }}>
               {updateError && (
-                <Alert severity="error" sx={{ mb: 4, borderRadius: "16px", background: "rgba(211, 47, 47, 0.2)", color: "#ffcdd2", border: "1px solid rgba(211, 47, 47, 0.3)" }}>
+                <Alert
+                  severity="error"
+                  sx={{
+                    mb: 4,
+                    borderRadius: "16px",
+                    background: "rgba(211, 47, 47, 0.2)",
+                    color: "#ffcdd2",
+                    border: "1px solid rgba(211, 47, 47, 0.3)",
+                  }}
+                >
                   {updateError}
                 </Alert>
               )}
               {updateSuccess && (
-                <Alert severity="success" sx={{ mb: 4, borderRadius: "16px", background: "rgba(46, 125, 50, 0.2)", color: "#c8e6c9", border: "1px solid rgba(46, 125, 50, 0.3)" }}>
+                <Alert
+                  severity="success"
+                  sx={{
+                    mb: 4,
+                    borderRadius: "16px",
+                    background: "rgba(46, 125, 50, 0.2)",
+                    color: "#c8e6c9",
+                    border: "1px solid rgba(46, 125, 50, 0.3)",
+                  }}
+                >
                   Perfil actualizado exitosamente!
                 </Alert>
               )}
@@ -529,10 +560,26 @@ const ProfilePage = () => {
               <Grid container spacing={3}>
                 {[
                   { label: "Nombre", name: "firstName", sm: 6, required: true },
-                  { label: "Apellido", name: "lastName", sm: 6, required: true },
-                  { label: "Cédula", name: "cedula", sm: 6, placeholder: "Cédula, Dimex o NITE" },
+                  {
+                    label: "Apellido",
+                    name: "lastName",
+                    sm: 6,
+                    required: true,
+                  },
+                  {
+                    label: "Cédula",
+                    name: "cedula",
+                    sm: 6,
+                    placeholder: "Cédula, Dimex o NITE",
+                  },
                   { label: "Teléfono", name: "phoneNumber", sm: 6 },
-                  { label: "Código Actividad Receptor", name: "codigoActividadReceptor", sm: 12, helperText: "Opcional - para fines tributarios", placeholder: "Ej: 620100, 461000, etc." },
+                  {
+                    label: "Código Actividad Receptor",
+                    name: "codigoActividadReceptor",
+                    sm: 12,
+                    helperText: "Opcional - para fines tributarios",
+                    placeholder: "Ej: 620100, 461000, etc.",
+                  },
                 ].map((field) => (
                   <Grid item xs={12} sm={field.sm} key={field.name}>
                     <TextField
@@ -545,18 +592,32 @@ const ProfilePage = () => {
                       placeholder={field.placeholder}
                       helperText={field.helperText}
                       variant="outlined"
-                      InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
-                      FormHelperTextProps={{ sx: { color: "rgba(255,255,255,0.5)" } }}
+                      InputLabelProps={{
+                        sx: {
+                          color: "rgba(255,255,255,0.7)",
+                          "&.Mui-focused": { color: "#A855F7" },
+                        },
+                      }}
+                      FormHelperTextProps={{
+                        sx: { color: "rgba(255,255,255,0.5)" },
+                      }}
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           borderRadius: "16px",
                           color: "white !important",
                           background: "rgba(255, 255, 255, 0.05)",
-                          "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
-                          "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                          "& fieldset": {
+                            borderColor: "rgba(255, 255, 255, 0.1)",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "rgba(255, 255, 255, 0.3)",
+                          },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
-                          "& input": { color: "white !important", WebkitTextFillColor: "white !important" }
-                        }
+                          "& input": {
+                            color: "white !important",
+                            WebkitTextFillColor: "white !important",
+                          },
+                        },
                       }}
                     />
                   </Grid>
@@ -578,27 +639,42 @@ const ProfilePage = () => {
                             backdropFilter: "blur(10px)",
                             border: "1px solid rgba(255,255,255,0.1)",
                             color: "white",
-                            "& .MuiMenuItem-root:hover": { background: "rgba(255,255,255,0.1)" },
-                            "& .Mui-selected": { background: "rgba(168, 85, 247, 0.3) !important" },
-                          }
-                        }
-                      }
+                            "& .MuiMenuItem-root:hover": {
+                              background: "rgba(255,255,255,0.1)",
+                            },
+                            "& .Mui-selected": {
+                              background: "rgba(168, 85, 247, 0.3) !important",
+                            },
+                          },
+                        },
+                      },
                     }}
-                    InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "rgba(255,255,255,0.7)",
+                        "&.Mui-focused": { color: "#A855F7" },
+                      },
+                    }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "16px",
                         color: "white !important",
                         background: "rgba(255, 255, 255, 0.05)",
-                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
-                        "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                        "& fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.1)",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.3)",
+                        },
                         "&.Mui-focused fieldset": { borderColor: "#A855F7" },
                       },
                       "& .MuiSelect-select": { color: "white !important" },
-                      "& .MuiSelect-icon": { color: "white !important" }
+                      "& .MuiSelect-icon": { color: "white !important" },
                     }}
                   >
-                    <MenuItem value=""><em>Ninguno</em></MenuItem>
+                    <MenuItem value="">
+                      <em>Ninguno</em>
+                    </MenuItem>
                     <MenuItem value="Fisica">Persona Física</MenuItem>
                     <MenuItem value="Juridica">Persona Jurídica</MenuItem>
                   </TextField>
@@ -619,12 +695,14 @@ const ProfilePage = () => {
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "16px",
                         background: "rgba(255, 255, 255, 0.02)",
-                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.05)" },
+                        "& fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.05)",
+                        },
                         "& .MuiOutlinedInput-input.Mui-disabled": {
                           color: "white !important",
                           WebkitTextFillColor: "white !important",
                         },
-                      }
+                      },
                     }}
                   />
                 </Grid>
@@ -632,37 +710,55 @@ const ProfilePage = () => {
                 <Grid item xs={12}>
                   <Typography
                     variant="body2"
-                    sx={{ mb: 2, ml: 1, color: "rgba(255, 255, 255, 0.6)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                    sx={{
+                      mb: 2,
+                      ml: 1,
+                      color: "rgba(255, 255, 255, 0.6)",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
                   >
                     Dirección de Entrega
                   </Typography>
-                  <Box sx={{
-                    borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    p: 2.5,
-                    "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.7) !important" },
-                    "& .MuiOutlinedInput-root": {
-                      color: "white !important",
-                      borderRadius: "12px",
-                      background: "rgba(255, 255, 255, 0.03)",
-                      "& fieldset": { borderColor: "rgba(255,255,255,0.1) !important" },
-                      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3) !important" },
-                      "& input, & select, & .MuiSelect-select": {
+                  <Box
+                    sx={{
+                      borderRadius: "20px",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      p: 2.5,
+                      "& .MuiInputLabel-root": {
+                        color: "rgba(255,255,255,0.7) !important",
+                      },
+                      "& .MuiOutlinedInput-root": {
                         color: "white !important",
-                        WebkitTextFillColor: "white !important"
+                        borderRadius: "12px",
+                        background: "rgba(255, 255, 255, 0.03)",
+                        "& fieldset": {
+                          borderColor: "rgba(255,255,255,0.1) !important",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "rgba(255,255,255,0.3) !important",
+                        },
+                        "& input, & select, & .MuiSelect-select": {
+                          color: "white !important",
+                          WebkitTextFillColor: "white !important",
+                        },
                       },
-                    },
-                    "& .Mui-disabled": {
-                      color: "rgba(255,255,255,0.4) !important",
-                      "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.05) !important" },
-                      "& input, & select, & .MuiSelect-select": {
+                      "& .Mui-disabled": {
                         color: "rgba(255,255,255,0.4) !important",
-                        WebkitTextFillColor: "rgba(255,255,255,0.4) !important"
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "rgba(255,255,255,0.05) !important",
+                        },
+                        "& input, & select, & .MuiSelect-select": {
+                          color: "rgba(255,255,255,0.4) !important",
+                          WebkitTextFillColor:
+                            "rgba(255,255,255,0.4) !important",
+                        },
                       },
-                    },
-                    "& .MuiSelect-icon": { color: "white !important" }
-                  }}>
+                      "& .MuiSelect-icon": { color: "white !important" },
+                    }}
+                  >
                     <style>
                       {`
                         .MuiMenu-paper {
@@ -707,17 +803,26 @@ const ProfilePage = () => {
                       rows={2}
                       value={editFormData.address}
                       onChange={handleEditFormChange}
-                      InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
+                      InputLabelProps={{
+                        sx: {
+                          color: "rgba(255,255,255,0.7)",
+                          "&.Mui-focused": { color: "#A855F7" },
+                        },
+                      }}
                       sx={{
                         mt: 2.5,
                         "& .MuiOutlinedInput-root": {
                           borderRadius: "16px",
                           color: "white",
                           background: "rgba(255, 255, 255, 0.05)",
-                          "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
-                          "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                          "& fieldset": {
+                            borderColor: "rgba(255, 255, 255, 0.1)",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "rgba(255, 255, 255, 0.3)",
+                          },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
-                        }
+                        },
                       }}
                     />
                   </Box>
@@ -725,7 +830,15 @@ const ProfilePage = () => {
               </Grid>
             </DialogContent>
             <DialogActions sx={{ px: { xs: 3, sm: 5 }, pb: 5, pt: 3 }}>
-              <Button onClick={handleCloseDialog} sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 700, textTransform: "none", fontSize: "1rem" }}>
+              <Button
+                onClick={handleCloseDialog}
+                sx={{
+                  color: "rgba(255,255,255,0.6)",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  fontSize: "1rem",
+                }}
+              >
                 Cancelar
               </Button>
               <Button
@@ -737,10 +850,14 @@ const ProfilePage = () => {
                   minWidth: 160,
                   py: 1.5,
                   fontSize: "1rem",
-                  ml: 2
+                  ml: 2,
                 }}
               >
-                {updateLoading ? <CircularProgress size={24} color="inherit" /> : "Guardar Cambios"}
+                {updateLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Guardar Cambios"
+                )}
               </Button>
             </DialogActions>
           </form>
@@ -748,20 +865,24 @@ const ProfilePage = () => {
 
         {/* Información Personal */}
         <Box className="animate-fade-in-up">
-          <Typography
-            variant="h4"
-            sx={sectionHeaderStyle}
-          >
+          <Typography variant="h4" sx={sectionHeaderStyle}>
             Mi Perfil
           </Typography>
 
-          <Card sx={{ ...glassStyle, mb: { xs: 4, sm: 6 }, position: "relative", overflow: "visible" }}>
+          <Card
+            sx={{
+              ...glassStyle,
+              mb: { xs: 4, sm: 6 },
+              position: "relative",
+              overflow: "visible",
+            }}
+          >
             <Box
               sx={{
                 position: "absolute",
                 top: -20,
                 right: { xs: 20, sm: 30 },
-                zIndex: 2
+                zIndex: 2,
               }}
             >
               <IconButton
@@ -776,7 +897,8 @@ const ProfilePage = () => {
                     transform: "scale(1.1)",
                     boxShadow: "0 10px 20px rgba(0,0,0,0.4)",
                   },
-                  transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                  transition:
+                    "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                 }}
                 onClick={handleEditClick}
               >
@@ -787,23 +909,35 @@ const ProfilePage = () => {
             <CardContent sx={{ p: { xs: 4, sm: 6 } }}>
               <Grid container spacing={{ xs: 3, md: 4 }}>
                 <Grid item xs={12} md={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: "14px",
-                        background: "rgba(255,255,255,0.1)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        mr: 2.5,
-                        border: "1px solid rgba(255,255,255,0.1)"
-                      }}>
+                      <Box
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: "14px",
+                          background: "rgba(255,255,255,0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          mr: 2.5,
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
                         <PersonIcon sx={{ color: "#A855F7" }} />
                       </Box>
                       <Box>
-                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: "rgba(255,255,255,0.6)",
+                            fontWeight: 600,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
                           Nombre Completo
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
@@ -813,32 +947,8 @@ const ProfilePage = () => {
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: "14px",
-                        background: "rgba(255,255,255,0.1)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        mr: 2.5,
-                        border: "1px solid rgba(255,255,255,0.1)"
-                      }}>
-                        <EmailIcon sx={{ color: "#F72585" }} />
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                          Correo Electrónico
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 700, wordBreak: "break-all" }}>
-                          {user.email}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    {user.phoneNumber && (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box sx={{
+                      <Box
+                        sx={{
                           width: 48,
                           height: 48,
                           borderRadius: "14px",
@@ -847,12 +957,59 @@ const ProfilePage = () => {
                           alignItems: "center",
                           justifyContent: "center",
                           mr: 2.5,
-                          border: "1px solid rgba(255,255,255,0.1)"
-                        }}>
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        <EmailIcon sx={{ color: "#F72585" }} />
+                      </Box>
+                      <Box>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: "rgba(255,255,255,0.6)",
+                            fontWeight: 600,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
+                          Correo Electrónico
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontWeight: 700, wordBreak: "break-all" }}
+                        >
+                          {user.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {user.phoneNumber && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: "14px",
+                            background: "rgba(255,255,255,0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            mr: 2.5,
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        >
                           <PhoneIcon sx={{ color: "#4EA8DE" }} />
                         </Box>
                         <Box>
-                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "rgba(255,255,255,0.6)",
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.1em",
+                            }}
+                          >
                             Teléfono
                           </Typography>
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
@@ -865,42 +1022,12 @@ const ProfilePage = () => {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                      <Box sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: "14px",
-                        background: "rgba(255,255,255,0.1)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        mr: 2.5,
-                        mt: 0.5,
-                        border: "1px solid rgba(255,255,255,0.1)"
-                      }}>
-                        <LocationOnIcon sx={{ color: "#4895EF" }} />
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                          Dirección de Entrega
-                        </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          {user.provincia
-                            ? `${user.provincia}, ${user.canton}, ${user.distrito}`
-                            : [user.address, user.city, user.province].filter(Boolean).join(", ") || "No especificada"}
-                        </Typography>
-                        {user.address && (
-                          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)", mt: 0.5 }}>
-                            {user.address}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-
-                    {(user.tipoIdentificacion || user.cedula) && (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box sx={{
+                      <Box
+                        sx={{
                           width: 48,
                           height: 48,
                           borderRadius: "14px",
@@ -909,13 +1036,71 @@ const ProfilePage = () => {
                           alignItems: "center",
                           justifyContent: "center",
                           mr: 2.5,
-                          border: "1px solid rgba(255,255,255,0.1)"
-                        }}>
+                          mt: 0.5,
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        <LocationOnIcon sx={{ color: "#4895EF" }} />
+                      </Box>
+                      <Box>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: "rgba(255,255,255,0.6)",
+                            fontWeight: 600,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
+                          Dirección de Entrega
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {user.provincia
+                            ? `${user.provincia}, ${user.canton}, ${user.distrito}`
+                            : [user.address, user.city, user.province]
+                                .filter(Boolean)
+                                .join(", ") || "No especificada"}
+                        </Typography>
+                        {user.address && (
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "rgba(255,255,255,0.7)", mt: 0.5 }}
+                          >
+                            {user.address}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+
+                    {(user.tipoIdentificacion || user.cedula) && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: "14px",
+                            background: "rgba(255,255,255,0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            mr: 2.5,
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        >
                           <BadgeOutlinedIcon sx={{ color: "#7209B7" }} />
                         </Box>
                         <Box>
-                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                            Identificación ({user.tipoIdentificacion || "Física"})
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "rgba(255,255,255,0.6)",
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.1em",
+                            }}
+                          >
+                            Identificación (
+                            {user.tipoIdentificacion || "Física"})
                           </Typography>
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
                             {user.cedula || "N/A"}
@@ -926,25 +1111,36 @@ const ProfilePage = () => {
 
                     {user.role === "Revendedor" && (
                       <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box sx={{
-                          width: 48,
-                          height: 48,
-                          borderRadius: "14px",
-                          background: "rgba(255,255,255,0.1)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          mr: 2.5,
-                          border: "1px solid rgba(255,255,255,0.1)"
-                        }}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: "14px",
+                            background: "rgba(255,255,255,0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            mr: 2.5,
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        >
                           <CategoryIcon sx={{ color: "#FFC300" }} />
                         </Box>
                         <Box>
-                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "rgba(255,255,255,0.6)",
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.1em",
+                            }}
+                          >
                             Categoría / Código
                           </Typography>
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                            {getCategoryLabel(user.resellerCategory)} • {user.resellerCode || "N/A"}
+                            {getCategoryLabel(user.resellerCategory)} •{" "}
+                            {user.resellerCode || "N/A"}
                           </Typography>
                         </Box>
                       </Box>
@@ -958,10 +1154,7 @@ const ProfilePage = () => {
 
         {/* Mis Pedidos Recientes */}
         <Box className="animate-fade-in-up delay-1">
-          <Typography
-            variant="h4"
-            sx={sectionHeaderStyle}
-          >
+          <Typography variant="h4" sx={sectionHeaderStyle}>
             Mis Pedidos Recientes
           </Typography>
 
@@ -970,31 +1163,51 @@ const ProfilePage = () => {
               {displayOrders && displayOrders.length > 0 ? (
                 <Box sx={{ p: { xs: 2.5, sm: 4 } }}>
                   {displayOrders.map((order, orderIndex) => {
-                    const breakdown = order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
-                      ? order.taxBreakdown
-                      : (() => {
-                        const iSubtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.priceAtSale), 0);
-                        const iTax = order.items.reduce((acc, item) => {
-                          const iva = parseFloat(item.product?.iva) || 0;
-                          return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
-                        }, 0);
+                    const breakdown =
+                      order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
+                        ? order.taxBreakdown
+                        : (() => {
+                            const iSubtotal = order.items.reduce(
+                              (sum, item) =>
+                                sum + item.quantity * item.priceAtSale,
+                              0,
+                            );
+                            const iTax = order.items.reduce((acc, item) => {
+                              const iva = parseFloat(item.product?.iva) || 0;
+                              return (
+                                acc +
+                                Math.round(
+                                  item.quantity *
+                                    item.priceAtSale *
+                                    (iva / 100),
+                                )
+                              );
+                            }, 0);
 
-                        const currentOrderRegime = order.taxRegime || globalTaxRegime;
-                        const sBaseRaw = 3000;
-                        const sTax = currentOrderRegime === 'simplified' ? 0 : 390;
-                        const sBase = currentOrderRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
+                            const currentOrderRegime =
+                              order.taxRegime || globalTaxRegime;
+                            const sBaseRaw = 3000;
+                            const sTax =
+                              currentOrderRegime === "simplified" ? 0 : 390;
+                            const sBase =
+                              currentOrderRegime === "simplified"
+                                ? Math.round(sBaseRaw * 1.13)
+                                : sBaseRaw;
 
-                        return {
-                          itemsSubtotal: iSubtotal,
-                          itemsTax: iTax,
-                          shippingBase: sBase,
-                          shippingTax: sTax,
-                          total: Math.round(iSubtotal + iTax + sBase + sTax)
-                        };
-                      })();
+                            return {
+                              itemsSubtotal: iSubtotal,
+                              itemsTax: iTax,
+                              shippingBase: sBase,
+                              shippingTax: sTax,
+                              total: Math.round(
+                                iSubtotal + iTax + sBase + sTax,
+                              ),
+                            };
+                          })();
 
                     const totalFinal = breakdown.total;
-                    const shippingCost = breakdown.shippingBase + breakdown.shippingTax;
+                    const shippingCost =
+                      breakdown.shippingBase + breakdown.shippingTax;
 
                     const formatPrice = (price) => {
                       return `₡${Math.round(price).toLocaleString("es-CR")}`;
@@ -1009,7 +1222,9 @@ const ProfilePage = () => {
                       cancelled: { color: "#E74C3C", label: "Cancelado" },
                     };
 
-                    const currentStatus = statusInfo[order.status.toLowerCase()] || { color: "#95A5A6", label: order.status };
+                    const currentStatus = statusInfo[
+                      order.status.toLowerCase()
+                    ] || { color: "#95A5A6", label: order.status };
 
                     return (
                       <Accordion
@@ -1031,89 +1246,167 @@ const ProfilePage = () => {
                         }}
                       >
                         <AccordionSummary
-                          expandIcon={<ExpandMoreIcon sx={{ color: "rgba(255,255,255,0.7)" }} />}
+                          expandIcon={
+                            <ExpandMoreIcon
+                              sx={{ color: "rgba(255,255,255,0.7)" }}
+                            />
+                          }
                           sx={{
                             px: { xs: 2.5, sm: 4 },
                             py: 1,
-                            "& .MuiAccordionSummary-content": { alignItems: "center" }
+                            "& .MuiAccordionSummary-content": {
+                              alignItems: "center",
+                            },
                           }}
                         >
                           <Grid container spacing={2} alignItems="center">
                             <Grid item xs={12} sm={4}>
-                              <Box sx={{ display: "flex", alignItems: "center" }}>
-                                <Box sx={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: "10px",
-                                  background: "rgba(255,255,255,0.1)",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  mr: 2
-                                }}>
-                                  <ShoppingBagIcon sx={{ fontSize: 20, color: "#fff" }} />
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
+                                <Box
+                                  sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: "10px",
+                                    background: "rgba(255,255,255,0.1)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    mr: 2,
+                                  }}
+                                >
+                                  <ShoppingBagIcon
+                                    sx={{ fontSize: 20, color: "#fff" }}
+                                  />
                                 </Box>
                                 <Box>
-                                  <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block", mb: -0.5 }}>
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: "rgba(255,255,255,0.5)",
+                                      display: "block",
+                                      mb: -0.5,
+                                    }}
+                                  >
                                     ORDEN
                                   </Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 700, fontFamily: "monospace" }}>
-                                    #{order._id.substring(order._id.length - 8).toUpperCase()}
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      fontWeight: 700,
+                                      fontFamily: "monospace",
+                                    }}
+                                  >
+                                    #
+                                    {order._id
+                                      .substring(order._id.length - 8)
+                                      .toUpperCase()}
                                   </Typography>
                                 </Box>
                               </Box>
                             </Grid>
                             <Grid item xs={6} sm={3}>
-                              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block" }}>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "rgba(255,255,255,0.5)",
+                                  display: "block",
+                                }}
+                              >
                                 FECHA
                               </Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                {new Date(order.createdAt).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}
+                              <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 600 }}
+                              >
+                                {new Date(order.createdAt).toLocaleDateString(
+                                  "es-ES",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )}
                               </Typography>
                             </Grid>
                             <Grid item xs={6} sm={2}>
-                              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block" }}>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "rgba(255,255,255,0.5)",
+                                  display: "block",
+                                }}
+                              >
                                 TOTAL
                               </Typography>
-                              <Typography variant="body1" sx={{ fontWeight: 800, color: "#fff" }}>
+                              <Typography
+                                variant="body1"
+                                sx={{ fontWeight: 800, color: "#fff" }}
+                              >
                                 {formatPrice(totalFinal)}
                               </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={3} sx={{ textAlign: { sm: "right" } }}>
-                              <Box sx={{
-                                display: "inline-flex",
-                                px: 2,
-                                py: 0.5,
-                                borderRadius: "8px",
-                                bgcolor: `${currentStatus.color}20`,
-                                color: currentStatus.color,
-                                border: `1px solid ${currentStatus.color}40`,
-                                fontSize: "0.75rem",
-                                fontWeight: 800,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.05em"
-                              }}>
+                            <Grid
+                              item
+                              xs={12}
+                              sm={3}
+                              sx={{ textAlign: { sm: "right" } }}
+                            >
+                              <Box
+                                sx={{
+                                  display: "inline-flex",
+                                  px: 2,
+                                  py: 0.5,
+                                  borderRadius: "8px",
+                                  bgcolor: `${currentStatus.color}20`,
+                                  color: currentStatus.color,
+                                  border: `1px solid ${currentStatus.color}40`,
+                                  fontSize: "0.75rem",
+                                  fontWeight: 800,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.05em",
+                                }}
+                              >
                                 {currentStatus.label}
                               </Box>
                             </Grid>
                           </Grid>
                         </AccordionSummary>
-                        <AccordionDetails sx={{
-                          px: { xs: 2.5, sm: 4 },
-                          pb: 4,
-                          pt: 1,
-                          borderTop: "1px solid rgba(255,255,255,0.05)"
-                        }}>
-                          <Typography variant="subtitle2" sx={{ color: "rgba(255,255,255,0.6)", mb: 3, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        <AccordionDetails
+                          sx={{
+                            px: { xs: 2.5, sm: 4 },
+                            pb: 4,
+                            pt: 1,
+                            borderTop: "1px solid rgba(255,255,255,0.05)",
+                          }}
+                        >
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              color: "rgba(255,255,255,0.6)",
+                              mb: 3,
+                              fontWeight: 700,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.1em",
+                            }}
+                          >
                             Detalle de Productos
                           </Typography>
 
                           <List disablePadding>
                             {order.items.map((item, itemIndex) => {
-                              const currentOrderRegime = order.taxRegime || globalTaxRegime;
-                              const iva = currentOrderRegime === 'simplified' ? 0 : (parseFloat(item.product?.iva) || 0);
-                              const priceWithTax = Math.round(Number(item.priceAtSale || 0) * (1 + iva / 100));
-                              const subtotalWithTax = priceWithTax * item.quantity;
+                              const currentOrderRegime =
+                                order.taxRegime || globalTaxRegime;
+                              const iva =
+                                currentOrderRegime === "simplified"
+                                  ? 0
+                                  : parseFloat(item.product?.iva) || 0;
+                              const priceWithTax = Math.round(
+                                Number(item.priceAtSale || 0) * (1 + iva / 100),
+                              );
+                              const subtotalWithTax =
+                                priceWithTax * item.quantity;
 
                               return (
                                 <ListItem
@@ -1124,48 +1417,89 @@ const ProfilePage = () => {
                                     flexWrap: "wrap",
                                     alignItems: "center",
                                     py: 2,
-                                    borderBottom: itemIndex < order.items.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                                    borderBottom:
+                                      itemIndex < order.items.length - 1
+                                        ? "1px solid rgba(255,255,255,0.05)"
+                                        : "none",
                                   }}
                                 >
-                                  {item.product?.imageUrls && item.product.imageUrls.length > 0 && (
-                                    <Box sx={{
-                                      width: 64,
-                                      height: 64,
-                                      mr: 2.5,
-                                      borderRadius: "12px",
-                                      overflow: "hidden",
-                                      border: "1px solid rgba(255,255,255,0.1)",
-                                      background: "white"
-                                    }}>
-                                      <img
-                                        src={item.product.imageUrls[0].secure_url}
-                                        alt={item.name}
-                                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                                      />
-                                    </Box>
-                                  )}
-                                  <Box sx={{ flexGrow: 1, minWidth: { xs: "calc(100% - 90px)", sm: "auto" } }}>
-                                    <Typography variant="body1" sx={{ fontWeight: 700 }}>
+                                  {item.product?.imageUrls &&
+                                    item.product.imageUrls.length > 0 && (
+                                      <Box
+                                        sx={{
+                                          width: 64,
+                                          height: 64,
+                                          mr: 2.5,
+                                          borderRadius: "12px",
+                                          overflow: "hidden",
+                                          border:
+                                            "1px solid rgba(255,255,255,0.1)",
+                                          background: "white",
+                                        }}
+                                      >
+                                        <img
+                                          src={
+                                            item.product.imageUrls[0].secure_url
+                                          }
+                                          alt={item.name}
+                                          style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "contain",
+                                          }}
+                                        />
+                                      </Box>
+                                    )}
+                                  <Box
+                                    sx={{
+                                      flexGrow: 1,
+                                      minWidth: {
+                                        xs: "calc(100% - 90px)",
+                                        sm: "auto",
+                                      },
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ fontWeight: 700 }}
+                                    >
                                       {item.name}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>
-                                      {item.quantity} x {formatPrice(Number(item.priceAtSale || 0))}
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ color: "rgba(255,255,255,0.5)" }}
+                                    >
+                                      {item.quantity} x{" "}
+                                      {formatPrice(
+                                        Number(item.priceAtSale || 0),
+                                      )}
                                     </Typography>
                                   </Box>
                                   <Box sx={{ textAlign: "right", ml: 3 }}>
-                                    <Typography variant="body1" sx={{ fontWeight: 800 }}>
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ fontWeight: 800 }}
+                                    >
                                       {formatPrice(subtotalWithTax)}
                                     </Typography>
                                     <Button
                                       size="small"
-                                      startIcon={<RateReviewIcon sx={{ fontSize: 16 }} />}
-                                      onClick={() => navigate(`/products/${item.product?._id}`)}
+                                      startIcon={
+                                        <RateReviewIcon sx={{ fontSize: 16 }} />
+                                      }
+                                      onClick={() =>
+                                        navigate(
+                                          `/products/${item.product?._id}`,
+                                        )
+                                      }
                                       sx={{
                                         mt: 1,
                                         color: "#F72585",
                                         fontWeight: "bold",
                                         textTransform: "none",
-                                        "&:hover": { background: "rgba(247, 37, 133, 0.1)" }
+                                        "&:hover": {
+                                          background: "rgba(247, 37, 133, 0.1)",
+                                        },
                                       }}
                                     >
                                       Calificar
@@ -1175,42 +1509,128 @@ const ProfilePage = () => {
                               );
                             })}
 
-                            <Box sx={{
-                              mt: 3,
-                              pt: 3,
-                              borderTop: "2px solid rgba(255,255,255,0.1)",
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 1.5
-                            }}>
-                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                                  Subtotal de Productos:
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                                  {formatPrice(breakdown.itemsSubtotal + breakdown.itemsTax)}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
-                                  Envío:
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                                  {formatPrice(shippingCost)}
-                                </Typography>
-                              </Box>
-                              <Box sx={{
+                            <Box
+                              sx={{
+                                mt: 3,
+                                pt: 3,
+                                borderTop: "2px solid rgba(255,255,255,0.1)",
                                 display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                mt: 1,
-                                pt: 2,
-                                borderTop: "1px dashed rgba(255,255,255,0.2)"
-                              }}>
-                                <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                                flexDirection: "column",
+                                gap: 1.5,
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "rgba(255,255,255,0.6)" }}
+                                >
+                                  {(order.taxRegime || globalTaxRegime) ===
+                                  "simplified"
+                                    ? "Subtotal Productos:"
+                                    : "Subtotal Productos (Sin IVA):"}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 700 }}
+                                >
+                                  {formatPrice(breakdown.itemsSubtotal)}
+                                </Typography>
+                              </Box>
+                              {(order.taxRegime || globalTaxRegime) !==
+                                "simplified" && (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ color: "rgba(255,255,255,0.6)" }}
+                                  >
+                                    IVA Productos (13%):
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 700 }}
+                                  >
+                                    {formatPrice(breakdown.itemsTax)}
+                                  </Typography>
+                                </Box>
+                              )}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "rgba(255,255,255,0.6)" }}
+                                >
+                                  {(order.taxRegime || globalTaxRegime) ===
+                                  "simplified"
+                                    ? "Envío:"
+                                    : "Envío (Sin IVA):"}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 700 }}
+                                >
+                                  {formatPrice(breakdown.shippingBase)}
+                                </Typography>
+                              </Box>
+                              {(order.taxRegime || globalTaxRegime) !==
+                                "simplified" && (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ color: "rgba(255,255,255,0.6)" }}
+                                  >
+                                    IVA Envío (13%):
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 700 }}
+                                  >
+                                    {formatPrice(breakdown.shippingTax)}
+                                  </Typography>
+                                </Box>
+                              )}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  mt: 1,
+                                  pt: 2,
+                                  borderTop: "1px dashed rgba(255,255,255,0.2)",
+                                }}
+                              >
+                                <Typography
+                                  variant="h6"
+                                  sx={{ fontWeight: 800 }}
+                                >
                                   Total Final:
                                 </Typography>
-                                <Typography variant="h6" sx={{ fontWeight: 900, color: "#F72585" }}>
+                                <Typography
+                                  variant="h6"
+                                  sx={{ fontWeight: 900, color: "#F72585" }}
+                                >
                                   {formatPrice(totalFinal)}
                                 </Typography>
                               </Box>
@@ -1223,7 +1643,10 @@ const ProfilePage = () => {
                 </Box>
               ) : (
                 <Box sx={{ p: 6, textAlign: "center" }}>
-                  <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.6)", mb: 4 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ color: "rgba(255,255,255,0.6)", mb: 4 }}
+                  >
                     Aún no tienes pedidos registrados.
                   </Typography>
                   <Button

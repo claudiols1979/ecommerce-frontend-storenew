@@ -8,12 +8,12 @@
  */
 export const formatPrice = (price) => {
   // Si el precio no es un número válido, retorna un texto por defecto.
-  if (typeof price !== 'number' || isNaN(price)) {
-    return 'Precio no disponible';
+  if (typeof price !== "number" || isNaN(price)) {
+    return "Precio no disponible";
   }
 
   // Añade el símbolo de colón al principio y redondea a 0 decimales.
-  return `₡${Math.round(price).toLocaleString('es-CR', {
+  return `₡${Math.round(price).toLocaleString("es-CR", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })}`;

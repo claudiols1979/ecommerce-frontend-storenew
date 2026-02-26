@@ -1,10 +1,20 @@
-import React from 'react';
-import { Card, CardMedia, CardContent, CardActions, Typography, Button, Box, CircularProgress, Chip } from '@mui/material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useNavigate } from 'react-router-dom';
-import { useOrders } from 'contexts/OrderContext';
-import { useAuth } from 'contexts/AuthContext';
-import { toast } from 'react-toastify';
+import React from "react";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  Box,
+  CircularProgress,
+  Chip,
+} from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useNavigate } from "react-router-dom";
+import { useOrders } from "contexts/OrderContext";
+import { useAuth } from "contexts/AuthContext";
+import { toast } from "react-toastify";
 
 // Helper function to extract base product name (without variant details)
 const extractBaseProductName = (name) => {
@@ -21,7 +31,12 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   const getPriceForProduct = (prod) => {
     if (!prod) return null;
 
-    if (user && user.role === 'Revendedor' && prod.resellerPrices && prod.resellerPrices[user.resellerCategory]) {
+    if (
+      user &&
+      user.role === "Revendedor" &&
+      prod.resellerPrices &&
+      prod.resellerPrices[user.resellerCategory]
+    ) {
       return prod.resellerPrices[user.resellerCategory];
     }
     // Fallback para no-revendedores o si su categoría no tiene precio
@@ -37,7 +52,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   // --- El manejador de clic corregido ---
   const handleAddToCart = async () => {
     if (!user) {
-      toast.info('Por favor, inicia sesión para añadir productos al carrito.');
+      toast.info("Por favor, inicia sesión para añadir productos al carrito.");
       return;
     }
 
@@ -46,7 +61,9 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
 
     // 2. Validamos que el precio exista
     if (priceToPass === null || priceToPass <= 0) {
-      toast.error('Este producto no tiene un precio válido y no se puede añadir al carrito.');
+      toast.error(
+        "Este producto no tiene un precio válido y no se puede añadir al carrito.",
+      );
       return;
     }
 
@@ -57,7 +74,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
 
   // Format price function
   const formatPrice = (price) => {
-    return `₡${price.toLocaleString('es-CR')}`;
+    return `₡${price.toLocaleString("es-CR")}`;
   };
 
   // Navigate to product details using the product code instead of ID
@@ -66,17 +83,25 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   };
 
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <CardMedia
         component="img"
         height="180"
-        image={product.imageUrls?.[0]?.secure_url || 'https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image'}
+        image={
+          product.imageUrls?.[0]?.secure_url ||
+          "https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image"
+        }
         alt={product.name}
-        sx={{ objectFit: 'contain', p: 2, cursor: 'pointer' }}
+        sx={{ objectFit: "contain", p: 2, cursor: "pointer" }}
         onClick={handleViewDetails}
       />
       <CardContent sx={{ flexGrow: 1, p: 2 }}>
-        <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 600 }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: 600 }}
+        >
           {extractBaseProductName(product.name)}
         </Typography>
 
@@ -90,14 +115,31 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           />
         )}
 
-        <Typography variant="body2" color="text.secondary" sx={{ minHeight: 40 }}>
-          {product.shortDescription || (product.description ? product.description.substring(0, 70) + '...' : 'No description available.')}
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ minHeight: 40 }}
+        >
+          {product.shortDescription ||
+            (product.description
+              ? product.description.substring(0, 70) + "..."
+              : "No description available.")}
         </Typography>
-        <Typography variant="h6" color="primary" sx={{ mt: 2, fontWeight: 700 }}>
-          {displayPrice !== null ? formatPrice(displayPrice) : 'Precio no disponible'}
+        <Typography
+          variant="h6"
+          color="primary"
+          sx={{ mt: 2, fontWeight: 700 }}
+        >
+          {displayPrice !== null
+            ? formatPrice(displayPrice)
+            : "Precio no disponible"}
         </Typography>
         {isOutOfStock && (
-          <Typography variant="body2" color="error" sx={{ mt: 1, fontWeight: 600 }}>
+          <Typography
+            variant="body2"
+            color="error"
+            sx={{ mt: 1, fontWeight: 600 }}
+          >
             Sin Stock
           </Typography>
         )}
@@ -111,11 +153,19 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           variant="contained"
           color="primary"
           onClick={onAddToCart || handleAddToCart}
-          startIcon={isAdding || cartLoading ? <CircularProgress size={20} color="inherit" /> : <ShoppingCartIcon />}
-          disabled={isAdding || cartLoading || isOutOfStock || displayPrice === null}
+          startIcon={
+            isAdding || cartLoading ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              <ShoppingCartIcon />
+            )
+          }
+          disabled={
+            isAdding || cartLoading || isOutOfStock || displayPrice === null
+          }
           sx={{ ml: 1 }}
         >
-          {isOutOfStock ? 'Sin Stock' : 'Añadir'}
+          {isOutOfStock ? "Sin Stock" : "Añadir"}
         </Button>
       </CardActions>
     </Card>

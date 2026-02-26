@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 const useClickOutside = (handler, { enabled = true } = {}) => {
   const ref = useRef(null);
@@ -9,15 +9,15 @@ const useClickOutside = (handler, { enabled = true } = {}) => {
     const handleClickOutside = (event) => {
       // Ignorar clicks en elementos de Material-UI
       const ignoredSelectors = [
-        '.MuiPopover-root',
-        '.MuiMenu-root', 
-        '.MuiSelect-root',
-        '.MuiAutocomplete-popper',
-        '.MuiModal-root'
+        ".MuiPopover-root",
+        ".MuiMenu-root",
+        ".MuiSelect-root",
+        ".MuiAutocomplete-popper",
+        ".MuiModal-root",
       ];
 
-      const isIgnored = ignoredSelectors.some(selector => 
-        event.target.closest(selector)
+      const isIgnored = ignoredSelectors.some((selector) =>
+        event.target.closest(selector),
       );
 
       if (isIgnored) return;
@@ -28,12 +28,12 @@ const useClickOutside = (handler, { enabled = true } = {}) => {
     };
 
     const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }, 10);
 
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [handler, enabled]);
 

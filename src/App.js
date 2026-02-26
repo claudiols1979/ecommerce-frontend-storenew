@@ -1,55 +1,53 @@
-import React from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { Box, styled } from '@mui/material';
+import React from "react";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Box, styled } from "@mui/material";
 
 // Layout components
-import Header from './layouts/Header';
-import Footer from './layouts/Footer';
+import Header from "./layouts/Header";
+import Footer from "./layouts/Footer";
 
 // Page components
-import HomePage from './pages/HomePage';
-import ProductsPage from './pages/ProductsPage';
-import ProductDetailsPage from './pages/ProductDetailsPage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import LoginPage from './pages/LoginPage';
-import ProfilePage from './pages/ProfilePage';
-import RegisterPage from './pages/RegisterPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import NewPasswordPage from './pages/NewPasswordPage';
-import PrivacyPolicies from './pages/PrivacyPolicies';
-import TermsConditions from './pages/TermsConditions';
-import PaymentRedirectPage from './pages/PaymentRedirectPage';
-import DepartmentalFilterBar from './layouts/DepartmentalFilterBar';
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import NewPasswordPage from "./pages/NewPasswordPage";
+import PrivacyPolicies from "./pages/PrivacyPolicies";
+import TermsConditions from "./pages/TermsConditions";
+import PaymentRedirectPage from "./pages/PaymentRedirectPage";
+import DepartmentalFilterBar from "./layouts/DepartmentalFilterBar";
 
 // PrivateRoute component
-import PrivateRoute from './components/auth/PrivateRoute';
+import PrivateRoute from "./components/auth/PrivateRoute";
 
 // Styled components
 const AppContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
 });
 
-const MainContent = styled('main')(({ theme }) => ({
+const MainContent = styled("main")(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(1.5),
   },
 }));
 
 // Layout para páginas que siempre tienen Header/Footer
 const MainLayout = ({ children }) => (
-    <AppContainer>
-        <Header />
-        <DepartmentalFilterBar />
-        <MainContent>
-            {children}
-        </MainContent>
-        <Footer />
-    </AppContainer>
+  <AppContainer>
+    <Header />
+    <DepartmentalFilterBar />
+    <MainContent>{children}</MainContent>
+    <Footer />
+  </AppContainer>
 );
 
 function App() {
@@ -77,13 +75,13 @@ function App() {
               <Route path="/products/:id" element={<ProductDetailsPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/privacy" element={<PrivacyPolicies />} />
-              <Route path='/conditions' element={<TermsConditions />} />              
+              <Route path="/conditions" element={<TermsConditions />} />
               {/* Rutas que requieren autenticación */}
               <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/profile" element={<ProfilePage />} />                
+                <Route path="/profile" element={<ProfilePage />} />
               </Route>
-              
+
               {/* Fallback para cualquier ruta desconocida dentro de este layout */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

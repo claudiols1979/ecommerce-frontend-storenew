@@ -1,26 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline'; // ¡Importa CssBaseline!
-import theme from './theme';
-import { AuthProvider } from './contexts/AuthContext';
-import { OrderProvider } from './contexts/OrderContext';
-import { ProductProvider } from './contexts/ProductContext';
-import { ReviewProvider } from './contexts/ReviewContext';
-import { DepartmentalProvider } from './contexts/DepartmentalContext';
-import { SearchProvider } from './contexts/searchContext';
-import { UpdateInfoProvider } from './contexts/UpdateInfoContext';
-import { HeroCarouselProvider } from './contexts/HeroCarouselContext';
-import { AdGridProvider } from './contexts/AdGridContext';
-import { HeroCarouselVideoProvider } from './contexts/HeroCarouselVideoContext'
-import { ConfigProvider } from './contexts/ConfigContext';
-import { ToastContainer } from 'react-toastify';
-import { HelmetProvider } from 'react-helmet-async';
-import 'react-toastify/dist/ReactToastify.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline"; // ¡Importa CssBaseline!
+import theme from "./theme";
+import { AuthProvider } from "./contexts/AuthContext";
+import { OrderProvider } from "./contexts/OrderContext";
+import { ProductProvider } from "./contexts/ProductContext";
+import { ReviewProvider } from "./contexts/ReviewContext";
+import { DepartmentalProvider } from "./contexts/DepartmentalContext";
+import { SearchProvider } from "./contexts/searchContext";
+import { UpdateInfoProvider } from "./contexts/UpdateInfoContext";
+import { HeroCarouselProvider } from "./contexts/HeroCarouselContext";
+import { AdGridProvider } from "./contexts/AdGridContext";
+import { HeroCarouselVideoProvider } from "./contexts/HeroCarouselVideoContext";
+import { ConfigProvider } from "./contexts/ConfigContext";
+import { ToastContainer } from "react-toastify";
+import { HelmetProvider } from "react-helmet-async";
+import "react-toastify/dist/ReactToastify.css";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
@@ -46,7 +46,17 @@ root.render(
                       </SearchProvider>
                     </DepartmentalProvider>
                   </ReviewProvider>
-                  <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+                  <ToastContainer
+                    position="bottom-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                  />
                 </OrderProvider>
               </ProductProvider>
             </ConfigProvider>
@@ -54,5 +64,5 @@ root.render(
         </HelmetProvider>
       </Router>
     </ThemeProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

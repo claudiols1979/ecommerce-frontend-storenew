@@ -123,7 +123,13 @@ function CRAddressSelector({
       </Grid>
 
       <Grid item xs={12} md={itemCols}>
-        <FormControl fullWidth variant="outlined" required disabled={!provincia} sx={customStyle}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          required
+          disabled={!provincia}
+          sx={customStyle}
+        >
           <InputLabel id="canton-label">Cantón</InputLabel>
           <Select
             labelId="canton-label"
@@ -147,7 +153,13 @@ function CRAddressSelector({
       </Grid>
 
       <Grid item xs={12} md={itemCols}>
-        <FormControl fullWidth variant="outlined" required disabled={!canton} sx={customStyle}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          required
+          disabled={!canton}
+          sx={customStyle}
+        >
           <InputLabel id="distrito-label">Distrito</InputLabel>
           <Select
             labelId="distrito-label"

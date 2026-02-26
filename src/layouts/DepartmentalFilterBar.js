@@ -1,5 +1,11 @@
 // components/DepartmentalFilterBar.js
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Box,
   Paper,
@@ -14,40 +20,38 @@ import {
   useMediaQuery,
   useTheme,
   Collapse,
-  IconButton
-} from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { useDepartmental } from '../contexts/DepartmentalContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import useClickOutside from '../hooks/useClickOutside';
-
+  IconButton,
+} from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useDepartmental } from "../contexts/DepartmentalContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import useClickOutside from "../hooks/useClickOutside";
 
 const DepartmentalFilterBar = () => {
-  const { 
-    taxonomy, 
+  const {
+    taxonomy,
     taxonomyLoading,
-    searchWithFilters, 
-    fetchTaxonomy, 
+    searchWithFilters,
+    fetchTaxonomy,
     currentFilters,
     departmentalLoading,
-    resetSearch
+    resetSearch,
   } = useDepartmental();
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
- 
-  
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+
   const [uiFilters, setUiFilters] = useState({
-    department: '',
-    brand: '',
-    category: '',
-    subcategory: ''
+    department: "",
+    brand: "",
+    category: "",
+    subcategory: "",
   });
 
   const [activeFilters, setActiveFilters] = useState({});
@@ -58,21 +62,20 @@ const DepartmentalFilterBar = () => {
   console.log("🔍 Current Filters from Context: ", currentFilters);
   console.log("🎯 UI Filters: ", uiFilters);
 
-
   useEffect(() => {
-    if (!location.pathname.startsWith('/products')) {
+    if (!location.pathname.startsWith("/products")) {
       handleClearAllFilters();
     }
   }, [location.pathname]); // Se ejecuta cada vez que cambia la ruta
 
-  
-
-   const containerRef = useClickOutside(() => {
-    if (expanded) {
-      setExpanded(false);
-    }
-  }, { enabled: expanded });
-  
+  const containerRef = useClickOutside(
+    () => {
+      if (expanded) {
+        setExpanded(false);
+      }
+    },
+    { enabled: expanded },
+  );
 
   // Cargar taxonomía completa al montar
   useEffect(() => {
@@ -87,10 +90,10 @@ const DepartmentalFilterBar = () => {
     if (Object.keys(currentFilters).length > 0) {
       console.log("🔄 Sincronizando UI filters con currentFilters");
       setUiFilters({
-        department: currentFilters.department || '',
-        brand: currentFilters.brand || '',
-        category: currentFilters.category || '',
-        subcategory: currentFilters.subcategory || ''
+        department: currentFilters.department || "",
+        brand: currentFilters.brand || "",
+        category: currentFilters.category || "",
+        subcategory: currentFilters.subcategory || "",
       });
       setActiveFilters(currentFilters);
     }
@@ -102,7 +105,7 @@ const DepartmentalFilterBar = () => {
       const timeoutId = setTimeout(() => {
         applyFiltersAutomatically();
       }, 500); // Debounce de 500ms
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [uiFilters, initialLoad]);
@@ -110,75 +113,86 @@ const DepartmentalFilterBar = () => {
   const applyFiltersAutomatically = useCallback(async () => {
     // No aplicar si está cargando o si son filtros vacíos
     if (filterLoading || taxonomyLoading) return;
-    
+
     // Crear filtros no vacíos
     const nonEmptyFilters = Object.fromEntries(
-      Object.entries(uiFilters)
-        .filter(([_, value]) => value && value.toString().trim() !== '')
+      Object.entries(uiFilters).filter(
+        ([_, value]) => value && value.toString().trim() !== "",
+      ),
     );
 
     // Solo aplicar si hay filtros diferentes a los activos
     if (JSON.stringify(nonEmptyFilters) !== JSON.stringify(activeFilters)) {
       console.log("🚀 Aplicando filtros automáticamente:", nonEmptyFilters);
       setFilterLoading(true);
-      
+
       try {
         await searchWithFilters(nonEmptyFilters);
         setActiveFilters(nonEmptyFilters);
-        
+
         // Navegar a /products si hay filtros y no estamos allí
-        if (Object.keys(nonEmptyFilters).length > 0 && location.pathname !== '/products') {
-          navigate('/products');
+        if (
+          Object.keys(nonEmptyFilters).length > 0 &&
+          location.pathname !== "/products"
+        ) {
+          navigate("/products");
         }
       } catch (error) {
-        console.error('Error applying filters:', error);
+        console.error("Error applying filters:", error);
       } finally {
         setFilterLoading(false);
       }
     }
-  }, [uiFilters, activeFilters, searchWithFilters, filterLoading, taxonomyLoading, location.pathname, navigate]);
+  }, [
+    uiFilters,
+    activeFilters,
+    searchWithFilters,
+    filterLoading,
+    taxonomyLoading,
+    location.pathname,
+    navigate,
+  ]);
 
   // ✅ Manejar cambio de filtros - SIMPLIFICADO
   const handleFilterChange = async (filterType, value) => {
     const newValue = value.toString().trim();
-    
+
     console.log(`🔄 Cambiando filtro ${filterType}:`, newValue);
-    
+
     if (newValue === uiFilters[filterType]) return;
-    
+
     setFilterLoading(true);
-    
-    const newFilters = { 
-      ...uiFilters, 
-      [filterType]: newValue 
+
+    const newFilters = {
+      ...uiFilters,
+      [filterType]: newValue,
     };
-    
+
     // Resetear filtros dependientes
-    if (filterType === 'department') {
-      newFilters.brand = '';
-      newFilters.category = '';
-      newFilters.subcategory = '';
-    } else if (filterType === 'brand') {
-      newFilters.category = '';
-      newFilters.subcategory = '';
-    } else if (filterType === 'category') {
-      newFilters.subcategory = '';
+    if (filterType === "department") {
+      newFilters.brand = "";
+      newFilters.category = "";
+      newFilters.subcategory = "";
+    } else if (filterType === "brand") {
+      newFilters.category = "";
+      newFilters.subcategory = "";
+    } else if (filterType === "category") {
+      newFilters.subcategory = "";
     }
-    
+
     setUiFilters(newFilters);
-    
+
     try {
       // Actualizar taxonomía contextual
       const taxonomyFilters = { ...newFilters };
-      if (newValue === '') {
+      if (newValue === "") {
         delete taxonomyFilters[filterType];
       }
-      
+
       await fetchTaxonomy(taxonomyFilters);
       console.log("📊 Taxonomía actualizada");
-      
     } catch (error) {
-      console.error('Error loading taxonomy:', error);
+      console.error("Error loading taxonomy:", error);
     } finally {
       setFilterLoading(false);
     }
@@ -192,158 +206,165 @@ const DepartmentalFilterBar = () => {
   }, [applyFiltersAutomatically]);
 
   // ✅ Limpiar filtro individual
-const handleClearFilter = useCallback(async (filterType) => {
-  console.log("🧹 Limpiando filtro:", filterType);
-  setFilterLoading(true);
-  
-  const newFilters = { ...uiFilters, [filterType]: '' };
-  
-  // Resetear filtros dependientes
-  if (filterType === 'department') {
-    newFilters.brand = '';
-    newFilters.category = '';
-    newFilters.subcategory = '';
-  } else if (filterType === 'brand') {
-    newFilters.category = '';
-    newFilters.subcategory = '';
-  } else if (filterType === 'category') {
-    newFilters.subcategory = '';
-  }
-  
-  setUiFilters(newFilters);
-  
-  // ✅ ACTUALIZAR activeFilters - ESTO SÍ ES NECESARIO
-  setActiveFilters(prev => {
-    const newActiveFilters = { ...prev };
-    delete newActiveFilters[filterType];
-    
-    // También eliminar filtros dependientes si es necesario
-    if (filterType === 'department') {
-      delete newActiveFilters.brand;
-      delete newActiveFilters.category;
-      delete newActiveFilters.subcategory;
-    } else if (filterType === 'brand') {
-      delete newActiveFilters.category;
-      delete newActiveFilters.subcategory;
-    } else if (filterType === 'category') {
-      delete newActiveFilters.subcategory;
-    }
-    
-    console.log('✅ Nuevos activeFilters:', newActiveFilters);
-    return newActiveFilters;
-  });
-  
-  try {
-    const taxonomyFilters = { ...newFilters };
-    delete taxonomyFilters[filterType];
-    await fetchTaxonomy(taxonomyFilters);
-    
-    // ✅ AQUÍ NECESITO SABER QUÉ FUNCIÓN USAS PARA BUSCAR PRODUCTOS
-    // Por ahora, solo actualizo la taxonomía
-    console.log('🔍 Filtro limpiado, necesito ejecutar búsqueda aquí');
-    
-  } catch (error) {
-    console.error('Error clearing filter:', error);
-  } finally {
-    setFilterLoading(false);
-  }
-}, [uiFilters, fetchTaxonomy]); // ✅ Solo las dependencias que existen
+  const handleClearFilter = useCallback(
+    async (filterType) => {
+      console.log("🧹 Limpiando filtro:", filterType);
+      setFilterLoading(true);
+
+      const newFilters = { ...uiFilters, [filterType]: "" };
+
+      // Resetear filtros dependientes
+      if (filterType === "department") {
+        newFilters.brand = "";
+        newFilters.category = "";
+        newFilters.subcategory = "";
+      } else if (filterType === "brand") {
+        newFilters.category = "";
+        newFilters.subcategory = "";
+      } else if (filterType === "category") {
+        newFilters.subcategory = "";
+      }
+
+      setUiFilters(newFilters);
+
+      // ✅ ACTUALIZAR activeFilters - ESTO SÍ ES NECESARIO
+      setActiveFilters((prev) => {
+        const newActiveFilters = { ...prev };
+        delete newActiveFilters[filterType];
+
+        // También eliminar filtros dependientes si es necesario
+        if (filterType === "department") {
+          delete newActiveFilters.brand;
+          delete newActiveFilters.category;
+          delete newActiveFilters.subcategory;
+        } else if (filterType === "brand") {
+          delete newActiveFilters.category;
+          delete newActiveFilters.subcategory;
+        } else if (filterType === "category") {
+          delete newActiveFilters.subcategory;
+        }
+
+        console.log("✅ Nuevos activeFilters:", newActiveFilters);
+        return newActiveFilters;
+      });
+
+      try {
+        const taxonomyFilters = { ...newFilters };
+        delete taxonomyFilters[filterType];
+        await fetchTaxonomy(taxonomyFilters);
+
+        // ✅ AQUÍ NECESITO SABER QUÉ FUNCIÓN USAS PARA BUSCAR PRODUCTOS
+        // Por ahora, solo actualizo la taxonomía
+        console.log("🔍 Filtro limpiado, necesito ejecutar búsqueda aquí");
+      } catch (error) {
+        console.error("Error clearing filter:", error);
+      } finally {
+        setFilterLoading(false);
+      }
+    },
+    [uiFilters, fetchTaxonomy],
+  ); // ✅ Solo las dependencias que existen
 
   // ✅ Limpiar todos los filtros
   const handleClearAllFilters = useCallback(async () => {
     console.log("🧹 Limpiando TODOS los filtros");
     setFilterLoading(true);
-    
+
     const emptyFilters = {
-      department: '',
-      brand: '',
-      category: '',
-      subcategory: ''
+      department: "",
+      brand: "",
+      category: "",
+      subcategory: "",
     };
-    
+
     setUiFilters(emptyFilters);
     setActiveFilters({});
-    
+
     try {
       await fetchTaxonomy({});
       resetSearch();
-      
     } catch (error) {
-      console.error('Error clearing all filters:', error);
+      console.error("Error clearing all filters:", error);
     } finally {
       setFilterLoading(false);
       setExpanded(false);
     }
   }, [fetchTaxonomy, resetSearch]);
 
-  const hasActiveFilters = Object.values(activeFilters).some(value => value !== '');
+  const hasActiveFilters = Object.values(activeFilters).some(
+    (value) => value !== "",
+  );
   const isLoading = filterLoading || taxonomyLoading || departmentalLoading;
 
-  const filteredOptions = useMemo(() => ({
-    departments: taxonomy.departments || [],
-    brands: taxonomy.brands || [],
-    categories: taxonomy.categories || [],
-    subcategories: taxonomy.subcategories || []
-  }), [taxonomy]);
+  const filteredOptions = useMemo(
+    () => ({
+      departments: taxonomy.departments || [],
+      brands: taxonomy.brands || [],
+      categories: taxonomy.categories || [],
+      subcategories: taxonomy.subcategories || [],
+    }),
+    [taxonomy],
+  );
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
 
   return (
-    <Paper 
-      elevation={0}   
-      ref={containerRef}         
-      sx={{ 
+    <Paper
+      elevation={0}
+      ref={containerRef}
+      sx={{
         p: isSmallScreen ? 2 : 3,
-        width: isSmallScreen ? '90%' : '40%',
-        mx: 'auto',
+        width: isSmallScreen ? "90%" : "40%",
+        mx: "auto",
         py: 1.5,
         borderRadius: 2,
         opacity: 0.9,
-        background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        background:
+          "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
+        backdropFilter: "blur(10px)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         mt: 2,
-        mb: 3,         
-        position: 'sticky',
-        top: isSmallScreen ? 10 : 120,        
+        mb: 3,
+        position: "sticky",
+        top: isSmallScreen ? 10 : 120,
         zIndex: 700,
       }}
-    >     
+    >
       {/* Encabezado del acordeón */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          cursor: 'pointer',
-          mb: expanded ? 2 : 0
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          cursor: "pointer",
+          mb: expanded ? 2 : 0,
         }}
         onClick={toggleExpanded}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <FilterListIcon sx={{ color: 'rgba(255, 255, 255, 0.8)', mr: 1 }} />
-          <Typography variant="h6" sx={{ color: 'white', fontWeight: 500 }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <FilterListIcon sx={{ color: "rgba(255, 255, 255, 0.8)", mr: 1 }} />
+          <Typography variant="h6" sx={{ color: "white", fontWeight: 500 }}>
             Departamentos
           </Typography>
           {hasActiveFilters && (
-            <Chip 
-              label={Object.keys(activeFilters).length} 
-              size="small" 
+            <Chip
+              label={Object.keys(activeFilters).length}
+              size="small"
               onClick={undefined}
-              sx={{ 
-                ml: 1, 
-                backgroundColor: '#bb4343', 
-                color: 'white',
-                height: 20,                  
-                '& .MuiChip-label': { px: 1 },
-                pointerEvents: 'none'
-              }} 
+              sx={{
+                ml: 1,
+                backgroundColor: "#bb4343",
+                color: "white",
+                height: 20,
+                "& .MuiChip-label": { px: 1 },
+                pointerEvents: "none",
+              }}
             />
           )}
         </Box>
-        <IconButton size="small" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+        <IconButton size="small" sx={{ color: "rgba(255, 255, 255, 0.8)" }}>
           {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
@@ -352,25 +373,29 @@ const handleClearFilter = useCallback(async (filterType) => {
         <Grid container spacing={2} alignItems="flex-end">
           {/* Departamento */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small">            
+            <FormControl fullWidth size="small">
               <Select
                 value={uiFilters.department}
-                onChange={(e) => handleFilterChange('department', e.target.value)}
+                onChange={(e) =>
+                  handleFilterChange("department", e.target.value)
+                }
                 disabled={isLoading}
                 displayEmpty
-                sx={{                
-                  color: 'white',
+                sx={{
+                  color: "white",
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  }
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
+                  },
                 }}
-                renderValue={(value) => value ? value : 'Departamento'}
+                renderValue={(value) => (value ? value : "Departamento")}
               >
                 <MenuItem value="">Todos los departamentos</MenuItem>
-                {filteredOptions.departments.map(dept => (
-                  <MenuItem key={dept} value={dept}>{dept}</MenuItem>
+                {filteredOptions.departments.map((dept) => (
+                  <MenuItem key={dept} value={dept}>
+                    {dept}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -378,21 +403,23 @@ const handleClearFilter = useCallback(async (filterType) => {
 
           {/* Marca */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>            
+            <FormControl fullWidth size="small" disabled={isLoading}>
               <Select
                 value={uiFilters.brand}
-                onChange={(e) => handleFilterChange('brand', e.target.value)}
+                onChange={(e) => handleFilterChange("brand", e.target.value)}
                 displayEmpty
                 sx={{
-                  color: 'white',
+                  color: "white",
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
                 }}
-                renderValue={(value) => value ? value : 'Marca'}
+                renderValue={(value) => (value ? value : "Marca")}
               >
                 <MenuItem value="">Todas las marcas</MenuItem>
-                {filteredOptions.brands.map(brand => (
-                  <MenuItem key={brand} value={brand}>{brand}</MenuItem>
+                {filteredOptions.brands.map((brand) => (
+                  <MenuItem key={brand} value={brand}>
+                    {brand}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -400,21 +427,23 @@ const handleClearFilter = useCallback(async (filterType) => {
 
           {/* Categoría */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>           
+            <FormControl fullWidth size="small" disabled={isLoading}>
               <Select
                 value={uiFilters.category}
-                onChange={(e) => handleFilterChange('category', e.target.value)}
+                onChange={(e) => handleFilterChange("category", e.target.value)}
                 displayEmpty
                 sx={{
-                  color: 'white',
+                  color: "white",
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
                 }}
-                renderValue={(value) => value ? value : 'Categoría'}
+                renderValue={(value) => (value ? value : "Categoría")}
               >
                 <MenuItem value="">Todas las categorías</MenuItem>
-                {filteredOptions.categories.map(cat => (
-                  <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                {filteredOptions.categories.map((cat) => (
+                  <MenuItem key={cat} value={cat}>
+                    {cat}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -422,21 +451,25 @@ const handleClearFilter = useCallback(async (filterType) => {
 
           {/* Subcategoría */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>            
+            <FormControl fullWidth size="small" disabled={isLoading}>
               <Select
                 value={uiFilters.subcategory}
-                onChange={(e) => handleFilterChange('subcategory', e.target.value)}
+                onChange={(e) =>
+                  handleFilterChange("subcategory", e.target.value)
+                }
                 displayEmpty
                 sx={{
-                  color: 'white',
+                  color: "white",
                   borderRadius: 2,
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
                 }}
-                renderValue={(value) => value ? value : 'Subcategoría'}
+                renderValue={(value) => (value ? value : "Subcategoría")}
               >
                 <MenuItem value="">Todas las subcategorías</MenuItem>
-                {filteredOptions.subcategories.map(sub => (
-                  <MenuItem key={sub} value={sub}>{sub}</MenuItem>
+                {filteredOptions.subcategories.map((sub) => (
+                  <MenuItem key={sub} value={sub}>
+                    {sub}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -449,31 +482,48 @@ const handleClearFilter = useCallback(async (filterType) => {
               fullWidth
               onClick={handleManualSearch}
               disabled={isLoading}
-              startIcon={isLoading ? <CircularProgress size={16} /> : <SearchIcon />}
-              sx={{ 
-                height: '40px',
+              startIcon={
+                isLoading ? <CircularProgress size={16} /> : <SearchIcon />
+              }
+              sx={{
+                height: "40px",
                 borderRadius: 2,
                 fontWeight: 600,
-                background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
+                background:
+                  "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
               }}
             >
-              {isLoading ? 'Cargando...' : 'Buscar'}
+              {isLoading ? "Cargando..." : "Buscar"}
             </Button>
           </Grid>
         </Grid>
 
         {/* Chips de Filtros Activos */}
         {hasActiveFilters && (
-          <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', p: 2, borderRadius: 2, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: 500 }}>
+          <Box
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              alignItems: "center",
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: "rgba(255, 255, 255, 0.8)", fontWeight: 500 }}
+            >
               Filtros activos:
             </Typography>
             {Object.entries(activeFilters).map(([key, value]) => {
               const labelMap = {
-                department: 'Departamento',
-                brand: 'Marca', 
-                category: 'Categoría',
-                subcategory: 'Subcategoría'
+                department: "Departamento",
+                brand: "Marca",
+                category: "Categoría",
+                subcategory: "Subcategoría",
               };
 
               return (
@@ -485,14 +535,14 @@ const handleClearFilter = useCallback(async (filterType) => {
                   variant="outlined"
                   clickable={false}
                   onClick={undefined}
-                  sx={{ 
-                    color: 'white', 
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    pointerEvents: 'none',
-                    '& .MuiChip-deleteIcon': {
-                      pointerEvents: 'auto' // Pero permitir eventos en el icono de delete
-                    }
+                  sx={{
+                    color: "white",
+                    borderColor: "rgba(255, 255, 255, 0.3)",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    pointerEvents: "none",
+                    "& .MuiChip-deleteIcon": {
+                      pointerEvents: "auto", // Pero permitir eventos en el icono de delete
+                    },
                   }}
                 />
               );
@@ -501,7 +551,7 @@ const handleClearFilter = useCallback(async (filterType) => {
               size="small"
               onClick={handleClearAllFilters}
               startIcon={<CheckIcon />}
-              sx={{ color: '#ffffffff' }}
+              sx={{ color: "#ffffffff" }}
             >
               Limpiar todos
             </Button>
@@ -510,9 +560,22 @@ const handleClearFilter = useCallback(async (filterType) => {
 
         {/* Loading indicator */}
         {isLoading && (
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <CircularProgress size={20} sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', ml: 1 }}>
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress
+              size={20}
+              sx={{ color: "rgba(255, 255, 255, 0.7)" }}
+            />
+            <Typography
+              variant="body2"
+              sx={{ color: "rgba(255, 255, 255, 0.8)", ml: 1 }}
+            >
               Aplicando filtros...
             </Typography>
           </Box>

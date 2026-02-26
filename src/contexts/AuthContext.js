@@ -1,10 +1,17 @@
-import React, { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
-import API_URL from '../config';
-import authService from '../services/authService';
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import API_URL from "../config";
+import authService from "../services/authService";
 
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
@@ -26,37 +33,40 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     authService.logout();
     setUser(null);
-    navigate('/login');
+    navigate("/login");
   }, [navigate]);
 
   const api = useMemo(() => {
     const instance = axios.create({
       baseURL: API_URL,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (user && user.token) {
-      instance.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+      instance.defaults.headers.common["Authorization"] =
+        `Bearer ${user.token}`;
     } else {
-      delete instance.defaults.headers.common['Authorization'];
+      delete instance.defaults.headers.common["Authorization"];
     }
 
     // --- INTERCEPTOR CORREGIDO ---
     instance.interceptors.response.use(
-      response => response,
-      error => {
+      (response) => response,
+      (error) => {
         // La lógica de forzar el cierre de sesión SOLO debe ejecutarse si
         // había un usuario logueado en primer lugar.
         if (user && error.response && error.response.status === 401) {
-          console.error("Token inválido o expirado para el usuario logueado. Forzando cierre de sesión.");
+          console.error(
+            "Token inválido o expirado para el usuario logueado. Forzando cierre de sesión.",
+          );
           logout();
         }
         // Si no hay un usuario, simplemente se rechaza la promesa
         // para que el componente que hizo la llamada maneje el error, sin forzar un logout global.
         return Promise.reject(error);
-      }
+      },
     );
 
     return instance;
@@ -67,11 +77,16 @@ export const AuthProvider = ({ children }) => {
       try {
         const decodedToken = jwtDecode(user.token);
         if (decodedToken.exp * 1000 < Date.now()) {
-          console.warn("Cliente: JWT detectado como expirado. Forzando cierre de sesión.");
+          console.warn(
+            "Cliente: JWT detectado como expirado. Forzando cierre de sesión.",
+          );
           logout();
         }
       } catch (decodeError) {
-        console.error("Error al decodificar JWT o formato de token inválido:", decodeError);
+        console.error(
+          "Error al decodificar JWT o formato de token inválido:",
+          decodeError,
+        );
         logout();
       }
     }
@@ -84,45 +99,59 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return true;
     } catch (error) {
-      console.error('Login de revendedor fallido:', error.response?.data?.message || error.message);
+      console.error(
+        "Login de revendedor fallido:",
+        error.response?.data?.message || error.message,
+      );
       toast.error(error.response?.data?.message || "Código inválido.");
       return false;
     }
   };
 
   // El resto de tus funciones (loginWithEmail, register, etc.) permanecen exactamente iguales
-  const loginWithEmail = useCallback(async (email, password) => {
-    try {
-      const userData = await authService.login({ email, password });
-      setUser(userData);
-      navigate("/");
-      return { success: true };
-    } catch (error) {
-      const message = error.response?.data?.message || "Credenciales inválidas.";
-      toast.error(message);
-      return { success: false, message };
-    }
-  }, [navigate]);
+  const loginWithEmail = useCallback(
+    async (email, password) => {
+      try {
+        const userData = await authService.login({ email, password });
+        setUser(userData);
+        navigate("/");
+        return { success: true };
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Credenciales inválidas.";
+        toast.error(message);
+        return { success: false, message };
+      }
+    },
+    [navigate],
+  );
 
-  const register = useCallback(async (userData) => {
-    try {
-      const data = await authService.register(userData);
-      setUser(data);
-      navigate("/login");
-      return { success: true };
-    } catch (error) {
-      const message = error.response?.data?.message || "Error durante el registro.";
-      toast.error(message);
-      return { success: false, message };
-    }
-  }, [navigate]);
+  const register = useCallback(
+    async (userData) => {
+      try {
+        const data = await authService.register(userData);
+        setUser(data);
+        navigate("/login");
+        return { success: true };
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Error durante el registro.";
+        toast.error(message);
+        return { success: false, message };
+      }
+    },
+    [navigate],
+  );
 
   const forgotPassword = useCallback(async (email) => {
     try {
       const data = await authService.forgotPassword({ email });
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || "Error al enviar el correo." };
+      return {
+        success: false,
+        message: error.response?.data?.message || "Error al enviar el correo.",
+      };
     }
   }, []);
 
@@ -131,20 +160,25 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.resetPassword(token, { newPassword });
       return { success: true, message: data.message };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || "Error al restablecer la contraseña." };
+      return {
+        success: false,
+        message:
+          error.response?.data?.message ||
+          "Error al restablecer la contraseña.",
+      };
     }
   }, []);
 
   // Agrega esta función para actualizar el usuario
   const updateUser = useCallback((updatedUserData) => {
-    setUser(prevUser => {
+    setUser((prevUser) => {
       if (!prevUser) return prevUser;
 
       const updatedUser = {
         ...prevUser,
         ...updatedUserData,
         // Mantén el token intacto
-        token: prevUser.token
+        token: prevUser.token,
       };
 
       // Actualiza también localStorage
@@ -188,7 +222,7 @@ export const AuthProvider = ({ children }) => {
     forgotPassword,
     resetPassword,
     updateUser,
-    refreshProfile
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

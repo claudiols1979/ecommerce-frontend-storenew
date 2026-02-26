@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { useAuth } from './AuthContext';
-import API_URL from '../config';
+import React, { createContext, useContext, useState, useCallback } from "react";
+import PropTypes from "prop-types";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useAuth } from "./AuthContext";
+import API_URL from "../config";
 
 const ReviewContext = createContext();
 
@@ -28,7 +28,8 @@ export const ReviewProvider = ({ children }) => {
       const { data } = await axios.get(`${API_URL}/api/reviews/${productId}`);
       setReviews(data);
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Error al cargar las reseñas.';
+      const errorMessage =
+        err.response?.data?.message || "Error al cargar las reseñas.";
       setError({ message: errorMessage });
       // No mostramos un toast aquí para no molestar al usuario que solo está viendo.
     } finally {
@@ -41,27 +42,31 @@ export const ReviewProvider = ({ children }) => {
    * Esta es una llamada PRIVADA, por lo que usa la instancia 'api' con token.
    * @param {object} reviewData - Objeto con { productId, rating, comment }.
    */
-  const createReview = useCallback(async (reviewData) => {
-    if (!user) {
-      toast.error("Debes iniciar sesión para dejar una reseña.");
-      throw new Error("Usuario no autenticado.");
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      await api.post('/api/reviews', reviewData);
-      toast.success('¡Gracias por tu reseña!');
-      // Después de crear la reseña, volvemos a cargar la lista para ese producto.
-      await fetchReviews(reviewData.productId);
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || 'No se pudo enviar tu reseña.';
-      setError({ message: errorMessage });
-      toast.error(errorMessage);
-      throw new Error(errorMessage); // Propaga el error para que el componente lo maneje
-    } finally {
-      setLoading(false);
-    }
-  }, [api, user, fetchReviews]);
+  const createReview = useCallback(
+    async (reviewData) => {
+      if (!user) {
+        toast.error("Debes iniciar sesión para dejar una reseña.");
+        throw new Error("Usuario no autenticado.");
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        await api.post("/api/reviews", reviewData);
+        toast.success("¡Gracias por tu reseña!");
+        // Después de crear la reseña, volvemos a cargar la lista para ese producto.
+        await fetchReviews(reviewData.productId);
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.message || "No se pudo enviar tu reseña.";
+        setError({ message: errorMessage });
+        toast.error(errorMessage);
+        throw new Error(errorMessage); // Propaga el error para que el componente lo maneje
+      } finally {
+        setLoading(false);
+      }
+    },
+    [api, user, fetchReviews],
+  );
 
   const value = {
     reviews,
@@ -72,9 +77,7 @@ export const ReviewProvider = ({ children }) => {
   };
 
   return (
-    <ReviewContext.Provider value={value}>
-      {children}
-    </ReviewContext.Provider>
+    <ReviewContext.Provider value={value}>{children}</ReviewContext.Provider>
   );
 };
 
