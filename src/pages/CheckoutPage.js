@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container, Box, Typography, Button, Grid, TextField,
+    Container, Box, Typography, Button, Grid, TextField, Card, CardContent,
     CircularProgress, Divider, List, ListItem, Paper, FormControl,
     Select, MenuItem, useTheme, InputLabel, alpha
 } from '@mui/material';
@@ -19,6 +19,17 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CRAddressSelector from '../components/CRAddressSelector';
+
+const mainGradient = "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important";
+const glassStyle = {
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "24px",
+    color: "white",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+};
 
 const CheckoutPage = () => {
     const { cartItems, loading, initiateTilopayPayment } = useOrders();
@@ -55,15 +66,10 @@ const CheckoutPage = () => {
         province: false
     });
 
-    // Función para manejar cuando un campo pierde el focus (se toca)
     const handleFieldBlur = (fieldName) => {
-        setTouchedFields(prev => ({
-            ...prev,
-            [fieldName]: true
-        }));
+        setTouchedFields(prev => ({ ...prev, [fieldName]: true }));
     };
 
-    // Función para verificar si un campo debe mostrar error
     const shouldShowError = (fieldName, value) => {
         return touchedFields[fieldName] && !value;
     };
@@ -79,7 +85,6 @@ const CheckoutPage = () => {
 
     const provinces = ["Alajuela", "Cartago", "Guanacaste", "Heredia", "Limón", "Puntarenas", "San José"];
 
-    // List of GAM Cantons (Mirror of backend logic)
     const GAM_CANTONS = {
         "san jose": ["central", "escazu", "desamparados", "aserri", "mora", "goicoechea", "santa ana", "alajuelita", "vazquez de coronado", "tibas", "moravia", "montes de oca", "curridabat", "puriscal"],
         "alajuela": ["central", "atenas", "grecia", "naranjo", "palmares", "poas", "orotina", "sarchi", "zarcero"],
@@ -88,13 +93,7 @@ const CheckoutPage = () => {
     };
 
     const normalize = (str) =>
-        str
-            ? str
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .trim()
-            : "";
+        str ? str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
 
     const isGAM = (prov, cant) => {
         if (!prov || !cant) return false;
@@ -106,31 +105,23 @@ const CheckoutPage = () => {
 
     const calculateShippingFee = (prov, cant, items) => {
         if (!prov || !cant) return 0;
-
         const totalWeight = items.reduce((sum, item) => sum + (item.quantity * (item.product?.weight || 100)), 0);
         const inGAM = isGAM(prov, cant);
-
-        // Matriz Correos 2025
         const tariffs = [
             { maxW: 250, gam: 1850, resto: 2150 },
             { maxW: 500, gam: 1950, resto: 2500 },
             { maxW: 1000, gam: 2350, resto: 3450 }
         ];
-
         const rate = tariffs.find(t => totalWeight <= t.maxW);
         let base = 0;
-
         if (rate) {
             base = inGAM ? rate.gam : rate.resto;
         } else {
-            // Dynamic formula for weight > 1000g
             const base1kg = inGAM ? 2350 : 3450;
             const extraKiloRate = 1100;
-            const totalKilos = totalWeight / 1000;
-            const extraKilos = Math.ceil(totalKilos - 1);
+            const extraKilos = Math.ceil((totalWeight / 1000) - 1);
             base = base1kg + (extraKilos * extraKiloRate);
         }
-
         return base;
     };
 
@@ -148,13 +139,10 @@ const CheckoutPage = () => {
             const iva = parseFloat(item.product?.iva) || 0;
             return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
         }, 0);
-
         const currentCanton = selectedCanton || shippingDetails.city;
-
         const sBaseRaw = calculateShippingFee(selectedProvince, currentCanton, cartItems);
         const sTax = taxRegime === 'simplified' ? 0 : Math.round(sBaseRaw * 0.13);
         const sBase = taxRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
-
         setBreakdown({
             itemsSubtotal: iSubtotal,
             itemsTax: iTax,
@@ -162,7 +150,6 @@ const CheckoutPage = () => {
             shippingTax: sTax,
             total: Math.round(iSubtotal + iTax + sBase + sTax)
         });
-
         if (selectedProvince && shippingDetails.city) {
             setShippingCost(sBase + sTax);
             setShippingMessage(isGAM(selectedProvince, shippingDetails.city) ? 'Tarifa GAM (EMS Nacional)' : 'Tarifa Resto del País (EMS Nacional)');
@@ -180,19 +167,15 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         if (user) {
-            // ✅ CORREGIDO: Cargar todos los datos del usuario incluyendo provincia y ciudad
             const fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : '';
-
             setShippingDetails(prev => ({
                 ...prev,
                 name: fullName || prev.name,
                 email: user.email || prev.email,
                 phone: user.phoneNumber || prev.phone,
                 address: user.address || prev.address,
-                city: user.city || prev.city, // ✅ Ahora sí carga la ciudad
+                city: user.city || prev.city,
             }));
-
-            // ✅ CORREGIDO: Cargar provincia, cantón y distrito del usuario si existen
             if (user.provincia || user.province) {
                 setSelectedProvince(user.provincia || user.province);
                 setProvinceTouched(true);
@@ -211,39 +194,26 @@ const CheckoutPage = () => {
         setShippingDetails(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleProvinceChange = (e) => {
-        setSelectedProvince(e.target.value);
-        setProvinceTouched(true);
-    };
-
-    // ✅ NUEVA FUNCIÓN: Actualizar perfil del usuario con la información de envío
     const updateUserProfileWithShippingInfo = async () => {
         if (!user || !user._id) return;
-
         try {
-            // Extraer nombre y apellido del campo name
             const nameParts = shippingDetails.name.split(' ');
             const firstName = nameParts[0] || '';
             const lastName = nameParts.slice(1).join(' ') || '';
-
             const updatedData = {
-                firstName: firstName,
-                lastName: lastName,
+                firstName,
+                lastName,
                 email: shippingDetails.email,
                 phoneNumber: shippingDetails.phone,
                 address: shippingDetails.address,
                 city: selectedCanton || shippingDetails.city,
-                province: selectedProvince,
                 provincia: selectedProvince,
                 canton: selectedCanton || shippingDetails.city,
                 distrito: selectedDistrito
             };
-
             await updateResellerProfile(user._id, updatedData);
-            // La actualización del contexto de auth se maneja automáticamente en el contexto UpdateInfo
         } catch (error) {
             console.error('Error al actualizar perfil del usuario:', error);
-            // No mostramos error al usuario para no interrumpir el flujo de checkout
         }
     };
 
@@ -252,338 +222,169 @@ const CheckoutPage = () => {
             toast.error("Debes iniciar sesión para finalizar el pedido.");
             return;
         }
-
         if (cartItems.length === 0) {
             toast.error("No puedes procesar el pago con un carrito vacío.");
             return;
         }
-
         if (!shippingDetails.name || !shippingDetails.phone || !shippingDetails.address || !shippingDetails.email || !shippingDetails.city || !selectedProvince) {
-            toast.error("Por favor, completa toda la información de envío, incluyendo la provincia y la ciudad.");
+            toast.error("Por favor, completa toda la información de envío.");
             return;
         }
-
         setPaymentButtonLoading(true);
-
         try {
-            // ✅ NUEVO: Actualizar perfil del usuario antes de proceder al pago
             await updateUserProfileWithShippingInfo();
-
             const finalShippingDetails = {
                 ...shippingDetails,
-                province: selectedProvince,
                 provincia: selectedProvince,
                 canton: selectedCanton || shippingDetails.city,
                 distrito: selectedDistrito,
                 city: selectedCanton || shippingDetails.city,
             };
-
             const paymentUrl = await initiateTilopayPayment(finalShippingDetails);
-
             if (paymentUrl) {
                 window.location.href = paymentUrl;
             }
         } catch (err) {
             console.error("Error en la página al iniciar el pago:", err);
-            toast.error('Hubo un problema al redirigir al pago. Intente nuevamente.');
+            toast.error('Hubo un problema al redirigir al pago.');
+        } finally {
+            setPaymentButtonLoading(false);
         }
     };
 
     if (orderPlaced) {
         return (
-            <Container maxWidth="sm" sx={{
-                py: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '80vh'
-            }}>
-                <Paper elevation={0} sx={{
-                    p: 6,
-                    textAlign: 'center',
-                    background: 'transparent'
-                }}>
-                    <CheckCircleOutlineIcon sx={{
-                        fontSize: 80,
-                        color: 'success.main',
-                        mb: 3,
-                        opacity: 0.9
-                    }} />
-                    <Typography variant="h4" gutterBottom sx={{
-                        fontWeight: 400,
-                        color: 'text.primary',
-                        mb: 2,
-                        letterSpacing: '-0.5px'
-                    }}>
-                        Pedido confirmado
+            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: mainGradient, p: 3 }}>
+                <Card sx={{ ...glassStyle, maxWidth: 600, width: "100%", textAlign: "center", p: 4 }}>
+                    <CheckCircleOutlineIcon sx={{ fontSize: 100, color: '#4CAF50', mb: 3 }} />
+                    <Typography variant="h3" gutterBottom sx={{ fontWeight: 800 }}>Pedido confirmado</Typography>
+                    <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', mb: 4, fontSize: '1.2rem' }}>
+                        Su pedido ha sido procesado exitosamente. Será redirigido al portal de pago seguro.
                     </Typography>
-                    <Typography variant="body1" sx={{
-                        color: 'text.secondary',
-                        mb: 4,
-                        fontSize: '1.1rem',
-                        lineHeight: 1.6
-                    }}>
-                        Su pedido ha sido procesado exitosamente.
-                        Será redirigido al portal de pago seguro.
-                    </Typography>
-
                     {placedOrderDetails && (
-                        <Box sx={{
-                            mb: 4,
-                            p: 3,
-                            backgroundColor: alpha(theme.palette.success.main, 0.05),
-                            border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
-                            borderRadius: 2
-                        }}>
-                            <Typography variant="body2" sx={{
-                                fontWeight: 500,
-                                color: 'text.primary',
-                                mb: 1
-                            }}>
-                                ID de pedido: {placedOrderDetails._id}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                Total: {formatPrice(placedOrderDetails.totalPrice)}
-                            </Typography>
+                        <Box sx={{ mb: 4, p: 3, background: "rgba(255,255,255,0.05)", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                            <Typography variant="h6" sx={{ fontWeight: 700 }}>ID de pedido: {placedOrderDetails._id}</Typography>
+                            <Typography variant="h6" sx={{ color: "#F72585", fontWeight: 800 }}>Total: {formatPrice(placedOrderDetails.totalPrice)}</Typography>
                         </Box>
                     )}
-
-                    <Button
-                        variant="outlined"
-                        onClick={() => navigate('/profile')}
-                        sx={{
-                            px: 5,
-                            py: 1.5,
-                            borderRadius: 1,
-                            borderWidth: 2,
-                            '&:hover': {
-                                borderWidth: 2
-                            }
-                        }}
-                    >
+                    <Button variant="contained" onClick={() => navigate('/profile')} sx={{ borderRadius: "16px", px: 4, py: 1.5, fontWeight: "bold", background: "rgba(255,255,255,0.2)", "&:hover": { background: "rgba(255,255,255,0.3)" } }}>
                         Ver historial de pedidos
                     </Button>
-                </Paper>
-            </Container>
+                </Card>
+            </Box>
         );
     }
 
     return (
-        <Container maxWidth="xl" sx={{
-            py: 6,
-            minHeight: '100vh'
-        }}>
-            <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
-                <Typography variant="h1" sx={{
-                    fontSize: '2.5rem',
-                    fontWeight: 400,
-                    color: 'text.primary',
-                    mb: 6,
-                    textAlign: 'center',
-                    letterSpacing: '-0.5px'
-                }}>
-                    Finalizar compra
+        <Box sx={{ minHeight: "100vh", pb: 8, pt: { xs: 4, md: 8 }, background: mainGradient, position: "relative", overflow: "hidden" }}>
+            {/* Decorative Blur Blobs */}
+            <Box sx={{ position: "absolute", top: -150, right: -150, width: 500, height: 500, background: "radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(168, 85, 247, 0) 70%)", borderRadius: "50%", zIndex: 0 }} />
+            <Box sx={{ position: "absolute", bottom: -100, left: -100, width: 400, height: 400, background: "radial-gradient(circle, rgba(247, 37, 133, 0.35) 0%, rgba(247, 37, 133, 0) 70%)", borderRadius: "50%", zIndex: 0 }} />
+
+            <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+                <style>
+                    {`
+                        @keyframes fadeInUp {
+                            from { opacity: 0; transform: translateY(30px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        .animate-fade-in-up {
+                            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+                        }
+                    `}
+                </style>
+
+                <Typography variant="h3" sx={{ textAlign: 'center', mb: 8, fontWeight: 800, color: 'white', letterSpacing: "-0.02em", textShadow: "0 2px 10px rgba(0,0,0,0.2)" }} className="animate-fade-in-up">
+                    Finalizar Compra
                 </Typography>
 
-                <Grid container spacing={6}>
+                <Grid container spacing={4}>
                     {/* Order Summary - LEFT SIDE */}
-                    <Grid item xs={12} lg={5}>
-                        <Box sx={{
-                            position: 'sticky',
-                            top: 24
-                        }}>
+                    <Grid item xs={12} lg={5} className="animate-fade-in-up">
+                        <Box sx={{ position: 'sticky', top: 24 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <ReceiptIcon sx={{
-                                    color: 'primary.main',
-                                    mr: 2,
-                                    fontSize: 28
-                                }} />
-                                <Typography variant="h5" sx={{
-                                    fontWeight: 600,
-                                    color: 'text.primary'
-                                }}>
-                                    Resumen del pedido
-                                </Typography>
+                                <ReceiptIcon sx={{ color: 'white', mr: 2, fontSize: 32 }} />
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>Resumen del pedido</Typography>
                             </Box>
 
-                            <Paper elevation={3} sx={{
-                                p: 4,
-                                borderRadius: 3,
-                                backgroundColor: 'white',
-                                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-                            }}>
-                                <List sx={{ mb: 2 }}>
-                                    {cartItems.map((item) => {
-                                        const priceWithTax = item.product ?
-                                            (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
-                                            item.priceAtSale;
-
-                                        return (
-                                            <ListItem key={item.product._id} disablePadding sx={{
-                                                py: 2,
-                                                borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`
-                                            }}>
-                                                <Box sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'flex-start',
-                                                    width: '100%'
-                                                }}>
-                                                    <Box sx={{ flex: 1 }}>
-                                                        <Typography variant="body1" sx={{
-                                                            fontWeight: 600,
-                                                            color: 'text.primary',
-                                                            mb: 0.5
-                                                        }}>
-                                                            {item.name}
-                                                        </Typography>
-                                                        <Typography variant="caption" sx={{
-                                                            color: 'text.secondary',
-                                                            display: 'block'
-                                                        }}>
-                                                            Cantidad: {item.quantity} • {formatPrice(priceWithTax)} c/u
-                                                        </Typography>
+                            <Card sx={{ ...glassStyle, p: 1 }}>
+                                <CardContent sx={{ p: 3 }}>
+                                    <List sx={{ mb: 0 }}>
+                                        {cartItems.map((item, idx) => {
+                                            const priceWithTax = item.product ?
+                                                (taxRegime === 'simplified' ? Math.round(item.priceAtSale) : calculatePriceWithTax(item.priceAtSale, item.product.iva)) :
+                                                item.priceAtSale;
+                                            return (
+                                                <ListItem key={item.product?._id} disablePadding sx={{ py: 2, borderBottom: idx === cartItems.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                                                        <Box sx={{ flex: 1, pr: 2 }}>
+                                                            <Typography variant="body1" sx={{ fontWeight: 700, mb: 0.5 }}>{item.name}</Typography>
+                                                            <Typography variant="caption" sx={{ opacity: 0.6 }}>{item.quantity} x {formatPrice(priceWithTax)}</Typography>
+                                                        </Box>
+                                                        <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatPrice(item.quantity * priceWithTax)}</Typography>
                                                     </Box>
-                                                    <Typography variant="body1" sx={{
-                                                        fontWeight: 700,
-                                                        color: 'text.primary'
-                                                    }}>
-                                                        {formatPrice(item.quantity * priceWithTax)}
-                                                    </Typography>
+                                                </ListItem>
+                                            );
+                                        })}
+                                    </List>
+
+                                    <Box sx={{ my: 3, p: 2, background: "rgba(255,255,255,0.05)", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                                            <LocalShippingIcon sx={{ fontSize: 22, color: '#A855F7', mr: 1.5 }} />
+                                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Costo de envío</Typography>
+                                        </Box>
+                                        {!selectedProvince ? (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, p: 1, background: "rgba(255, 152, 0, 0.1)", borderRadius: "8px" }}>
+                                                <WarningAmberIcon sx={{ fontSize: 18, color: '#FF9800', mr: 1 }} />
+                                                <Typography variant="caption" sx={{ color: '#FF9800', fontWeight: 600 }}>Selecciona ubicación para calcular</Typography>
+                                            </Box>
+                                        ) : (
+                                            <Box>
+                                                <Box display="flex" justifyContent="space-between" mb={0.5}>
+                                                    <Typography variant="body2" sx={{ opacity: 0.7 }}>Envío base:</Typography>
+                                                    <Typography variant="body2">{formatPrice(breakdown.shippingBase)}</Typography>
                                                 </Box>
-                                            </ListItem>
-                                        );
-                                    })}
-                                </List>
-
-                                <Divider sx={{ my: 3 }} />
-
-                                {/* Shipping Cost Info */}
-                                <Box sx={{
-                                    mb: 3,
-                                    p: 2,
-                                    backgroundColor: alpha(theme.palette.primary.main, 0.03),
-                                    borderRadius: 2,
-                                    border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-                                }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                        <LocalShippingIcon sx={{
-                                            fontSize: 20,
-                                            color: 'primary.main',
-                                            mr: 1
-                                        }} />
-                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                            Costo de envío
-                                        </Typography>
+                                                {taxRegime !== 'simplified' && (
+                                                    <Box display="flex" justifyContent="space-between" mb={0.5}>
+                                                        <Typography variant="body2" sx={{ opacity: 0.7 }}>IVA (13%):</Typography>
+                                                        <Typography variant="body2">{formatPrice(breakdown.shippingTax)}</Typography>
+                                                    </Box>
+                                                )}
+                                                <Typography variant="caption" sx={{ color: "#4CAF50", fontWeight: 700, mt: 1, display: "block" }}>{shippingMessage}</Typography>
+                                            </Box>
+                                        )}
                                     </Box>
 
-                                    {!selectedProvince ? (
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                            <WarningAmberIcon sx={{
-                                                fontSize: 16,
-                                                color: 'warning.main',
-                                                mr: 1
-                                            }} />
-                                            <Typography variant="caption" sx={{ color: 'warning.main' }}>
-                                                Selecciona tu provincia para calcular el envío
-                                            </Typography>
+                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, my: 3 }}>
+                                        <Box display="flex" justifyContent="space-between">
+                                            <Typography variant="body2" sx={{ opacity: 0.7 }}>{taxRegime === 'simplified' ? 'Subtotal' : 'Subtotal Productos'}:</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatPrice(breakdown.itemsSubtotal + (taxRegime !== 'simplified' ? breakdown.itemsTax : 0))}</Typography>
                                         </Box>
-                                    ) : (
-                                        <Box>
-                                            <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                {taxRegime === 'simplified' ? 'Envío' : 'Envío base'}: {formatPrice(breakdown.shippingBase)}
-                                            </Typography>
-                                            {taxRegime !== 'simplified' && (
-                                                <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                                    Impuesto (13%): {formatPrice(breakdown.shippingTax)}
-                                                </Typography>
-                                            )}
-                                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, mt: 1 }}>
-                                                Total envío: {formatPrice(shippingCost)}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600, mt: 1 }}>
-                                                Envío por Correos de Costa Rica a todo el territorio nacional.
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 600 }}>
-                                                Datos calculados por Correos de Costa Rica.
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 500, display: 'block', mt: 1 }}>
-                                                {shippingMessage}
-                                            </Typography>
+                                        <Box display="flex" justifyContent="space-between" sx={{ pb: 1, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                                            <Typography variant="body2" sx={{ opacity: 0.7 }}>Envío:</Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatPrice(shippingCost)}</Typography>
                                         </Box>
-                                    )}
-                                </Box>
-
-                                <Box sx={{ mb: 3 }}>
-                                    <Box display="flex" justifyContent="space-between" mb={1.5}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{taxRegime === 'simplified' ? 'Productos' : 'Subtotal Productos'}</Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsSubtotal)}</Typography>
+                                        <Box display="flex" justifyContent="space-between" sx={{ pt: 1 }}>
+                                            <Typography variant="h5" sx={{ fontWeight: 800 }}>Total</Typography>
+                                            <Typography variant="h5" sx={{ fontWeight: 900, color: "white" }}>{formatPrice(breakdown.total)}</Typography>
+                                        </Box>
                                     </Box>
-                                    {taxRegime !== 'simplified' && (
-                                        <Box display="flex" justifyContent="space-between" mb={1.5}>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Productos</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.itemsTax)}</Typography>
-                                        </Box>
-                                    )}
-                                    <Box display="flex" justifyContent="space-between" mb={1.5}>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{taxRegime === 'simplified' ? 'Envío' : 'Envío (Base)'}</Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingBase)}</Typography>
-                                    </Box>
-                                    {taxRegime !== 'simplified' && (
-                                        <Box display="flex" justifyContent="space-between" mb={1.5}>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>IVA Envío (13%)</Typography>
-                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatPrice(breakdown.shippingTax)}</Typography>
-                                        </Box>
-                                    )}
-                                </Box>
-
-                                <Divider sx={{ my: 2 }} />
-
-                                <Box sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    mb: 4
-                                }}>
-                                    <Typography variant="h5" sx={{
-                                        fontWeight: 700,
-                                        color: 'text.primary'
-                                    }}>
-                                        Total
-                                    </Typography>
-                                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                                        {formatPrice(breakdown.total)}
-                                    </Typography>
-                                </Box>
-                            </Paper>
+                                </CardContent>
+                            </Card>
                         </Box>
                     </Grid>
 
                     {/* Shipping Details Form - RIGHT SIDE */}
-                    <Grid item xs={12} lg={7}>
-                        <Box sx={{ mb: 5 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <LocalShippingIcon sx={{
-                                    color: 'primary.main',
-                                    mr: 2,
-                                    fontSize: 28
-                                }} />
-                                <Typography variant="h5" sx={{
-                                    fontWeight: 600,
-                                    color: 'text.primary'
-                                }}>
-                                    Información de envío
-                                </Typography>
-                            </Box>
+                    <Grid item xs={12} lg={7} className="animate-fade-in-up" sx={{ animationDelay: "0.2s" }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <LocalShippingIcon sx={{ color: 'white', mr: 2, fontSize: 32 }} />
+                            <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>Información de envío</Typography>
+                        </Box>
 
-                            <Paper elevation={3} sx={{
-                                p: 4,
-                                borderRadius: 3,
-                                backgroundColor: 'white',
-                                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-                            }}>
+                        <Card sx={{ ...glassStyle, mb: 4 }}>
+                            <CardContent sx={{ p: 4 }}>
                                 <Grid container spacing={3}>
-                                    <Grid item xs={12} md={6}>
+                                    <Grid item xs={12}>
                                         <TextField
                                             label="Nombre completo"
                                             name="name"
@@ -591,12 +392,17 @@ const CheckoutPage = () => {
                                             onChange={handleShippingChange}
                                             onBlur={() => handleFieldBlur('name')}
                                             error={shouldShowError('name', shippingDetails.name)}
-                                            helperText={shouldShowError('name', shippingDetails.name) ? "Este campo es requerido" : ""}
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            size="medium"
-                                            sx={{ mb: 2 }}
+                                            fullWidth required variant="outlined"
+                                            InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7) !important" } }}
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: "16px", color: "white",
+                                                    background: "rgba(255,255,255,0.05)",
+                                                    "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                                                    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+                                                    "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                                                }
+                                            }}
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
@@ -608,12 +414,17 @@ const CheckoutPage = () => {
                                             onChange={handleShippingChange}
                                             onBlur={() => handleFieldBlur('email')}
                                             error={shouldShowError('email', shippingDetails.email)}
-                                            helperText={shouldShowError('email', shippingDetails.email) ? "Este campo es requerido" : ""}
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            size="medium"
-                                            sx={{ mb: 2 }}
+                                            fullWidth required variant="outlined"
+                                            InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7) !important" } }}
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: "16px", color: "white",
+                                                    background: "rgba(255,255,255,0.05)",
+                                                    "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                                                    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+                                                    "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                                                }
+                                            }}
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
@@ -624,156 +435,121 @@ const CheckoutPage = () => {
                                             onChange={handleShippingChange}
                                             onBlur={() => handleFieldBlur('phone')}
                                             error={shouldShowError('phone', shippingDetails.phone)}
-                                            helperText={shouldShowError('phone', shippingDetails.phone) ? "Este campo es requerido" : ""}
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            size="medium"
-                                            sx={{ mb: 2 }}
+                                            fullWidth required variant="outlined"
+                                            InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7) !important" } }}
+                                            sx={{
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: "16px", color: "white",
+                                                    background: "rgba(255,255,255,0.05)",
+                                                    "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                                                    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+                                                    "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                                                }
+                                            }}
                                         />
                                     </Grid>
+
                                     <Grid item xs={12}>
-                                        <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-                                            Provincia, Cantón y Distrito *
-                                        </Typography>
-                                        <CRAddressSelector
-                                            provincia={selectedProvince}
-                                            setProvincia={setSelectedProvince}
-                                            canton={selectedCanton}
-                                            setCanton={setSelectedCanton}
-                                            distrito={selectedDistrito}
-                                            setDistrito={setSelectedDistrito}
-                                            icon={null}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Otras señas (Calle, número, urbanización, punto de referencia, etc.)"
-                                            name="address"
-                                            value={shippingDetails.address}
-                                            onChange={handleShippingChange}
-                                            onBlur={() => handleFieldBlur('address')}
-                                            error={shouldShowError('address', shippingDetails.address)}
-                                            helperText={shouldShowError('address', shippingDetails.address) ? "Este campo es requerido" : ""}
-                                            fullWidth
-                                            required
-                                            variant="outlined"
-                                            size="medium"
-                                            multiline
-                                            rows={2}
-                                            sx={{ mb: 2 }}
-                                        />
+                                        <Box sx={{
+                                            "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.7) !important" },
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: "16px", color: "white",
+                                                background: "rgba(255,255,255,0.05)",
+                                                "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                                                "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+                                                "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                                                "& input, & select, & .MuiSelect-select": { color: "white !important", WebkitTextFillColor: "white !important" }
+                                            },
+                                            "& .MuiSelect-icon": { color: "white !important" }
+                                        }}>
+                                            <style>
+                                                {`
+                                                   .MuiMenu-paper {
+                                                       background: rgba(30, 0, 80, 0.95) !important;
+                                                       backdrop-filter: blur(10px) !important;
+                                                       border: 1px solid rgba(255,255,255,0.1) !important;
+                                                       color: white !important;
+                                                   }
+                                                   .MuiMenuItem-root:hover { background: rgba(255,255,255,0.1) !important; }
+                                                   .Mui-selected { background: rgba(168, 85, 247, 0.3) !important; }
+                                               `}
+                                            </style>
+                                            <CRAddressSelector
+                                                provincia={selectedProvince} setProvincia={setSelectedProvince}
+                                                canton={selectedCanton} setCanton={setSelectedCanton}
+                                                distrito={selectedDistrito} setDistrito={setSelectedDistrito}
+                                                icon={null}
+                                                vertical={false}
+                                            />
+                                        </Box>
                                     </Grid>
                                 </Grid>
-                            </Paper>
+
+                                <TextField
+                                    label="Dirección exacta"
+                                    name="address"
+                                    value={shippingDetails.address}
+                                    onChange={handleShippingChange}
+                                    onBlur={() => handleFieldBlur('address')}
+                                    error={shouldShowError('address', shippingDetails.address)}
+                                    fullWidth required variant="outlined" multiline rows={2}
+                                    InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7) !important" } }}
+                                    sx={{
+                                        mt: 3,
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: "16px", color: "white",
+                                            background: "rgba(255,255,255,0.05)",
+                                            "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                                            "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3)" },
+                                            "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                                        }
+                                    }}
+                                />
+                            </CardContent>
+                        </Card>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <PaymentIcon sx={{ color: 'white', mr: 2, fontSize: 32 }} />
+                            <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>Método de pago</Typography>
                         </Box>
 
-                        <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <PaymentIcon sx={{
-                                    color: 'primary.main',
-                                    mr: 2,
-                                    fontSize: 28
-                                }} />
-                                <Typography variant="h5" sx={{
-                                    fontWeight: 600,
-                                    color: 'text.primary'
-                                }}>
-                                    Método de pago
-                                </Typography>
-                            </Box>
-
-                            <Paper elevation={3} sx={{
-                                p: 4,
-                                borderRadius: 3,
-                                backgroundColor: 'white',
-                                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`
-                            }}>
-                                <Box sx={{
-                                    p: 3,
-                                    backgroundColor: alpha(theme.palette.primary.main, 0.03),
-                                    border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                                    borderRadius: 2
-                                }}>
-                                    <Typography variant="h6" sx={{
-                                        fontWeight: 600,
-                                        color: 'primary.main',
-                                        mb: 2,
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}>
-                                        <PaymentIcon sx={{ mr: 1.5, fontSize: 24 }} />
-                                        Tarjeta de crédito/débito
+                        <Card sx={glassStyle}>
+                            <CardContent sx={{ p: 4 }}>
+                                <Box sx={{ p: 3, background: "rgba(255, 193, 7, 0.1)", border: "2px solid rgba(255, 193, 7, 0.3)", borderRadius: "20px" }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#FFC107', mb: 2, display: 'flex', alignItems: 'center' }}>
+                                        <PaymentIcon sx={{ mr: 1.5 }} /> Tarjeta de crédito/débito
                                     </Typography>
-                                    <Typography variant="body1" sx={{
-                                        color: 'text.secondary',
-                                        mb: 2,
-                                        lineHeight: 1.6
-                                    }}>
-                                        Será redirigido a una plataforma de pago segura para completar su transacción.
-                                        Todos los datos están protegidos con encriptación SSL.
+                                    <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', lineHeight: 1.7 }}>
+                                        Será redirigido a una plataforma de pago segura. Todos los datos están protegidos con encriptación de grado bancario.
                                     </Typography>
                                 </Box>
-                            </Paper>
-                        </Box>
 
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            onClick={handleInitiatePayment}
-                            disabled={
-                                cartItems.length === 0 ||
-                                loading ||
-                                !shippingDetails.name ||
-                                !shippingDetails.phone ||
-                                !shippingDetails.address ||
-                                !shippingDetails.email ||
-                                !shippingDetails.city ||
-                                !selectedProvince ||
-                                user?.isBlocked
-                            }
-                            sx={{
-                                mt: 4,
-                                py: 2,
-                                backgroundColor: '#f3e300ff',
-                                color: 'black',
-                                borderRadius: 2,
-                                fontWeight: 600,
-                                fontSize: '1.1rem',
-                                '&:hover': {
-                                    backgroundColor: '#cdc00fff',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: '0 8px 20px rgba(38, 60, 92, 0.3)'
-                                },
-                                '&:disabled': {
-                                    backgroundColor: 'grey.300',
-                                    color: 'grey.500',
-                                    transform: 'none'
-                                }
-                            }}
-                        >
-                            {paymentButtonLoading ? (
-                                <CircularProgress size={24} sx={{ color: 'black' }} />
-                            ) : (
-                                'Proceder al pago seguro'
-                            )}
-
-                            {paymentButtonLoading ? (
-                                console.log("procesando pago")
-                            ) : (
-                                <PaymentIcon sx={{
-                                    color: 'black',
-                                    ml: 2,
-                                    fontSize: 28
-                                }} />
-                            )}
-
-                        </Button>
+                                <Button
+                                    variant="contained" fullWidth size="large" onClick={handleInitiatePayment}
+                                    disabled={cartItems.length === 0 || loading || !shippingDetails.name || !shippingDetails.phone || !shippingDetails.address || !shippingDetails.email || !selectedProvince || user?.isBlocked}
+                                    sx={{
+                                        mt: 5, py: 2.5, borderRadius: "20px",
+                                        backgroundColor: '#FFC107 !important',
+                                        color: 'white !important',
+                                        fontWeight: 900, fontSize: '1.2rem', textTransform: "uppercase", letterSpacing: "0.05em",
+                                        boxShadow: "0 10px 25px rgba(255, 193, 7, 0.4)",
+                                        "&:hover": {
+                                            backgroundColor: '#FFD54F !important',
+                                            transform: 'translateY(-3px)',
+                                            boxShadow: '0 15px 30px rgba(255, 193, 7, 0.5)'
+                                        },
+                                        transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                                    }}
+                                >
+                                    {paymentButtonLoading ? <CircularProgress size={28} sx={{ color: 'white' }} /> : 'Proceder al pago seguro'}
+                                    {!paymentButtonLoading && <PaymentIcon sx={{ ml: 2, fontSize: 32 }} />}
+                                </Button>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };
 

@@ -96,81 +96,81 @@ function CRAddressSelector({
 
   const itemCols = vertical ? 12 : 4;
 
-return (
-  <Grid container spacing={2} direction="column">
-    <Grid item xs={12}>
-      <FormControl fullWidth variant="outlined" required sx={customStyle}>
-        <InputLabel id="provincia-label">Provincia</InputLabel>
-        <Select
-          labelId="provincia-label"
-          id="provincia"
-          name="provincia"
-          value={provincia}
-          onChange={handleProvinciaChange}
-          label="Provincia"
-          startAdornment={icon}
-        >
-          <MenuItem value="">
-            <em>Seleccione una Provincia</em>
-          </MenuItem>
-          {provincesList.map((p) => (
-            <MenuItem key={p.id} value={p.name}>
-              {p.name}
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={itemCols}>
+        <FormControl fullWidth variant="outlined" required sx={customStyle}>
+          <InputLabel id="provincia-label">Provincia</InputLabel>
+          <Select
+            labelId="provincia-label"
+            id="provincia"
+            name="provincia"
+            value={provincia}
+            onChange={handleProvinciaChange}
+            label="Provincia"
+            startAdornment={icon}
+          >
+            <MenuItem value="">
+              <em>Seleccione una Provincia</em>
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Grid>
+            {provincesList.map((p) => (
+              <MenuItem key={p.id} value={p.name}>
+                {p.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
 
-    <Grid item xs={12}>
-      <FormControl fullWidth variant="outlined" required disabled={!provincia} sx={customStyle}>
-        <InputLabel id="canton-label">Cantón</InputLabel>
-        <Select
-          labelId="canton-label"
-          id="canton"
-          name="canton"
-          value={canton}
-          onChange={handleCantonChange}
-          label="Cantón"
-          startAdornment={icon}
-        >
-          <MenuItem value="">
-            <em>Seleccione un Cantón</em>
-          </MenuItem>
-          {cantonesList.map((c) => (
-            <MenuItem key={c.id} value={c.name}>
-              {c.name}
+      <Grid item xs={12} md={itemCols}>
+        <FormControl fullWidth variant="outlined" required disabled={!provincia} sx={customStyle}>
+          <InputLabel id="canton-label">Cantón</InputLabel>
+          <Select
+            labelId="canton-label"
+            id="canton"
+            name="canton"
+            value={canton}
+            onChange={handleCantonChange}
+            label="Cantón"
+            startAdornment={icon}
+          >
+            <MenuItem value="">
+              <em>Seleccione un Cantón</em>
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Grid>
+            {cantonesList.map((c) => (
+              <MenuItem key={c.id} value={c.name}>
+                {c.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
 
-    <Grid item xs={12}>
-      <FormControl fullWidth variant="outlined" required disabled={!canton} sx={customStyle}>
-        <InputLabel id="distrito-label">Distrito</InputLabel>
-        <Select
-          labelId="distrito-label"
-          id="distrito"
-          name="distrito"
-          value={distrito}
-          onChange={handleDistritoChange}
-          label="Distrito"
-          startAdornment={icon}
-        >
-          <MenuItem value="">
-            <em>Seleccione un Distrito</em>
-          </MenuItem>
-          {distritosList.map((d, idx) => (
-            <MenuItem key={idx} value={d.name}>
-              {d.name}
+      <Grid item xs={12} md={itemCols}>
+        <FormControl fullWidth variant="outlined" required disabled={!canton} sx={customStyle}>
+          <InputLabel id="distrito-label">Distrito</InputLabel>
+          <Select
+            labelId="distrito-label"
+            id="distrito"
+            name="distrito"
+            value={distrito}
+            onChange={handleDistritoChange}
+            label="Distrito"
+            startAdornment={icon}
+          >
+            <MenuItem value="">
+              <em>Seleccione un Distrito</em>
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {distritosList.map((d, idx) => (
+              <MenuItem key={idx} value={d.name}>
+                {d.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
     </Grid>
-  </Grid>
-);
+  );
 }
 
 CRAddressSelector.propTypes = {

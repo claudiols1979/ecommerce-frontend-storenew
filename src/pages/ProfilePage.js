@@ -13,6 +13,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  MenuItem,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -86,6 +87,63 @@ const ProfilePage = () => {
     cedula: "",
     codigoActividadReceptor: "",
   });
+
+  // Modern Styles with requested gradients
+  const mainGradient = "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important";
+  const buttonGradient = "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important";
+
+  const glassStyle = {
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "24px",
+    color: "white",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+    transition: "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease",
+    "&:hover": {
+      transform: "translateY(-5px)",
+      boxShadow: "0 12px 40px 0 rgba(0, 0, 0, 0.45)",
+    },
+  };
+
+  const accentButtonStyle = {
+    background: buttonGradient,
+    color: "white",
+    fontWeight: "bold",
+    borderRadius: "12px",
+    textTransform: "none",
+    px: 4,
+    py: 1,
+    boxShadow: "0 4px 15px rgba(247, 37, 133, 0.3)",
+    "&:hover": {
+      background: buttonGradient,
+      opacity: 0.9,
+      boxShadow: "0 6px 20px rgba(247, 37, 133, 0.5)",
+      transform: "translateY(-2px)",
+    },
+    transition: "all 0.3s ease",
+  };
+
+  const sectionHeaderStyle = {
+    fontWeight: 800,
+    letterSpacing: "-0.02em",
+    background: "linear-gradient(90deg, #FFFFFF 0%, #E0E0E0 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    mb: 4,
+    position: "relative",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: -10,
+      left: 0,
+      width: "60px",
+      height: "4px",
+      background: buttonGradient,
+      borderRadius: "2px",
+    },
+  };
 
   useEffect(() => {
     console.log("🔄 User data en ProfilePage:", user);
@@ -281,62 +339,70 @@ const ProfilePage = () => {
 
   if (authError || ordersError) {
     return (
-      <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>
-        <Alert severity="error" sx={{ borderRadius: 2, p: 2, mb: 3 }}>
-          {authError?.message ||
-            ordersError?.message ||
-            "Error al cargar los datos del perfil o pedidos."}
-        </Alert>
-        <Button
-          onClick={() => window.location.reload()}
-          variant="contained"
-          color="primary"
-          sx={{ px: 4, py: 1.5, borderRadius: 8, fontWeight: 700 }}
-        >
-          Reintentar
-        </Button>
-      </Container>
+      <Box sx={{
+        minHeight: "100vh",
+        background: mainGradient,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 3
+      }}>
+        <Container maxWidth="sm">
+          <Card sx={{ ...glassStyle, p: 4, textAlign: "center" }}>
+            <Alert severity="error" sx={{ borderRadius: 3, mb: 3 }}>
+              {authError?.message ||
+                ordersError?.message ||
+                "Error al cargar los datos del perfil o pedidos."}
+            </Alert>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="contained"
+              sx={accentButtonStyle}
+            >
+              Reintentar
+            </Button>
+          </Card>
+        </Container>
+      </Box>
     );
   }
 
   if (!user) {
     return (
-      <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>
-        <Alert severity="warning" sx={{ borderRadius: 2, p: 2, mb: 3 }}>
-          Por favor, inicia sesión para ver tu perfil.
-        </Alert>
-        <Button
-          onClick={() => navigate("/login")}
-          variant="contained"
-          color="primary"
-          sx={{ px: 4, py: 1.5, borderRadius: 8, fontWeight: 700 }}
-        >
-          Ir a Iniciar Sesión
-        </Button>
-      </Container>
+      <Box sx={{
+        minHeight: "100vh",
+        background: mainGradient,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 3
+      }}>
+        <Container maxWidth="sm">
+          <Card sx={{ ...glassStyle, p: 4, textAlign: "center" }}>
+            <Alert severity="warning" sx={{ borderRadius: 3, mb: 3 }}>
+              Por favor, inicia sesión para ver tu perfil.
+            </Alert>
+            <Button
+              onClick={() => navigate("/login")}
+              variant="contained"
+              sx={accentButtonStyle}
+            >
+              Ir a Iniciar Sesión
+            </Button>
+          </Card>
+        </Container>
+      </Box>
     );
   }
 
-  const cardStyle = {
-    borderRadius: theme.shape.borderRadius * 2,
-    boxShadow: theme.shadows[8],
-    bgcolor: theme.palette.background.paper,
-    transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-    "&:hover": {
-      transform: "translateY(-6px)",
-      boxShadow: theme.shadows[12],
-    },
-  };
-
   const iconStyle = {
     fontSize: { xs: 20, sm: 22 },
-    color: theme.palette.primary.main,
+    color: "#F72585",
     mr: 1.5,
     verticalAlign: "middle",
   };
 
   const displayOrders = myOrders.slice(0, 10);
-  console.log("myOrders: ", myOrders);
 
   const getCategoryLabel = (category) => {
     const categories = {
@@ -349,924 +415,831 @@ const ProfilePage = () => {
     return categories[category] || category;
   };
 
+
   return (
-    <Container
-      maxWidth="lg"
-      sx={{ my: { xs: 4, sm: 6 }, flexGrow: 1, position: "relative" }}
-    >
-      {/* Edit Profile Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
+    <Box sx={{
+      minHeight: "100vh",
+      background: mainGradient,
+      pt: { xs: 12, sm: 16 },
+      pb: { xs: 6, sm: 10 },
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      {/* Background patterns */}
+      <Box sx={{
+        position: "absolute",
+        top: -100,
+        right: -100,
+        width: 400,
+        height: 400,
+        background: "radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(168, 85, 247, 0) 70%)",
+        borderRadius: "50%",
+        zIndex: 0
+      }} />
+      <Box sx={{
+        position: "absolute",
+        bottom: -50,
+        left: -50,
+        width: 300,
+        height: 300,
+        background: "radial-gradient(circle, rgba(247, 37, 133, 0.3) 0%, rgba(247, 37, 133, 0) 70%)",
+        borderRadius: "50%",
+        zIndex: 0
+      }} />
+
+      <Container
+        maxWidth="lg"
+        sx={{ position: "relative", zIndex: 1 }}
       >
-        <DialogTitle
-          sx={{
-            bgcolor: "#263C5C",
-            color: "white",
-            fontWeight: "bold",
-            display: "flex",
-            alignItems: "center",
+        <style>
+          {`
+            @keyframes fadeInUp {
+              from { opacity: 0; transform: translateY(30px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+              animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            }
+            .delay-1 { animation-delay: 0.1s; }
+            .delay-2 { animation-delay: 0.2s; }
+          `}
+        </style>
+
+        {/* Edit Profile Dialog */}
+        <Dialog
+          open={editDialogOpen}
+          onClose={handleCloseDialog}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "32px",
+              background: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(40px)",
+              WebkitBackdropFilter: "blur(40px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              overflow: "hidden",
+              color: "white"
+            }
           }}
         >
-          <EditIcon sx={{ mr: 1 }} />
-          Editar Información Personal
-        </DialogTitle>
-        <form onSubmit={handleEditSubmit}>
-          <DialogContent sx={{ pt: 3 }}>
-            {updateError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {updateError}
-              </Alert>
-            )}
-            {updateSuccess && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                Perfil actualizado exitosamente!
-              </Alert>
-            )}
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Nombre"
-                  name="firstName"
-                  value={editFormData.firstName}
-                  onChange={handleEditFormChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Apellido"
-                  name="lastName"
-                  value={editFormData.lastName}
-                  onChange={handleEditFormChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Tipo de Identificación"
-                  name="tipoIdentificacion"
-                  value={editFormData.tipoIdentificacion}
-                  onChange={handleEditFormChange}
-                  select
-                  SelectProps={{ native: true }}
-                >
-                  <option value=""></option>
-                  <option value="Fisica">Persona Física</option>
-                  <option value="Juridica">Persona Jurídica</option>
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Cédula"
-                  name="cedula"
-                  value={editFormData.cedula}
-                  onChange={handleEditFormChange}
-                  placeholder="Cédula, Dimex o NITE"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Código Actividad Receptor (Opcional)"
-                  name="codigoActividadReceptor"
-                  value={editFormData.codigoActividadReceptor}
-                  onChange={handleEditFormChange}
-                  placeholder="Ej: 620100, 461000, etc."
-                  helperText="Opcional - para fines tributariosa"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  disabled
-                  label="Correo Electrónico"
-                  name="email"
-                  type="email"
-                  value={editFormData.email}
-                  onChange={handleEditFormChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Teléfono"
-                  name="phoneNumber"
-                  value={editFormData.phoneNumber}
-                  onChange={handleEditFormChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Dirección Exacta (Otras Señas)"
-                  name="address"
-                  multiline
-                  rows={3}
-                  value={editFormData.address}
-                  onChange={handleEditFormChange}
-                />
-              </Grid>
-              {/* ✅ NUEVOS CAMPOS - Ciudad y Provincia con Selector Geográfico */}
-              <Grid item xs={12}>
-                <Typography
-                  variant="body2"
-                  sx={{ mb: 1, ml: 1, color: "rgba(0, 0, 0, 0.7)" }}
-                >
-                  Dirección de Entrega
-                </Typography>
-                <CRAddressSelector
-                  provincia={editFormData.provincia}
-                  setProvincia={(val) =>
-                    setEditFormData((prev) => ({
-                      ...prev,
-                      provincia: val,
-                    }))
-                  }
-                  canton={editFormData.canton}
-                  setCanton={(val) =>
-                    setEditFormData((prev) => ({
-                      ...prev,
-                      canton: val,
-                    }))
-                  }
-                  distrito={editFormData.distrito}
-                  setDistrito={(val) =>
-                    setEditFormData((prev) => ({ ...prev, distrito: val }))
-                  }
-                />
-              </Grid>
-              {user.role === "Revendedor" && (
+          <DialogTitle
+            sx={{
+              background: "rgba(255, 255, 255, 0.05)",
+              color: "white",
+              fontWeight: 800,
+              display: "flex",
+              alignItems: "center",
+              py: 4,
+              px: { xs: 3, sm: 5 },
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+              letterSpacing: "-0.02em"
+            }}
+          >
+            <Box sx={{
+              width: 40,
+              height: 40,
+              borderRadius: "12px",
+              background: buttonGradient,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mr: 2,
+              boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+            }}>
+              <EditIcon sx={{ fontSize: 20 }} />
+            </Box>
+            Editar Información Personal
+          </DialogTitle>
+
+          <form onSubmit={handleEditSubmit}>
+            <DialogContent sx={{ pt: 5, px: { xs: 3, sm: 5 }, pb: 2 }}>
+              {updateError && (
+                <Alert severity="error" sx={{ mb: 4, borderRadius: "16px", background: "rgba(211, 47, 47, 0.2)", color: "#ffcdd2", border: "1px solid rgba(211, 47, 47, 0.3)" }}>
+                  {updateError}
+                </Alert>
+              )}
+              {updateSuccess && (
+                <Alert severity="success" sx={{ mb: 4, borderRadius: "16px", background: "rgba(46, 125, 50, 0.2)", color: "#c8e6c9", border: "1px solid rgba(46, 125, 50, 0.3)" }}>
+                  Perfil actualizado exitosamente!
+                </Alert>
+              )}
+
+              <Grid container spacing={3}>
+                {[
+                  { label: "Nombre", name: "firstName", sm: 6, required: true },
+                  { label: "Apellido", name: "lastName", sm: 6, required: true },
+                  { label: "Cédula", name: "cedula", sm: 6, placeholder: "Cédula, Dimex o NITE" },
+                  { label: "Teléfono", name: "phoneNumber", sm: 6 },
+                  { label: "Código Actividad Receptor", name: "codigoActividadReceptor", sm: 12, helperText: "Opcional - para fines tributarios", placeholder: "Ej: 620100, 461000, etc." },
+                ].map((field) => (
+                  <Grid item xs={12} sm={field.sm} key={field.name}>
+                    <TextField
+                      fullWidth
+                      label={field.label}
+                      name={field.name}
+                      value={editFormData[field.name]}
+                      onChange={handleEditFormChange}
+                      required={field.required}
+                      placeholder={field.placeholder}
+                      helperText={field.helperText}
+                      variant="outlined"
+                      InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
+                      FormHelperTextProps={{ sx: { color: "rgba(255,255,255,0.5)" } }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "16px",
+                          color: "white !important",
+                          background: "rgba(255, 255, 255, 0.05)",
+                          "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                          "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                          "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                          "& input": { color: "white !important", WebkitTextFillColor: "white !important" }
+                        }
+                      }}
+                    />
+                  </Grid>
+                ))}
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Tipo de Identificación"
+                    name="tipoIdentificacion"
+                    value={editFormData.tipoIdentificacion}
+                    onChange={handleEditFormChange}
+                    select
+                    SelectProps={{
+                      MenuProps: {
+                        PaperProps: {
+                          sx: {
+                            background: "rgba(30, 0, 80, 0.95)",
+                            backdropFilter: "blur(10px)",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            color: "white",
+                            "& .MuiMenuItem-root:hover": { background: "rgba(255,255,255,0.1)" },
+                            "& .Mui-selected": { background: "rgba(168, 85, 247, 0.3) !important" },
+                          }
+                        }
+                      }
+                    }}
+                    InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "16px",
+                        color: "white !important",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                        "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                        "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                      },
+                      "& .MuiSelect-select": { color: "white !important" },
+                      "& .MuiSelect-icon": { color: "white !important" }
+                    }}
+                  >
+                    <MenuItem value=""><em>Ninguno</em></MenuItem>
+                    <MenuItem value="Fisica">Persona Física</MenuItem>
+                    <MenuItem value="Juridica">Persona Jurídica</MenuItem>
+                  </TextField>
+                </Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
                     disabled
-                    label="Categoría de Revendedor"
-                    name="resellerCategory"
-                    value={editFormData.resellerCategory}
+                    label="Correo Electrónico (No modificable)"
+                    name="email"
+                    type="email"
+                    value={editFormData.email}
                     onChange={handleEditFormChange}
-                    select
-                    SelectProps={{ native: true }}
-                  >
-                    <option value=""></option>
-                    <option value="cat1">Categoría 1</option>
-                    <option value="cat2">Categoría 2</option>
-                    <option value="cat3">Categoría 3</option>
-                    <option value="cat4">Categoría 4</option>
-                    <option value="cat5">Categoría 5</option>
-                  </TextField>
+                    required
+                    InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)" } }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "16px",
+                        background: "rgba(255, 255, 255, 0.02)",
+                        "& fieldset": { borderColor: "rgba(255, 255, 255, 0.05)" },
+                        "& .MuiOutlinedInput-input.Mui-disabled": {
+                          color: "white !important",
+                          WebkitTextFillColor: "white !important",
+                        },
+                      }
+                    }}
+                  />
                 </Grid>
-              )}
-            </Grid>
-          </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3 }}>
-            <Button onClick={handleCloseDialog} color="secondary">
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={updateLoading}
-              sx={{ minWidth: 100, backgroundColor: "#263C5C" }}
-            >
-              {updateLoading ? <CircularProgress size={24} /> : "Guardar"}
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
 
-      {/* Información del Usuario/Revendedor - Ocupa todo el ancho */}
-      <Card sx={{ ...cardStyle, mb: { xs: 3, sm: 4 }, position: "relative" }}>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            bgcolor: theme.palette.primary.main,
-            color: "white",
-            "&:hover": {
-              bgcolor: theme.palette.primary.dark,
-            },
-          }}
-          onClick={handleEditClick}
-        >
-          <EditIcon />
-        </IconButton>
-
-        <CardContent sx={{ p: { xs: 3, sm: 5 } }}>
-          <Typography
-            variant="h5"
-            component="h2"
-            gutterBottom
-            sx={{
-              fontWeight: 700,
-              color: theme.palette.text.primary,
-              mb: 3,
-              pb: 1,
-              borderBottom: `2px solid ${theme.palette.primary.light}`,
-              pr: 4, // Add padding to prevent overlap with edit button
-            }}
-          >
-            Información Personal
-          </Typography>
-          <List disablePadding>
-            <ListItem disableGutters sx={{ py: 1 }}>
-              <ListItemText
-                primary={
-                  <Typography variant="body1" color="text.secondary">
-                    <PersonIcon sx={iconStyle} /> Nombre Completo:{" "}
-                    <Typography
-                      component="span"
-                      fontWeight="medium"
-                      color="text.primary"
-                    >
-                      {user.firstName} {user.lastName}
-                    </Typography>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    sx={{ mb: 2, ml: 1, color: "rgba(255, 255, 255, 0.6)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                  >
+                    Dirección de Entrega
                   </Typography>
-                }
-              />
-            </ListItem>
-            <ListItem disableGutters sx={{ py: 1 }}>
-              <ListItemText
-                primary={
-                  <Typography variant="body1" color="text.secondary">
-                    <EmailIcon sx={iconStyle} /> Correo Electrónico:{" "}
-                    <Typography
-                      component="span"
-                      fontWeight="medium"
-                      color="text.primary"
-                    >
-                      {user.email}
-                    </Typography>
-                  </Typography>
-                }
-              />
-            </ListItem>
-            {user.phoneNumber && (
-              <ListItem disableGutters sx={{ py: 1 }}>
-                <ListItemText
-                  primary={
-                    <Typography variant="body1" color="text.secondary">
-                      <PhoneIcon sx={iconStyle} /> Teléfono:{" "}
-                      <Typography
-                        component="span"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {user.phoneNumber}
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            )}
-            {user.tipoIdentificacion && (
-              <ListItem disableGutters sx={{ py: 1 }}>
-                <ListItemText
-                  primary={
-                    <Typography variant="body1" color="text.secondary">
-                      <BadgeOutlinedIcon sx={iconStyle} /> Tipo Identificación:{" "}
-                      <Typography
-                        component="span"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {user.tipoIdentificacion}
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            )}
-            {user.cedula && (
-              <ListItem disableGutters sx={{ py: 1 }}>
-                <ListItemText
-                  primary={
-                    <Typography variant="body1" color="text.secondary">
-                      <BadgeOutlinedIcon sx={iconStyle} /> Cédula:{" "}
-                      <Typography
-                        component="span"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {user.cedula}
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            )}
-            {user.codigoActividadReceptor && (
-              <ListItem disableGutters sx={{ py: 1 }}>
-                <ListItemText
-                  primary={
-                    <Typography variant="body1" color="text.secondary">
-                      <BusinessCenterIcon sx={iconStyle} /> Código Actividad:{" "}
-                      <Typography
-                        component="span"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {user.codigoActividadReceptor}
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            )}
-            {(user.address ||
-              user.city ||
-              user.province ||
-              user.provincia ||
-              user.canton ||
-              user.distrito) && (
-                <ListItemText
-                  primary={
-                    <Typography variant="body1" color="text.secondary">
-                      <Typography
-                        component="span"
-                        fontWeight="medium"
-                        color="text.primary"
-                      >
-                        {(user.address ||
-                          user.city ||
-                          user.province ||
-                          user.provincia ||
-                          user.canton ||
-                          user.distrito) && (
-                            <ListItem disableGutters sx={{ py: 1 }}>
-                              <ListItemText
-                                primary={
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      gap: 0.5,
-                                    }}
-                                  >
-                                    <Box
-                                      sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 1,
-                                      }}
-                                    >
-                                      <LocationOnIcon sx={iconStyle} />
-                                      <Typography
-                                        variant="body1"
-                                        color="text.primary"
-                                        fontWeight="bold"
-                                      >
-                                        {user.provincia
-                                          ? `${user.provincia}, ${user.canton}, ${user.distrito}`
-                                          : [user.address, user.city, user.province]
-                                            .filter(Boolean)
-                                            .join(", ")}
-                                      </Typography>
-                                    </Box>
-                                    <Typography
-                                      variant="body2"
-                                      color="text.secondary"
-                                      sx={{ ml: 4 }}
-                                    >
-                                      Otras señas: {user.address || "N/A"}
-                                    </Typography>
-                                  </Box>
-                                }
-                              />
-                            </ListItem>
-                          )}
-                      </Typography>
-                    </Typography>
-                  }
-                />
-              )}
-          </List>
-
-          {user.role === "Revendedor" && (
-            <Box
-              sx={{
-                mt: 4,
-                pt: 4,
-                borderTop: `1px dashed ${theme.palette.grey[300]}`,
-              }}
-            >
-              <Typography
-                variant="h6"
-                component="h3"
-                gutterBottom
-                sx={{
-                  fontWeight: 600,
-                  color: theme.palette.primary.dark,
-                  mb: 2,
-                }}
-              >
-                Información de Usuario
-              </Typography>
-              <List disablePadding>
-                {user.resellerCategory && (
-                  <ListItem disableGutters sx={{ py: 0.5 }}>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body1" color="text.secondary">
-                          <CategoryIcon sx={iconStyle} /> Categoría:{" "}
-                          <Typography
-                            component="span"
-                            fontWeight="medium"
-                            color="text.primary"
-                          >
-                            {getCategoryLabel(user.resellerCategory)}
-                          </Typography>
-                        </Typography>
+                  <Box sx={{
+                    borderRadius: "20px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    p: 2.5,
+                    "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.7) !important" },
+                    "& .MuiOutlinedInput-root": {
+                      color: "white !important",
+                      borderRadius: "12px",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      "& fieldset": { borderColor: "rgba(255,255,255,0.1) !important" },
+                      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.3) !important" },
+                      "& input, & select, & .MuiSelect-select": {
+                        color: "white !important",
+                        WebkitTextFillColor: "white !important"
+                      },
+                    },
+                    "& .Mui-disabled": {
+                      color: "rgba(255,255,255,0.4) !important",
+                      "& .MuiOutlinedInput-notchedOutline": { borderColor: "rgba(255,255,255,0.05) !important" },
+                      "& input, & select, & .MuiSelect-select": {
+                        color: "rgba(255,255,255,0.4) !important",
+                        WebkitTextFillColor: "rgba(255,255,255,0.4) !important"
+                      },
+                    },
+                    "& .MuiSelect-icon": { color: "white !important" }
+                  }}>
+                    <style>
+                      {`
+                        .MuiMenu-paper {
+                          background: rgba(30, 0, 80, 0.95) !important;
+                          backdrop-filter: blur(10px) !important;
+                          border: 1px solid rgba(255,255,255,0.1) !important;
+                          color: white !important;
+                        }
+                        .MuiMenuItem-root:hover {
+                          background: rgba(255,255,255,0.1) !important;
+                        }
+                        .Mui-selected {
+                          background: rgba(168, 85, 247, 0.3) !important;
+                        }
+                      `}
+                    </style>
+                    <CRAddressSelector
+                      provincia={editFormData.provincia}
+                      setProvincia={(val) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          provincia: val,
+                        }))
+                      }
+                      canton={editFormData.canton}
+                      setCanton={(val) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          canton: val,
+                        }))
+                      }
+                      distrito={editFormData.distrito}
+                      setDistrito={(val) =>
+                        setEditFormData((prev) => ({ ...prev, distrito: val }))
                       }
                     />
-                  </ListItem>
-                )}
+                    <TextField
+                      fullWidth
+                      label="Dirección Exacta (Otras Señas)"
+                      name="address"
+                      multiline
+                      rows={2}
+                      value={editFormData.address}
+                      onChange={handleEditFormChange}
+                      InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)", "&.Mui-focused": { color: "#A855F7" } } }}
+                      sx={{
+                        mt: 2.5,
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "16px",
+                          color: "white",
+                          background: "rgba(255, 255, 255, 0.05)",
+                          "& fieldset": { borderColor: "rgba(255, 255, 255, 0.1)" },
+                          "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.3)" },
+                          "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                        }
+                      }}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions sx={{ px: { xs: 3, sm: 5 }, pb: 5, pt: 3 }}>
+              <Button onClick={handleCloseDialog} sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 700, textTransform: "none", fontSize: "1rem" }}>
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={updateLoading}
+                sx={{
+                  ...accentButtonStyle,
+                  minWidth: 160,
+                  py: 1.5,
+                  fontSize: "1rem",
+                  ml: 2
+                }}
+              >
+                {updateLoading ? <CircularProgress size={24} color="inherit" /> : "Guardar Cambios"}
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
 
-                <ListItem disableGutters sx={{ py: 0.5 }}>
-                  <ListItemText
-                    primary={
-                      <Typography variant="body1" color="text.secondary">
-                        <CodeIcon sx={iconStyle} /> Código de Usuario:{" "}
-                        <Typography
-                          component="span"
-                          fontWeight="medium"
-                          color="text.primary"
-                        >
-                          {user.resellerCode || "N/A"}
-                        </Typography>
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </List>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Rest of the component remains the same */}
-      {/* Mis Pedidos Recientes - Ocupa todo el ancho y está centrado */}
-      <Card sx={cardStyle}>
-        <CardContent sx={{ p: { xs: 3, sm: 5 } }}>
+        {/* Información Personal */}
+        <Box className="animate-fade-in-up">
           <Typography
-            variant="h5"
-            component="h2"
-            gutterBottom
-            sx={{
-              fontWeight: 700,
-              mb: 3,
-              pb: 1,
-              borderBottom: `2px solid ${theme.palette.primary.light}`,
-            }}
+            variant="h4"
+            sx={sectionHeaderStyle}
+          >
+            Mi Perfil
+          </Typography>
+
+          <Card sx={{ ...glassStyle, mb: { xs: 4, sm: 6 }, position: "relative", overflow: "visible" }}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: -20,
+                right: { xs: 20, sm: 30 },
+                zIndex: 2
+              }}
+            >
+              <IconButton
+                sx={{
+                  background: buttonGradient,
+                  color: "white",
+                  width: 56,
+                  height: 56,
+                  boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
+                  "&:hover": {
+                    background: buttonGradient,
+                    transform: "scale(1.1)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.4)",
+                  },
+                  transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                }}
+                onClick={handleEditClick}
+              >
+                <EditIcon />
+              </IconButton>
+            </Box>
+
+            <CardContent sx={{ p: { xs: 4, sm: 6 } }}>
+              <Grid container spacing={{ xs: 3, md: 4 }}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "14px",
+                        background: "rgba(255,255,255,0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mr: 2.5,
+                        border: "1px solid rgba(255,255,255,0.1)"
+                      }}>
+                        <PersonIcon sx={{ color: "#A855F7" }} />
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                          Nombre Completo
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {user.firstName} {user.lastName}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "14px",
+                        background: "rgba(255,255,255,0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mr: 2.5,
+                        border: "1px solid rgba(255,255,255,0.1)"
+                      }}>
+                        <EmailIcon sx={{ color: "#F72585" }} />
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                          Correo Electrónico
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700, wordBreak: "break-all" }}>
+                          {user.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {user.phoneNumber && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: "14px",
+                          background: "rgba(255,255,255,0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          mr: 2.5,
+                          border: "1px solid rgba(255,255,255,0.1)"
+                        }}>
+                          <PhoneIcon sx={{ color: "#4EA8DE" }} />
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                            Teléfono
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            {user.phoneNumber}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                      <Box sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "14px",
+                        background: "rgba(255,255,255,0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mr: 2.5,
+                        mt: 0.5,
+                        border: "1px solid rgba(255,255,255,0.1)"
+                      }}>
+                        <LocationOnIcon sx={{ color: "#4895EF" }} />
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                          Dirección de Entrega
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {user.provincia
+                            ? `${user.provincia}, ${user.canton}, ${user.distrito}`
+                            : [user.address, user.city, user.province].filter(Boolean).join(", ") || "No especificada"}
+                        </Typography>
+                        {user.address && (
+                          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)", mt: 0.5 }}>
+                            {user.address}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+
+                    {(user.tipoIdentificacion || user.cedula) && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: "14px",
+                          background: "rgba(255,255,255,0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          mr: 2.5,
+                          border: "1px solid rgba(255,255,255,0.1)"
+                        }}>
+                          <BadgeOutlinedIcon sx={{ color: "#7209B7" }} />
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                            Identificación ({user.tipoIdentificacion || "Física"})
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            {user.cedula || "N/A"}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+
+                    {user.role === "Revendedor" && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: "14px",
+                          background: "rgba(255,255,255,0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          mr: 2.5,
+                          border: "1px solid rgba(255,255,255,0.1)"
+                        }}>
+                          <CategoryIcon sx={{ color: "#FFC300" }} />
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                            Categoría / Código
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            {getCategoryLabel(user.resellerCategory)} • {user.resellerCode || "N/A"}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* Mis Pedidos Recientes */}
+        <Box className="animate-fade-in-up delay-1">
+          <Typography
+            variant="h4"
+            sx={sectionHeaderStyle}
           >
             Mis Pedidos Recientes
           </Typography>
-          {displayOrders && displayOrders.length > 0 ? (
-            <Box>
-              {displayOrders.map((order) => {
-                // Robust breakdown logic for Recent Orders:
-                // Prioritize persisted taxBreakdown (sanitized to integers), fallback to legacy logic for old orders.
-                const breakdown = order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
-                  ? order.taxBreakdown
-                  : (() => {
-                    const iSubtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.priceAtSale), 0);
-                    const iTax = order.items.reduce((acc, item) => {
-                      const iva = parseFloat(item.product?.iva) || 0;
-                      return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
-                    }, 0);
 
-                    const currentOrderRegime = order.taxRegime || globalTaxRegime;
-                    const sBaseRaw = 3000;
-                    const sTax = currentOrderRegime === 'simplified' ? 0 : 390;
-                    const sBase = currentOrderRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
+          <Card sx={{ ...glassStyle, overflow: "hidden" }}>
+            <CardContent sx={{ p: { xs: 0, sm: 0 }, minHeight: 200 }}>
+              {displayOrders && displayOrders.length > 0 ? (
+                <Box sx={{ p: { xs: 2.5, sm: 4 } }}>
+                  {displayOrders.map((order, orderIndex) => {
+                    const breakdown = order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
+                      ? order.taxBreakdown
+                      : (() => {
+                        const iSubtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.priceAtSale), 0);
+                        const iTax = order.items.reduce((acc, item) => {
+                          const iva = parseFloat(item.product?.iva) || 0;
+                          return acc + Math.round(item.quantity * item.priceAtSale * (iva / 100));
+                        }, 0);
 
-                    return {
-                      itemsSubtotal: iSubtotal,
-                      itemsTax: iTax,
-                      shippingBase: sBase,
-                      shippingTax: sTax,
-                      total: Math.round(iSubtotal + iTax + sBase + sTax)
+                        const currentOrderRegime = order.taxRegime || globalTaxRegime;
+                        const sBaseRaw = 3000;
+                        const sTax = currentOrderRegime === 'simplified' ? 0 : 390;
+                        const sBase = currentOrderRegime === 'simplified' ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
+
+                        return {
+                          itemsSubtotal: iSubtotal,
+                          itemsTax: iTax,
+                          shippingBase: sBase,
+                          shippingTax: sTax,
+                          total: Math.round(iSubtotal + iTax + sBase + sTax)
+                        };
+                      })();
+
+                    const totalFinal = breakdown.total;
+                    const shippingCost = breakdown.shippingBase + breakdown.shippingTax;
+
+                    const formatPrice = (price) => {
+                      return `₡${Math.round(price).toLocaleString("es-CR")}`;
                     };
-                  })();
 
-                const totalFinal = breakdown.total;
-                const shippingCost = breakdown.shippingBase + breakdown.shippingTax;
+                    const statusInfo = {
+                      pending: { color: "#FFB703", label: "Pendiente" },
+                      placed: { color: "#219EBC", label: "Realizado" },
+                      processing: { color: "#8ECAE6", label: "En Proceso" },
+                      shipped: { color: "#FB8500", label: "Enviado" },
+                      delivered: { color: "#2ECC71", label: "Entregado" },
+                      cancelled: { color: "#E74C3C", label: "Cancelado" },
+                    };
 
-                const itemsWithTax = order.items.map((item) => {
-                  const currentOrderRegime = order.taxRegime || globalTaxRegime;
-                  const iva = currentOrderRegime === 'simplified' ? 0 : (parseFloat(item.product?.iva) || 0);
-                  const priceWithTax = Math.round(Number(item.priceAtSale || 0) * (1 + iva / 100));
-                  return {
-                    ...item,
-                    priceWithTax,
-                    subtotalWithTax: priceWithTax * item.quantity,
-                    showIvaLabel: currentOrderRegime !== 'simplified'
-                  };
-                });
+                    const currentStatus = statusInfo[order.status.toLowerCase()] || { color: "#95A5A6", label: order.status };
 
-                // Función para formatear números sin decimales (redondeando correctamente)
-                const formatPrice = (price) => {
-                  return `₡${Math.round(price).toLocaleString("es-CR")}`;
-                };
-
-                return (
-                  <Accordion
-                    key={order._id}
-                    sx={{
-                      mb: 2,
-                      borderRadius: 2,
-                      boxShadow: theme.shadows[2],
-                      "&:before": { display: "none" },
-                      "&.Mui-expanded": {
-                        margin: "auto",
-                        boxShadow: theme.shadows[4],
-                      },
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        <ExpandMoreIcon
-                          sx={{ color: theme.palette.primary.dark }}
-                        />
-                      }
-                      aria-controls={`panel-${order._id}-content`}
-                      id={`panel-${order._id}-header`}
-                      sx={{
-                        bgcolor: theme.palette.grey[100],
-                        borderRadius: "inherit",
-                        "&.Mui-expanded": {
-                          bgcolor: theme.palette.grey[200],
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                        },
-                        minHeight: { xs: "68px", sm: "76px" },
-                        px: { xs: 2, sm: 3 },
-                        py: { xs: 1.5, sm: 2 },
-                        transition: "background-color 0.2s ease-in-out",
-                      }}
-                    >
-                      <Grid
-                        container
-                        spacing={{ xs: 1, sm: 2 }}
-                        alignItems="center"
-                      >
-                        <Grid item xs={12} sm={3}>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: { xs: 0.5, sm: 0 },
-                            }}
-                          >
-                            <ShoppingBagIcon
-                              sx={{
-                                fontSize: 18,
-                                mr: 1,
-                                color: theme.palette.primary.main,
-                              }}
-                            />{" "}
-                            ID:
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            fontWeight="medium"
-                            color="text.primary"
-                          >
-                            {/* {order._id.substring(order._id.length - 8).toUpperCase()}  */}
-                            {order._id.toUpperCase()}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: { xs: 0.5, sm: 0 },
-                            }}
-                          >
-                            <CalendarTodayIcon
-                              sx={{
-                                fontSize: 18,
-                                mr: 1,
-                                color: theme.palette.primary.main,
-                              }}
-                            />{" "}
-                            Fecha:
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            fontWeight="medium"
-                            color="text.primary"
-                          >
-                            {formatDate(order.createdAt)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: { xs: 0.5, sm: 0 },
-                            }}
-                          >
-                            <ShoppingBagIcon
-                              sx={{
-                                fontSize: 18,
-                                mr: 1,
-                                color: theme.palette.primary.main,
-                              }}
-                            />{" "}
-                            Total:
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            fontWeight="medium"
-                            color="text.primary"
-                          >
-                            {formatPrice(totalFinal)}
-                          </Typography>
-                        </Grid>
-
-                        {/* <Grid item xs={12} sm={3} sx={{ textAlign: 'right' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ display: 'inline-flex', alignItems: 'center', mb: { xs: 0.5, sm: 0 }, justifyContent: 'flex-end', width: '100%' }}>
-                  <InfoIcon sx={{ fontSize: 18, mr: 1, color: theme.palette.primary.main }} /> Estado:
-                </Typography>
-                <Typography 
-                  variant="body1" 
-                  fontWeight="medium" 
-                  sx={{
-                    display: 'inline-block',
-                    px: 2, 
-                    py: 0.7, 
-                    borderRadius: 1.5, 
-                    color: 'white',
-                    bgcolor: 
-                      order.status === 'pending' ? theme.palette.warning.main :
-                      order.status === 'placed' ? theme.palette.info.main :
-                      order.status === 'processing' ? theme.palette.primary.main : 
-                      order.status === 'shipped' ? theme.palette.secondary.main : 
-                      order.status === 'delivered' ? theme.palette.success.main :
-                      order.status === 'cancelled' ? theme.palette.error.main :
-                      order.status === 'delivered' ? theme.palette.success.dark :
-                      theme.palette.grey[500],
-                    whiteSpace: 'nowrap', 
-                    fontSize: { xs: '0.8rem', sm: '0.9rem' }, 
-                    boxShadow: theme.shadows[1], 
-                  }}
-                >
-                  {getTranslatedStatus(order.status)} 
-                </Typography>
-              </Grid> */}
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails
-                      sx={{
-                        pt: 2.5,
-                        pb: 2.5,
-                        px: { xs: 2, sm: 3 },
-                        borderTop: `1px solid ${theme.palette.grey[200]}`,
-                      }}
-                    >
-                      <Typography
-                        variant="h6"
-                        gutterBottom
+                    return (
+                      <Accordion
+                        key={order._id}
                         sx={{
-                          fontWeight: 600,
-                          color: theme.palette.text.primary,
-                          mb: 2,
-                          pb: 1,
-                          borderBottom: `1px dashed ${theme.palette.grey[200]}`,
+                          mb: 2.5,
+                          borderRadius: "16px !important",
+                          background: "rgba(255, 255, 255, 0.05)",
+                          color: "white",
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          boxShadow: "none",
+                          "&:before": { display: "none" },
+                          "&.Mui-expanded": {
+                            background: "rgba(255, 255, 255, 0.08)",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                            margin: "0 0 20px 0",
+                          },
+                          transition: "all 0.3s ease",
                         }}
                       >
-                        Detalles del Pedido:
-                      </Typography>
-                      <List disablePadding>
-                        {itemsWithTax.map((item, itemIndex) => (
-                          <ListItem
-                            key={item._id || itemIndex}
-                            disableGutters
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              alignItems: "center",
-                              py: 1.5,
-                              mb: itemIndex < order.items.length - 1 ? 1 : 0,
-                              borderBottom:
-                                itemIndex < order.items.length - 1
-                                  ? `1px dashed ${theme.palette.grey[100]}`
-                                  : "none",
-                              "&:not(:last-child)": { mb: 1.5 },
-                            }}
-                          >
-                            {item.product?.imageUrls &&
-                              item.product.imageUrls.length > 0 && (
-                                <Box
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon sx={{ color: "rgba(255,255,255,0.7)" }} />}
+                          sx={{
+                            px: { xs: 2.5, sm: 4 },
+                            py: 1,
+                            "& .MuiAccordionSummary-content": { alignItems: "center" }
+                          }}
+                        >
+                          <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} sm={4}>
+                              <Box sx={{ display: "flex", alignItems: "center" }}>
+                                <Box sx={{
+                                  width: 40,
+                                  height: 40,
+                                  borderRadius: "10px",
+                                  background: "rgba(255,255,255,0.1)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  mr: 2
+                                }}>
+                                  <ShoppingBagIcon sx={{ fontSize: 20, color: "#fff" }} />
+                                </Box>
+                                <Box>
+                                  <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block", mb: -0.5 }}>
+                                    ORDEN
+                                  </Typography>
+                                  <Typography variant="body1" sx={{ fontWeight: 700, fontFamily: "monospace" }}>
+                                    #{order._id.substring(order._id.length - 8).toUpperCase()}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={6} sm={3}>
+                              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block" }}>
+                                FECHA
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                {new Date(order.createdAt).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={6} sm={2}>
+                              <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.5)", display: "block" }}>
+                                TOTAL
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 800, color: "#fff" }}>
+                                {formatPrice(totalFinal)}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={3} sx={{ textAlign: { sm: "right" } }}>
+                              <Box sx={{
+                                display: "inline-flex",
+                                px: 2,
+                                py: 0.5,
+                                borderRadius: "8px",
+                                bgcolor: `${currentStatus.color}20`,
+                                color: currentStatus.color,
+                                border: `1px solid ${currentStatus.color}40`,
+                                fontSize: "0.75rem",
+                                fontWeight: 800,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.05em"
+                              }}>
+                                {currentStatus.label}
+                              </Box>
+                            </Grid>
+                          </Grid>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{
+                          px: { xs: 2.5, sm: 4 },
+                          pb: 4,
+                          pt: 1,
+                          borderTop: "1px solid rgba(255,255,255,0.05)"
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: "rgba(255,255,255,0.6)", mb: 3, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                            Detalle de Productos
+                          </Typography>
+
+                          <List disablePadding>
+                            {order.items.map((item, itemIndex) => {
+                              const currentOrderRegime = order.taxRegime || globalTaxRegime;
+                              const iva = currentOrderRegime === 'simplified' ? 0 : (parseFloat(item.product?.iva) || 0);
+                              const priceWithTax = Math.round(Number(item.priceAtSale || 0) * (1 + iva / 100));
+                              const subtotalWithTax = priceWithTax * item.quantity;
+
+                              return (
+                                <ListItem
+                                  key={item._id || itemIndex}
+                                  disableGutters
                                   sx={{
-                                    width: 70,
-                                    height: 70,
-                                    mr: { xs: 1.5, sm: 2 },
-                                    flexShrink: 0,
-                                    overflow: "hidden",
-                                    borderRadius: 1.5,
                                     display: "flex",
+                                    flexWrap: "wrap",
                                     alignItems: "center",
-                                    justifyContent: "center",
-                                    border: `1px solid ${theme.palette.grey[200]}`,
-                                    boxShadow: theme.shadows[1],
+                                    py: 2,
+                                    borderBottom: itemIndex < order.items.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
                                   }}
                                 >
-                                  <img
-                                    src={item.product.imageUrls[0].secure_url}
-                                    alt={item.name}
-                                    style={{
-                                      width: "100%",
-                                      height: "100%",
-                                      objectFit: "cover",
-                                    }}
-                                  />
-                                </Box>
-                              )}
-                            <Box
-                              sx={{
-                                flexGrow: 1,
-                                minWidth: {
-                                  xs: "calc(100% - 85px)",
-                                  sm: "auto",
-                                },
-                              }}
-                            >
-                              <Typography
-                                variant="body1"
-                                fontWeight="medium"
-                                color="text.primary"
-                              >
-                                {item.name} ({item.code})
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                Cantidad: {item.quantity} x{" "}
-                                {formatPrice(Number(item.priceAtSale || 0))}
-                              </Typography>
-                              {item.showIvaLabel && (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  Precio con IVA: {formatPrice(item.priceWithTax)}
+                                  {item.product?.imageUrls && item.product.imageUrls.length > 0 && (
+                                    <Box sx={{
+                                      width: 64,
+                                      height: 64,
+                                      mr: 2.5,
+                                      borderRadius: "12px",
+                                      overflow: "hidden",
+                                      border: "1px solid rgba(255,255,255,0.1)",
+                                      background: "white"
+                                    }}>
+                                      <img
+                                        src={item.product.imageUrls[0].secure_url}
+                                        alt={item.name}
+                                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                                      />
+                                    </Box>
+                                  )}
+                                  <Box sx={{ flexGrow: 1, minWidth: { xs: "calc(100% - 90px)", sm: "auto" } }}>
+                                    <Typography variant="body1" sx={{ fontWeight: 700 }}>
+                                      {item.name}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>
+                                      {item.quantity} x {formatPrice(Number(item.priceAtSale || 0))}
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ textAlign: "right", ml: 3 }}>
+                                    <Typography variant="body1" sx={{ fontWeight: 800 }}>
+                                      {formatPrice(subtotalWithTax)}
+                                    </Typography>
+                                    <Button
+                                      size="small"
+                                      startIcon={<RateReviewIcon sx={{ fontSize: 16 }} />}
+                                      onClick={() => navigate(`/products/${item.product?._id}`)}
+                                      sx={{
+                                        mt: 1,
+                                        color: "#F72585",
+                                        fontWeight: "bold",
+                                        textTransform: "none",
+                                        "&:hover": { background: "rgba(247, 37, 133, 0.1)" }
+                                      }}
+                                    >
+                                      Calificar
+                                    </Button>
+                                  </Box>
+                                </ListItem>
+                              );
+                            })}
+
+                            <Box sx={{
+                              mt: 3,
+                              pt: 3,
+                              borderTop: "2px solid rgba(255,255,255,0.1)",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 1.5
+                            }}>
+                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                                  Subtotal de Productos:
                                 </Typography>
-                              )}
-                            </Box>
-                            <Typography
-                              variant="body1"
-                              fontWeight="bold"
-                              color="text.primary"
-                              sx={{
-                                ml: { xs: 0, sm: 3 },
-                                mt: { xs: 1, sm: 0 },
-                                minWidth: { xs: "100%", sm: "auto" },
-                                textAlign: { xs: "left", sm: "right" },
-                              }}
-                            >
-                              Subtotal: {formatPrice(item.subtotalWithTax)}
-                            </Typography>
-                            <Box
-                              sx={{
-                                width: "100%",
-                                mt: 1.5,
+                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                                  {formatPrice(breakdown.itemsSubtotal + breakdown.itemsTax)}
+                                </Typography>
+                              </Box>
+                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)" }}>
+                                  Envío:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                                  {formatPrice(shippingCost)}
+                                </Typography>
+                              </Box>
+                              <Box sx={{
                                 display: "flex",
-                                justifyContent: "flex-start",
-                              }}
-                            >
-                              <Button
-                                variant="contained"
-                                color="secondary"
-                                size="small"
-                                startIcon={<RateReviewIcon />}
-                                onClick={() =>
-                                  navigate(`/products/${item.product._id}`)
-                                }
-                                sx={{
-                                  textTransform: "none",
-                                  fontWeight: "bold",
-                                  boxShadow: theme.shadows[2],
-                                  "&:hover": {
-                                    boxShadow: theme.shadows[4],
-                                    transform: "translateY(-1px)",
-                                  },
-                                }}
-                              >
-                                Dejar Reseña
-                              </Button>
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                mt: 1,
+                                pt: 2,
+                                borderTop: "1px dashed rgba(255,255,255,0.2)"
+                              }}>
+                                <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                                  Total Final:
+                                </Typography>
+                                <Typography variant="h6" sx={{ fontWeight: 900, color: "#F72585" }}>
+                                  {formatPrice(totalFinal)}
+                                </Typography>
+                              </Box>
                             </Box>
-                          </ListItem>
-                        ))}
-
-                        {/* Mostrar información de envío */}
-                        <ListItem
-                          disableGutters
-                          sx={{
-                            py: 1.5,
-                            borderTop: `1px solid ${theme.palette.grey[200]}`,
-                          }}
-                        >
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography
-                              variant="body1"
-                              fontWeight="medium"
-                              color="text.primary"
-                            >
-                              {order.taxRegime === 'simplified' || (!order.taxRegime && globalTaxRegime === 'simplified') ? 'Envío:' : 'Costo de envío:'}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Destino: {[
-                                order.user?.provincia || order.customerDetails?.province || order.customerDetails?.provincia,
-                                order.user?.canton || order.customerDetails?.canton || order.customerDetails?.city,
-                                order.user?.distrito || order.customerDetails?.distrito,
-                                order.user?.address || order.customerDetails?.address,
-                              ].filter(Boolean).join(", ")}
-                            </Typography>
-                          </Box>
-                          <Typography
-                            variant="body1"
-                            fontWeight="bold"
-                            color="text.primary"
-                          >
-                            {formatPrice(shippingCost)}
-                          </Typography>
-                        </ListItem>
-
-                        {/* Mostrar total final */}
-                        <ListItem
-                          disableGutters
-                          sx={{
-                            py: 1.5,
-                            borderTop: `2px solid ${theme.palette.primary.main}`,
-                          }}
-                        >
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography
-                              variant="h6"
-                              fontWeight="bold"
-                              color="text.primary"
-                            >
-                              Total final:
-                            </Typography>
-                          </Box>
-                          <Typography
-                            variant="h6"
-                            fontWeight="bold"
-                            color="text.primary"
-                          >
-                            {formatPrice(totalFinal)}
-                          </Typography>
-                        </ListItem>
-                      </List>
-                    </AccordionDetails>
-                  </Accordion>
-                );
-              })}
-            </Box>
-          ) : (
-            <Box sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                No tienes pedidos realizados aún. ¡Explora nuestros productos
-                para empezar!
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/products")}
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: 8,
-                  fontWeight: 700,
-                  boxShadow: theme.shadows[4],
-                }}
-              >
-                Explorar Productos
-              </Button>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
-    </Container >
+                          </List>
+                        </AccordionDetails>
+                      </Accordion>
+                    );
+                  })}
+                </Box>
+              ) : (
+                <Box sx={{ p: 6, textAlign: "center" }}>
+                  <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.6)", mb: 4 }}>
+                    Aún no tienes pedidos registrados.
+                  </Typography>
+                  <Button
+                    onClick={() => navigate("/products")}
+                    variant="contained"
+                    sx={accentButtonStyle}
+                  >
+                    Empezar a Comprar
+                  </Button>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

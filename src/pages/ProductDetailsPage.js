@@ -863,12 +863,20 @@ const ProductDetailsPage = () => {
   const baseProductName = extractBaseProductName(product.name, product.code);
 
   const contentSectionStyle = {
-    my: 5, p: { xs: 2.5, sm: 3.5 }, bgcolor: 'background.paper', borderRadius: 3,
-    boxShadow: theme.shadows[2], border: `1px solid ${theme.palette.grey[100]}`,
-    transition: 'box-shadow 0.3s ease-in-out', '&:hover': { boxShadow: theme.shadows[4] }
+    my: 5, p: { xs: 3, sm: 5 }, bgcolor: '#ffffff', borderRadius: '32px',
+    border: '1px solid rgba(0, 0, 0, 0.05)',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)',
+    transition: 'all 0.3s ease',
+    '&:hover': { boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)' }
   };
 
-  const sectionTitleStyle = { fontWeight: 700, color: 'primary.main', mb: 3, textAlign: 'left' };
+  const sectionTitleStyle = {
+    fontWeight: 800,
+    color: '#1A1A1A',
+    mb: 4,
+    fontSize: '1.5rem',
+    letterSpacing: '-0.02em'
+  };
 
   const genderMap = { 'men': 'Hombre', 'women': 'Mujer', 'unisex': 'Unisex', 'children': 'Niños', 'elderly': 'Ancianos', 'other': 'Otro' };
   const getTranslatedGender = (gender) => genderMap[gender.toLowerCase()] || gender;
@@ -960,7 +968,7 @@ const ProductDetailsPage = () => {
         <meta property="og:image" content={product?.imageUrls?.[0]?.secure_url} />
       </Helmet>
 
-      <Container maxWidth="lg" sx={{ my: 4, flexGrow: 1 }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', minHeight: '100vh', pb: 8, bgcolor: '#ffffff' }}>
         <Box sx={{ mb: 3 }}>
           {/* <Button
             variant="contained" startIcon={<ArrowBackIcon />}
@@ -986,26 +994,40 @@ const ProductDetailsPage = () => {
           </Button> */}
         </Box>
 
-        <Grid container spacing={5}>
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={{ xs: 3, sm: 6, md: 8 }} sx={{ alignItems: 'flex-start' }}>
+          <Grid item xs={12} sm={6}>
             <ProductImageCarousel imageUrls={getSelectedVariantFunction().imageUrls} productName={baseProductName} />
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 3, boxShadow: theme.shadows[1] }}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: { xs: 0, md: 2 } }}>
               <Typography
                 variant="h3"
                 component="h1"
                 gutterBottom
                 sx={{
-                  fontWeight: 700,
-                  color: 'primary.main',
-                  fontSize: { xs: '2rem', md: '2.5rem' },
-                  whiteSpace: 'pre-line',
+                  fontWeight: 900,
+                  color: '#1A1A1A',
+                  fontSize: { xs: '2.2rem', md: '3rem' },
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.04em',
+                  mb: 1
                 }}
               >
-                {formatProductNameMultiLine(baseProductName, 22)}
+                {baseProductName}
               </Typography>
-              <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>{product.brand || 'Sin descripción disponible.'}</Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 3,
+                  color: '#666',
+                  fontWeight: 500,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {product.brand || 'Premium Collection'}
+              </Typography>
               <Divider sx={{ my: 2 }} />
 
 
@@ -1072,19 +1094,21 @@ const ProductDetailsPage = () => {
                                   transform: 'scale(0.95)'
                                 },
                                 ...(isSelected && {
-                                  bgcolor: '#263C5C',
+                                  background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
                                   color: 'white',
-                                  borderColor: '#263C5C',
-                                  boxShadow: '0 4px 12px rgba(38, 60, 92, 0.3)',
+                                  border: 'none',
+                                  boxShadow: '0 8px 20px rgba(168, 85, 247, 0.3)',
+                                  fontWeight: '900',
                                   '&:hover': {
-                                    bgcolor: '#1E2F4A',
-                                    borderColor: '#1E2F4A',
+                                    opacity: 0.9,
+                                    transform: 'scale(1.05)',
                                   }
                                 }),
                                 ...(!isSelected && {
                                   bgcolor: 'white',
-                                  color: 'grey.800',
-                                  borderColor: 'grey.300',
+                                  color: '#000000',
+                                  borderColor: 'rgba(0,0,0,0.1)',
+                                  fontWeight: '400',
                                 }),
                                 ...(isLastAttribute && !option.isAvailable && {
                                   bgcolor: 'grey.100',
@@ -1100,7 +1124,7 @@ const ProductDetailsPage = () => {
                                 })
                               }}
                             >
-                              {option.value}
+                              {option.value.replace(/-/g, ' ')}
                             </Button>
                           );
                         })}
@@ -1119,31 +1143,62 @@ const ProductDetailsPage = () => {
               ) : null}
 
 
-              <Typography variant="h4" color="secondary" sx={{ mb: 2, fontWeight: 800 }}>
-                {priceWithTax !== null ? formatPrice(priceWithTax) : 'Precio no disponible'}
-              </Typography>
-              {taxRegime !== 'simplified' && (
-                <Typography variant="body2" color="text.secondary">
-                  IVA incluido
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" sx={{ mb: 1, fontWeight: 900, color: '#263C5C' }}>
+                  {priceWithTax !== null ? formatPrice(priceWithTax) : 'Precio no disponible'}
                 </Typography>
-              )}
-              <Typography variant="body1" color={isOutOfStock ? 'error.main' : 'text.primary'} sx={{ mb: 2, fontWeight: 600 }}>
-                Stock Disponible: {getSelectedVariantFunction().countInStock} {isOutOfStock && '(Agotado)'}
+                {taxRegime !== 'simplified' && (
+                  <Typography variant="body2" sx={{ color: '#999', fontWeight: 500 }}>
+                    IVA INCLUIDO
+                  </Typography>
+                )}
+              </Box>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  mb: 4,
+                  fontWeight: 600,
+                  color: isOutOfStock ? '#ef4444' : '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: isOutOfStock ? '#ef4444' : '#22c55e' }} />
+                {isOutOfStock ? 'Agotado' : `${getSelectedVariantFunction().countInStock} unidades disponibles`}
               </Typography>
 
-              <Box display="flex" alignItems="center" mb={3}>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <IconButton onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={quantity <= 1 || cartLoading || isOutOfStock}>
-                    <RemoveCircleOutlineIcon />
+              <Box display="flex" alignItems="center" gap={2}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  sx={{
+                    bgcolor: '#f8f8f8',
+                    borderRadius: '12px',
+                    p: 0.5,
+                    border: '1px solid rgba(0,0,0,0.05)'
+                  }}
+                >
+                  <IconButton
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    disabled={quantity <= 1 || cartLoading || isOutOfStock}
+                    size="small"
+                  >
+                    <RemoveCircleOutlineIcon fontSize="small" />
                   </IconButton>
-                  <Typography sx={{ width: '2ch', textAlign: 'center' }}>{quantity}</Typography>
-                  <IconButton onClick={() => setQuantity(q => Math.min(product.countInStock, q + 1))} disabled={quantity >= product.countInStock || cartLoading || isOutOfStock}>
-                    <AddCircleOutlineIcon />
+                  <Typography sx={{ width: '3ch', textAlign: 'center', fontWeight: 700 }}>{quantity}</Typography>
+                  <IconButton
+                    onClick={() => setQuantity(q => Math.min(product.countInStock, q + 1))}
+                    disabled={quantity >= product.countInStock || cartLoading || isOutOfStock}
+                    size="small"
+                  >
+                    <AddCircleOutlineIcon fontSize="small" />
                   </IconButton>
                 </Box>
                 <Button
                   variant="contained"
-                  color="primary"
+                  fullWidth
                   startIcon={cartLoading ? <CircularProgress size={20} color="inherit" /> : <ShoppingCartIcon />}
                   onClick={handleAddToCart}
                   disabled={
@@ -1155,42 +1210,28 @@ const ProductDetailsPage = () => {
                     !doesSelectedVariantExist()
                   }
                   sx={{
-                    borderRadius: 8,
+                    borderRadius: '16px',
                     textTransform: 'none',
-                    px: { xs: 1.5, sm: 4 }, // Reducir padding horizontal en móviles
-                    py: { xs: 1, sm: 1.5 }, // Reducir padding vertical en móviles
-                    ml: { xs: 0.5, sm: 1 }, // Reducir margen izquierdo en móviles
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' }, // Tamaño de fuente responsive
-                    minWidth: { xs: 'auto', sm: '64px' }, // Ancho mínimo ajustable
-                    background: 'rgb(249, 201, 8)',
-                    boxShadow: `0 3px 5px 2px rgba(33, 33, 33, .3)`,
-                    color: 'white',
+                    py: 2,
+                    fontSize: '1rem',
+                    fontWeight: 800,
+                    background: '#F9C908',
+                    color: '#ffffff',
+                    boxShadow: '0 8px 20px rgba(249, 201, 8, 0.3)',
                     '&:hover': {
-                      background: 'rgb(249, 201, 8)',
-                      boxShadow: `0 3px 8px 3px rgba(33, 33, 33, .4)`,
-                      transform: 'translateY(-2px)',
+                      background: '#E5B807',
+                      boxShadow: '0 12px 25px rgba(249, 201, 8, 0.4)',
+                      transform: 'translateY(-2px)'
                     },
-                    '&:active': { transform: 'translateY(0)' },
                     '&:disabled': {
-                      background: '#cccccc',
-                      color: '#666666',
+                      background: '#f0f0f0',
+                      color: '#bbb'
                     },
-                    // Ocultar texto en móviles muy pequeños y mostrar solo el icono
-                    ...(isExtraSmallMobile && {
-                      '& .MuiButton-startIcon': {
-                        margin: 0
-                      },
-                      minWidth: 'auto',
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%'
-                    })
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 >
-                  {/* Texto condicional para móviles pequeños */}
                   {isExtraSmallMobile ? '' : 'Añadir al Carrito'}
                 </Button>
-
               </Box>
             </Box>
           </Grid>
@@ -1200,7 +1241,7 @@ const ProductDetailsPage = () => {
           <Typography variant="h5" component="h2" gutterBottom sx={sectionTitleStyle}>Descripción del Producto</Typography>
           {/* <Typography variant="body1" color="text.primary" sx={{ lineHeight: 1.7 }}>{product.description || 'No hay descripción detallada disponible para este producto.'}</Typography> */}
           <HTMLContent
-            html={product.description}
+            html={getSelectedVariantFunction().description}
             fallback="No hay descripción detallada disponible para este producto."
             variant="body1"
             color="text.primary"
@@ -1248,672 +1289,261 @@ const ProductDetailsPage = () => {
         </Box>
 
 
-        <Box sx={{
-          p: { xs: 2, sm: 3 },
-          borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-          backgroundColor: 'background.paper',
-          mb: 4,
-          overflow: 'hidden'
-        }}>
-          <Typography
-            variant="h5"
-            component="h2"
-            gutterBottom
-            sx={{
-              fontWeight: 600,
-              color: 'primary.main',
-              mb: 3,
-              pb: 1,
-              borderBottom: '2px solid',
-              borderColor: 'primary.light'
-            }}
-          >
-            Especificaciones
-          </Typography>
-
-          {/* Contenedor con scroll horizontal para móviles */}
-          <Box sx={{
-            width: '100%',
-            overflowX: 'auto',
-            WebkitOverflowScrolling: 'touch', // Scroll suave en iOS
-            '&::-webkit-scrollbar': {
-              height: 6,
-            },
-            '&::-webkit-scrollbar-track': {
-              background: 'rgba(0,0,0,0.05)',
-              borderRadius: 3,
-            },
-            '&::-webkit-scrollbar-thumb': {
-              background: 'rgba(0,0,0,0.2)',
-              borderRadius: 3,
-            }
-          }}>
-            <TableContainer
-              component={Paper}
-              elevation={0}
-              sx={{
-                minWidth: 650, // Mantiene el ancho mínimo para desktop
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: 'grey.200',
-                overflow: 'hidden',
-                display: 'table' // Importante para que no colapse en móviles
-              }}
-            >
-              <Table aria-label="Especificaciones del producto" sx={{ minWidth: 650 }}>
-                <TableBody>
-                  {/* Código */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        width: { xs: '50%', sm: '40%' }, // Ajuste responsive del ancho
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap' // Evita que el texto se divida en varias líneas
-                      }}
-                    >
-                      Código
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().code ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150 // Ancho mínimo para la celda de datos
-                    }}>
-                      {getSelectedVariantFunction().code || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Volumen */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Volumen
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().volume ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().volume || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Género */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Género
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().gender ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().gender || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Colores */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Colores
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().colors?.length ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {formatArrayValue(getSelectedVariantFunction().colors)}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Tallas */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Tamaños
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().sizes?.length ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {formatArrayValue(getSelectedVariantFunction().sizes)}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Materiales */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Materiales
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().materials?.length ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {formatArrayValue(getSelectedVariantFunction().materials)}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Rango de edad */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Rango de edad
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().ageRange ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().ageRange || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Características */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Características
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().features?.length ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {formatArrayValue(getSelectedVariantFunction().features)}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Voltaje */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Voltaje
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().voltage ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().voltage || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Garantía */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Garantía
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().warranty ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().warranty || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Incluye baterías */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Incluye baterías
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().includesBatteries !== undefined ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().includesBatteries !== undefined ? (getSelectedVariantFunction().includesBatteries ? 'Sí' : 'No') : 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Tipo de batería */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Tipo de batería
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().batteryType ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().batteryType || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Dimensiones */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Dimensiones
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().dimensions ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {formatDimensions(getSelectedVariantFunction().dimensions)}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Peso */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Peso
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().weight ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().weight || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Ubicación recomendada */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Ubicación recomendada
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().recommendedLocation ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().recommendedLocation || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Categoría */}
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Categoría
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().category ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().category || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-
-                  {/* Marca */}
-                  <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        borderRight: '1px solid',
-                        borderColor: 'grey.200',
-                        py: 2,
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Marca
-                    </TableCell>
-                    <TableCell sx={{
-                      color: getSelectedVariantFunction().brand ? 'text.primary' : 'grey.500',
-                      py: 2,
-                      minWidth: 150
-                    }}>
-                      {getSelectedVariantFunction().brand || 'N/A'}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+        <Box sx={contentSectionStyle}>
+          <Typography variant="h5" sx={sectionTitleStyle}>Especificaciones</Typography>
+          <Box sx={{ mt: 3, border: '1px solid rgba(0,0,0,0.06)', borderRadius: '24px', overflow: 'hidden' }}>
+            {[
+              { label: 'Código', value: getSelectedVariantFunction().code },
+              { label: 'Volumen', value: getSelectedVariantFunction().volume },
+              { label: 'Género', value: getSelectedVariantFunction().gender },
+              { label: 'Colores', value: getSelectedVariantFunction().colors, isArray: true },
+              { label: 'Tamaños', value: getSelectedVariantFunction().sizes, isArray: true },
+              { label: 'Materiales', value: getSelectedVariantFunction().materials, isArray: true },
+              { label: 'Rango de edad', value: getSelectedVariantFunction().ageRange },
+              { label: 'Características', value: getSelectedVariantFunction().features, isArray: true },
+              { label: 'Voltaje', value: getSelectedVariantFunction().voltage },
+              { label: 'Garantía', value: getSelectedVariantFunction().warranty },
+              { label: 'Incluye baterías', value: getSelectedVariantFunction().includesBatteries !== undefined ? (getSelectedVariantFunction().includesBatteries ? 'Sí' : 'No') : null },
+              { label: 'Tipo de batería', value: getSelectedVariantFunction().batteryType },
+              { label: 'Dimensiones', value: formatDimensions(getSelectedVariantFunction().dimensions) },
+              { label: 'Peso', value: getSelectedVariantFunction().weight },
+              { label: 'Ubicación', value: getSelectedVariantFunction().recommendedLocation },
+              { label: 'Categoría', value: getSelectedVariantFunction().category },
+              { label: 'Marca', value: getSelectedVariantFunction().brand }
+            ].filter(spec => spec.value).map((spec, idx) => (
+              <Box
+                key={idx}
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  bgcolor: idx % 2 === 0 ? '#ffffff' : '#fcfcfc',
+                  borderBottom: idx === 16 ? 'none' : '1px solid rgba(0,0,0,0.04)',
+                  '&:last-child': { borderBottom: 'none' }
+                }}
+              >
+                <Box sx={{
+                  flex: { xs: 'none', sm: '0 0 30%' },
+                  p: 2.5,
+                  bgcolor: { xs: idx % 2 === 0 ? '#f9f9f9' : '#f4f4f4', sm: 'transparent' },
+                  borderRight: { sm: '1px solid rgba(0,0,0,0.04)' },
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontWeight: 800,
+                      color: '#666',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      fontSize: '0.7rem'
+                    }}
+                  >
+                    {spec.label}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 2.5, display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body1" sx={{ color: '#1A1A1A', fontWeight: 500, lineHeight: 1.5 }}>
+                    {spec.isArray ? formatArrayValue(spec.value) : spec.value}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
           </Box>
         </Box>
-
 
 
 
 
         {getSelectedVariantFunction().tags && getSelectedVariantFunction().tags.length > 0 && (
           <Box sx={contentSectionStyle}>
-            <Typography variant="h5" component="h2" gutterBottom sx={sectionTitleStyle}>Notas Aromáticas</Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Typography variant="h5" sx={sectionTitleStyle}>Notas Aromáticas</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
               {product.tags.map((tagItem, tagIndex) => (
-                <Button key={tagIndex} variant="contained" color="secondary" sx={{ borderRadius: 1, fontWeight: 600, cursor: 'default', textTransform: 'none', pointerEvents: 'none', boxShadow: 'none', '&:hover': { boxShadow: 'none', bgcolor: theme.palette.primary.main, }, '&:active': { boxShadow: 'none', bgcolor: theme.palette.primary.main, } }}>
+                <Box
+                  key={tagIndex}
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    borderRadius: '50px',
+                    bgcolor: '#f0f4f8',
+                    color: '#263C5C',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    border: '1px solid rgba(38, 60, 92, 0.1)'
+                  }}
+                >
                   {tagItem}
-                </Button>
+                </Box>
               ))}
             </Box>
           </Box>
         )}
 
         {/* --- 4. NUEVA SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) --- */}
-        <Box sx={{ ...contentSectionStyle, mt: 5 }}>
-          <Typography variant="h5" component="h2" gutterBottom sx={sectionTitleStyle}>
-            Preguntas Frecuentes
-          </Typography>
-          {faqData.map((faq, index) => (
-            <Accordion key={index} sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              color: 'text.primary',
-              boxShadow: 'none',
-              borderBottom: `1px solid ${theme.palette.divider}`,
-              '&:before': { display: 'none' },
-              '&.Mui-expanded': { margin: 'auto 0' }
-            }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ color: 'secondary.main' }} />}
-                aria-controls={`panel${index}a-content`}
-                id={`panel${index}a-header`}
+        <Box sx={contentSectionStyle}>
+          <Typography variant="h5" sx={sectionTitleStyle}>Preguntas Frecuentes</Typography>
+          <Box sx={{ mt: 2 }}>
+            {faqData.map((faq, index) => (
+              <Accordion
+                key={index}
+                sx={{
+                  backgroundColor: 'transparent',
+                  boxShadow: 'none',
+                  borderBottom: '1px solid rgba(0,0,0,0.05)',
+                  '&:before': { display: 'none' },
+                  '&.Mui-expanded': { margin: 0 },
+                  py: 1
+                }}
               >
-                <Typography sx={{ fontWeight: 'bold', color: 'primary.main' }}>{faq.question}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
-                  {faq.answer}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-          ))}
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: '#263C5C' }} />}
+                  sx={{ px: 0, '& .MuiAccordionSummary-content': { my: 2 } }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: '#1A1A1A', fontSize: '1.05rem' }}>
+                    {faq.question}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ px: 0, pb: 3 }}>
+                  <Typography variant="body1" sx={{ color: '#666', lineHeight: 1.8 }}>
+                    {faq.answer}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Box>
         </Box>
 
 
         {/* --- SECCIÓN DE CALIFICACIONES Y RESEÑAS ACTUALIZADA --- */}
-        <Card sx={{ ...contentSectionStyle, mt: 5 }}>
-          <CardContent>
-            <Typography variant="h5" component="h2" gutterBottom sx={sectionTitleStyle}>
-              Calificaciones y Reseñas
-            </Typography>
-            {reviews.length > 0 && (
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, p: 2, bgcolor: 'action.hover', borderRadius: 2 }}>
-                <Typography variant="h4" sx={{ mr: 2, fontWeight: 'bold' }}>
-                  {product.averageRating.toFixed(1)}
-                </Typography>
-                <Box>
-                  <Rating value={product.averageRating} precision={0.5} readOnly />
-                  <Typography variant="body2" color="text.secondary">
-                    Basado en {product.numReviews} reseña(s)
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-
-            {reviewsLoading ? (
-              <CircularProgress />
-            ) : reviews.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
-                Aún no hay reseñas para este producto. ¡Sé el primero en calificarlo!
+        <Box sx={contentSectionStyle}>
+          <Typography variant="h5" sx={sectionTitleStyle}>Calificaciones y Reseñas</Typography>
+          {reviews.length > 0 && (
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              mb: 6,
+              p: 4,
+              bgcolor: '#f8f8f8',
+              borderRadius: '24px',
+              border: '1px solid rgba(0,0,0,0.03)'
+            }}>
+              <Typography variant="h2" sx={{ mr: 3, fontWeight: 900, color: '#1A1A1A', letterSpacing: '-0.04em' }}>
+                {product.averageRating.toFixed(1)}
               </Typography>
-            ) : (
-              <List>
-                {reviews.map((review, index) => (
-                  <React.Fragment key={review._id}>
-                    <ListItem alignItems="flex-start">
-                      <Avatar sx={{ bgcolor: 'secondary.main', mr: 2 }}>
-                        {review.user.firstName ? review.user.firstName.charAt(0) : '?'}
-                      </Avatar>
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Typography component="span" variant="body1" sx={{ fontWeight: 'bold' }}>
-                              {review.user.firstName || 'Usuario'} {review.user.lastName || ''}
-                            </Typography>
-                            <Rating value={review.rating} readOnly size="small" sx={{ ml: 1.5, verticalAlign: 'middle' }} />
-                          </Box>
-                        }
-                        secondary={
-                          <>
-                            <Typography component="span" variant="body2" color="text.primary" sx={{ display: 'block', mt: 1, whiteSpace: 'pre-wrap' }}>
-                              {review.comment}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {new Date(review.createdAt).toLocaleDateString('es-CR')}
-                            </Typography>
-                          </>
-                        }
-                      />
-                    </ListItem>
-                    {index < reviews.length - 1 && <Divider variant="inset" component="li" />}
-                  </React.Fragment>
-                ))}
-              </List>
-            )}
-
-            {/* Formulario para Dejar una Reseña (con lógica condicional) */}
-            {user && (
-              <Box component="form" onSubmit={handleReviewSubmit} sx={{ mt: 4, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Escribe tu propia reseña</Typography>
-                <Box sx={{ mb: 2 }}>
-                  <Typography component="legend">Tu Calificación</Typography>
-                  <Rating
-                    name="new-rating"
-                    value={newRating}
-                    onChange={(event, newValue) => { setNewRating(newValue); }}
-                    readOnly={!canReview} // Se deshabilita si no puede reseñar
-                  />
-                </Box>
-                <TextField
-                  label={reviewDisabledMessage} // Label dinámico
-                  multiline
-                  rows={4}
-                  fullWidth
-                  variant="outlined"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  disabled={!canReview} // Se deshabilita si no puede reseñar
-                />
-                {/* <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={!canReview || reviewsLoading}>
-                  Enviar Reseña
-                </Button> */}
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!canReview || reviewsLoading}
-                  sx={{
-                    mt: 2,
-                    backgroundColor: '#4CAF50',
-                    '&:hover': {
-                      backgroundColor: '#45a049',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
-                    },
-                    '&:active': {
-                      transform: 'translateY(0)',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    },
-                    '&.Mui-disabled': {
-                      backgroundColor: '#cccccc',
-                      color: '#666666'
-                    },
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    padding: '10px 24px',
-                    borderRadius: '8px',
-                    textTransform: 'none',
-                    transition: 'all 0.2s ease-in-out',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  {reviewsLoading ? 'Enviando...' : 'Enviar Reseña'}
-                </Button>
+              <Box>
+                <Rating value={product.averageRating} precision={0.5} readOnly sx={{ mb: 0.5, color: '#F9C908' }} />
+                <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                  Basado en {product.numReviews} reseñas de clientes
+                </Typography>
               </Box>
-            )}
-          </CardContent>
-        </Card>
+            </Box>
+          )}
+
+          {reviewsLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={30} /></Box>
+          ) : reviews.length === 0 ? (
+            <Typography variant="body1" sx={{ color: '#999', py: 4, textAlign: 'center' }}>
+              Aún no hay reseñas para este producto.
+            </Typography>
+          ) : (
+            <List disablePadding>
+              {reviews.map((review, index) => (
+                <React.Fragment key={review._id}>
+                  <ListItem disableGutters alignItems="flex-start" sx={{ py: 4 }}>
+                    <Avatar sx={{ bgcolor: '#263C5C', width: 48, height: 48, mr: 2, fontWeight: 700 }}>
+                      {review.user.firstName ? review.user.firstName.charAt(0) : '?'}
+                    </Avatar>
+                    <ListItemText
+                      primary={
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#1A1A1A' }}>
+                            {review.user.firstName || 'Usuario'} {review.user.lastName || ''}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#999', fontWeight: 500 }}>
+                            {new Date(review.createdAt).toLocaleDateString('es-CR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </Typography>
+                        </Box>
+                      }
+                      secondary={
+                        <Box>
+                          <Rating value={review.rating} readOnly size="small" sx={{ mb: 1.5, color: '#F9C908' }} />
+                          <Typography variant="body1" sx={{ color: '#444', lineHeight: 1.8, fontSize: '1rem' }}>
+                            {review.comment}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                  {index < reviews.length - 1 && <Divider sx={{ borderColor: 'rgba(0,0,0,0.05)' }} />}
+                </React.Fragment>
+              ))}
+            </List>
+          )}
+
+          {user && (
+            <Box component="form" onSubmit={handleReviewSubmit} sx={{ mt: 8, p: 4, bgcolor: '#fdfdfd', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.02)' }}>
+              <Typography variant="h6" sx={{ mb: 3, fontWeight: 800 }}>Comparte tu experiencia</Typography>
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1, color: '#666' }}>Tu calificación</Typography>
+                <Rating
+                  name="new-rating"
+                  value={newRating}
+                  onChange={(event, newValue) => { setNewRating(newValue); }}
+                  readOnly={!canReview}
+                  size="large"
+                  sx={{ color: '#F9C908' }}
+                />
+              </Box>
+              <TextField
+                placeholder={reviewDisabledMessage}
+                multiline
+                rows={4}
+                fullWidth
+                variant="outlined"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                disabled={!canReview}
+                sx={{
+                  mb: 3,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '16px',
+                    bgcolor: '#ffffff'
+                  }
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!canReview || reviewsLoading}
+                sx={{
+                  backgroundColor: '#263C5C',
+                  py: 1.5,
+                  px: 4,
+                  borderRadius: '12px',
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  '&:hover': {
+                    backgroundColor: '#1E2F4A',
+                    transform: 'translateY(-2px)'
+                  }
+                }}
+              >
+                {reviewsLoading ? 'Enviando...' : 'Publicar Reseña'}
+              </Button>
+            </Box>
+          )}
+        </Box>
 
 
         {relatedProducts.length > 0 && (
           <Box sx={{ ...contentSectionStyle, textAlign: 'center' }}>
-            <Typography variant="h5" component="h2" gutterBottom sx={{ ...sectionTitleStyle, textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ ...sectionTitleStyle, textAlign: 'center', mb: 6 }}>
               Productos Relacionados
             </Typography>
             <Grid container spacing={4} justifyContent="center">
               {relatedProducts.map((p) => (
-                <Grid item key={p._id} xs={12} sm={6} md={6} lg={6}>
+                <Grid item key={p._id} xs={12} sm={6} md={3}>
                   <ProductCard
                     product={{
                       ...p,
@@ -1929,8 +1559,8 @@ const ProductDetailsPage = () => {
           </Box>
         )}
         {relatedProducts.length === 0 && !loadingSpecificProduct && (
-          <Box sx={{ ...contentSectionStyle, textAlign: 'center' }}>
-            <Typography variant="body1" color="text.secondary">
+          <Box sx={{ ...contentSectionStyle, textAlign: 'center', py: 8 }}>
+            <Typography variant="body1" sx={{ color: '#999' }}>
               No se encontraron productos relacionados.
             </Typography>
           </Box>
