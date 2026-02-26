@@ -49,7 +49,7 @@ const PromotionalBanner = () => {
       boxShadow: '0 4px 12px rgba(0,0,0,0.3) !important',
       mb: 1,
       mt: 1,
-      borderRadius: 10,
+      borderRadius: 2,
       zIndex: (theme) => theme.zIndex.drawer + 2,
     }}>
       {/* --- CONTENEDOR DE LA ANIMACIÓN --- */}

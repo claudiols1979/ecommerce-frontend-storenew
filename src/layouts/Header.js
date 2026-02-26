@@ -127,7 +127,7 @@ const Header = () => {
 
   const drawerContent = (
     <Box
-      sx={{ width: 225, height: '100%', p: 2, backgroundColor: 'rgba(38, 60, 92, 0.9)' }}
+      sx={{ width: 225, height: '100%', p: 1, background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important', }}
       role="presentation"
       onClick={handleMobileMenuClose}
       onKeyDown={handleMobileMenuClose}
@@ -234,8 +234,8 @@ const Header = () => {
                 sx={{
                   zIndex: (theme) => theme.zIndex.drawer + 2,
                   '& .MuiDrawer-paper': {
-                    backgroundColor: 'rgba(38, 60, 92, 0.92)',
-                    backdropFilter: 'blur(12px)',
+                    backgroundColor: 'rgba(236, 59, 230, 0.92)',
+                    backdropFilter: 'blur(14px)',
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
                     width: 230,
                     top: '70px',

@@ -140,7 +140,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           sx={{
             position: 'absolute', top: '18px', left: '-35px',
             transform: 'rotate(-45deg)', zIndex: 1, width: '150px',
-            py: 0.5, background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, #FFD700 90%)`,
+            py: 0.5, background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, #ff00d9 90%)`,
             boxShadow: '0 4px 10px rgba(0,0,0,0.5)', textAlign: 'center',
           }}
         >
@@ -148,7 +148,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             variant="caption"
             sx={{
               fontWeight: 'bold',
-              color: 'common.black',
+              color: 'white',
               textTransform: 'uppercase',
               fontSize: ['Últimas Unidades', 'Nuevo Ingreso', '10% OFF', '15% OFF', '20% OFF'].includes(product.promotionalLabels[0].name) ? '0.55rem' : '0.7rem'
             }}
@@ -191,13 +191,12 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         {hasVariants && (
           <Chip
             label={`Ver variantes`}
-            size="small"
-            color="secondary"
+            size="small"            
             onClick={(e) => {
               e.stopPropagation();
               handleViewDetails();
             }}
-            sx={{ mb: 1, fontSize: '0.65rem', height: '20px', cursor: 'pointer' }}
+            sx={{ mb: 1, fontSize: '0.75rem', height: '20px', cursor: 'pointer', background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, #d432bb 90%)`, color: 'white' }}
           />
         )}
 
@@ -227,8 +226,8 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
                 onClick={(e) => e.preventDefault()}
                 component="span"
                 sx={{
-                  bgcolor: 'secondary.light',
-                  color: 'secondary.contrastText',
+                  background: `linear-gradient(45deg, #66a8b1 90%)`,
+                  color: 'white',
                   fontSize: '0.65rem',
                   fontWeight: 'bold',
                   height: '20px',
