@@ -1651,9 +1651,9 @@ const ProductDetailsPage = () => {
                     sx={{
                       px: 3,
                       py: 1,
-                      borderRadius: "50px",
-                      bgcolor: "#f0f4f8",
-                      color: "#263C5C",
+                      borderRadius: "10px",
+                      background: 'linear-gradient(90deg, #7a4677 0%, #F72585 100%) !important',
+                      color: "#fff",
                       fontWeight: 700,
                       fontSize: "0.85rem",
                       border: "1px solid rgba(38, 60, 92, 0.1)",
