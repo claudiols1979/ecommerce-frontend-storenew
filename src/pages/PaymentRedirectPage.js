@@ -104,7 +104,7 @@ const PaymentRedirectPage = () => {
         setStatus("error");
         setMessage(
           err.response?.data?.message ||
-            "Hubo un problema de conexión. Por favor, revise el estado de su pedido en su perfil.",
+          "Hubo un problema de conexión. Por favor, revise el estado de su pedido en su perfil.",
         );
         console.error("Error al finalizar el pago en el frontend:", err);
       }
@@ -173,36 +173,51 @@ const PaymentRedirectPage = () => {
               </Typography>
 
               {orderInfo && (
-                <Box
-                  sx={{
-                    p: 3,
-                    background: "rgba(255,255,255,0.03)",
-                    borderRadius: "24px",
-                    mb: 4,
-                    border: "1px solid rgba(255,255,255,0.1)",
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={{ color: "rgba(255,255,255,0.6)", mb: 1 }}
-                  >
-                    ID de Pedido
+                <Box sx={{ mb: 4, p: 3, background: "rgba(255,255,255,0.03)", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.6)", mb: 2 }}>
+                    Resumen del Pedido (#{orderInfo._id.slice(-6)})
                   </Typography>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 800, color: "white", mb: 2 }}
-                  >
-                    {orderInfo._id}
-                  </Typography>
-                  <Divider
-                    sx={{ borderColor: "rgba(255,255,255,0.1)", my: 2 }}
-                  />
-                  <Typography
-                    variant="h4"
-                    sx={{ fontWeight: 900, color: "#4ade80" }}
-                  >
-                    {formatPrice(orderInfo.totalPrice)}
-                  </Typography>
+
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                    <Box display="flex" justifyContent="space-between">
+                      <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                        {orderInfo.taxRegime === 'simplified' ? 'Subtotal Productos' : 'Subtotal Productos (Sin IVA)'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                        {formatPrice(orderInfo.taxBreakdown?.itemsSubtotal || (orderInfo.totalPrice - (orderInfo.taxBreakdown?.shippingBase || 0)))}
+                      </Typography>
+                    </Box>
+
+                    {orderInfo.taxRegime !== 'simplified' && (
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" sx={{ opacity: 0.7 }}>IVA Productos (13%):</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatPrice(orderInfo.taxBreakdown?.itemsTax || 0)}</Typography>
+                      </Box>
+                    )}
+
+                    <Box display="flex" justifyContent="space-between">
+                      <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                        {orderInfo.taxRegime === 'simplified' ? 'Costo de Envío' : 'Envío (Sin IVA)'}:
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatPrice(orderInfo.taxBreakdown?.shippingBase || 0)}</Typography>
+                    </Box>
+
+                    {orderInfo.taxRegime !== 'simplified' && (
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" sx={{ opacity: 0.7 }}>IVA Envío (13%):</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatPrice(orderInfo.taxBreakdown?.shippingTax || 0)}</Typography>
+                      </Box>
+                    )}
+
+                    <Divider sx={{ my: 1, borderColor: "rgba(255,255,255,0.1)" }} />
+
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Typography variant="h5" sx={{ fontWeight: 800 }}>Total Pagado</Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: "#4ade80" }}>
+                        {formatPrice(orderInfo.totalPrice)}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               )}
 
