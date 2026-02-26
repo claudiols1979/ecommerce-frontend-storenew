@@ -416,7 +416,7 @@ const Header = () => {
                 }}
               >
                 <InputBase
-                  placeholder="Buscar en Software Factory ERP"
+                  placeholder="Buscar productos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   sx={{
