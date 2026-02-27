@@ -21,6 +21,7 @@ import PrivacyPolicies from "./pages/PrivacyPolicies";
 import TermsConditions from "./pages/TermsConditions";
 import PaymentRedirectPage from "./pages/PaymentRedirectPage";
 import DepartmentalFilterBar from "./layouts/DepartmentalFilterBar";
+import ChatWidget from "./components/chat/ChatWidget";
 
 // PrivateRoute component
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -47,6 +48,7 @@ const MainLayout = ({ children }) => (
     <DepartmentalFilterBar />
     <MainContent>{children}</MainContent>
     <Footer />
+    <ChatWidget />
   </AppContainer>
 );
 
