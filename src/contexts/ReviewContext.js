@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "./AuthContext";
 import API_URL from "../config";
@@ -45,21 +44,18 @@ export const ReviewProvider = ({ children }) => {
   const createReview = useCallback(
     async (reviewData) => {
       if (!user) {
-        toast.error("Debes iniciar sesión para dejar una reseña.");
         throw new Error("Usuario no autenticado.");
       }
       setLoading(true);
       setError(null);
       try {
         await api.post("/api/reviews", reviewData);
-        toast.success("¡Gracias por tu reseña!");
         // Después de crear la reseña, volvemos a cargar la lista para ese producto.
         await fetchReviews(reviewData.productId);
       } catch (err) {
         const errorMessage =
           err.response?.data?.message || "No se pudo enviar tu reseña.";
         setError({ message: errorMessage });
-        toast.error(errorMessage);
         throw new Error(errorMessage); // Propaga el error para que el componente lo maneje
       } finally {
         setLoading(false);
@@ -68,13 +64,16 @@ export const ReviewProvider = ({ children }) => {
     [api, user, fetchReviews],
   );
 
-  const value = {
-    reviews,
-    loading,
-    error,
-    fetchReviews,
-    createReview,
-  };
+  const value = useMemo(
+    () => ({
+      reviews,
+      loading,
+      error,
+      fetchReviews,
+      createReview,
+    }),
+    [reviews, loading, error, fetchReviews, createReview],
+  );
 
   return (
     <ReviewContext.Provider value={value}>{children}</ReviewContext.Provider>

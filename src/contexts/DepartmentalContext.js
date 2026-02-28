@@ -8,7 +8,6 @@ import React, {
   useMemo,
 } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -128,7 +127,6 @@ export const DepartmentalProvider = ({ children }) => {
         const errorMessage =
           err.response?.data?.message || "Error al cargar los productos.";
         setDepartmentalError({ message: errorMessage });
-        toast.error(errorMessage);
       } finally {
         setDepartmentalLoading(false);
         isLoadingRef.current = false;

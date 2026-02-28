@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
-import { toast } from "react-toastify";
 import AuthBranding from "../components/common/AuthBranding";
 import { Helmet } from "react-helmet-async";
 
@@ -31,27 +30,29 @@ const NewPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Las contraseñas no coinciden.");
+      setMessage("Las contraseñas no coinciden.");
       return;
     }
     if (password.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres.");
+      setMessage("La contraseña debe tener al menos 6 caracteres.");
       return;
     }
 
     setLoading(true);
+    setMessage("");
+    setError("");
     const result = await resetPassword(token, password);
 
     if (result.success) {
-      toast.success(result.message);
-      setMessage(result.message);
+      setMessage(result.message || "Tu contraseña ha sido restablecida con éxito.");
     } else {
-      toast.error(result.message);
+      setError(result.message || "Error al restablecer la contraseña.");
     }
 
     setLoading(false);
@@ -246,15 +247,15 @@ const NewPasswordPage = () => {
                 Establecer Nueva Contraseña
               </Typography>
 
-              {message ? (
+              {message && (message.includes("exitosamente") || message.includes("éxito")) ? (
                 <Box textAlign="center">
                   <Alert
-                    severity="success"
+                    severity={message.includes("exitosamente") || message.includes("éxito") ? "success" : "error"}
                     sx={{
                       mb: 3,
-                      bgcolor: "rgba(76, 175, 80, 0.2)",
+                      bgcolor: message.includes("exitosamente") || message.includes("éxito") ? "rgba(76, 175, 80, 0.2)" : "rgba(211, 47, 47, 0.2)",
                       color: "#fff",
-                      border: "1px solid #4caf50",
+                      border: message.includes("exitosamente") || message.includes("éxito") ? "1px solid #4caf50" : "1px solid #d32f2f",
                       borderRadius: "8px",
                     }}
                   >
@@ -287,6 +288,22 @@ const NewPasswordPage = () => {
                 </Box>
               ) : (
                 <Box component="form" onSubmit={handleSubmit} noValidate>
+                  {error && (
+                    <Alert
+                      severity="error"
+                      sx={{
+                        mb: 3,
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(211, 47, 47, 0.1)",
+                        color: "#ffcdd2",
+                        "& .MuiAlert-icon": {
+                          color: "#ffcdd2",
+                        },
+                      }}
+                    >
+                      {error}
+                    </Alert>
+                  )}
                   <TextField
                     margin="normal"
                     required

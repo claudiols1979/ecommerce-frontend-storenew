@@ -16,10 +16,10 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Alert,
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { toast } from "react-toastify";
 import AuthBranding from "../components/common/AuthBranding";
 import CRAddressSelector from "../components/CRAddressSelector";
 
@@ -55,6 +55,7 @@ const RegisterPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [error, setError] = useState("");
 
   const { register, user } = useAuth();
   const navigate = useNavigate();
@@ -101,6 +102,7 @@ const RegisterPage = () => {
     }
 
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(""); // Clear global error when user changes data
     // Limpiar error del campo cuando el usuario empiece a escribir
     if (fieldErrors[e.target.name]) {
       setFieldErrors({ ...fieldErrors, [e.target.name]: "" });
@@ -113,11 +115,11 @@ const RegisterPage = () => {
 
     // Validaciones básicas
     if (password !== confirmPassword) {
-      toast.error("Las contraseñas no coinciden.");
+      setFieldErrors({ confirmPassword: "Las contraseñas no coinciden." });
       return false;
     }
     if (password.length < 6) {
-      toast.error("La contraseña debe tener al menos 6 caracteres.");
+      setFieldErrors({ password: "La contraseña debe tener al menos 6 caracteres." });
       return false;
     }
     if (!provincia || !canton || !distrito) {
@@ -136,9 +138,6 @@ const RegisterPage = () => {
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
-      // Mostrar el primer error en toast
-      const firstError = Object.values(errors)[0];
-      toast.error(firstError);
       return false;
     }
 
@@ -154,6 +153,7 @@ const RegisterPage = () => {
     }
 
     setLoading(true);
+    setError("");
     // ✅ INCLUIR TODOS LOS CAMPOS en los datos del usuario
     const userData = {
       firstName,
@@ -172,7 +172,10 @@ const RegisterPage = () => {
       codigoActividadReceptor,
     };
 
-    await register(userData);
+    const result = await register(userData);
+    if (!result.success) {
+      setError(result.message || "Error al registrarse.");
+    }
     setLoading(false);
   };
 
@@ -378,8 +381,26 @@ const RegisterPage = () => {
             },
           }}
         >
-          <CardContent>
+          <CardContent sx={{ p: { xs: 2, sm: 4 } }}>
             <AuthBranding lightMode={true} />
+
+            {error && (
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 3,
+                  borderRadius: "12px",
+                  backgroundColor: "rgba(211, 47, 47, 0.1)",
+                  color: "#ffcdd2",
+                  "& .MuiAlert-icon": {
+                    color: "#ffcdd2",
+                  },
+                }}
+              >
+                {error}
+              </Alert>
+            )}
+
             <Typography
               variant="h4"
               component="h1"

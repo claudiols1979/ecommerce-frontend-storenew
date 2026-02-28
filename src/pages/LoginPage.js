@@ -13,10 +13,10 @@ import {
   Tabs,
   Tab,
   useTheme,
+  Alert,
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { toast } from "react-toastify";
 import AuthBranding from "../components/common/AuthBranding";
 
 // Iconos para los campos de texto
@@ -36,6 +36,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const { login, loginWithEmail, user } = useAuth();
   const navigate = useNavigate();
@@ -54,14 +55,17 @@ const LoginPage = () => {
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
+    setError(""); // Clear error when switching tabs
   };
 
   const handleCodeSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setError("");
     const success = await login(resellerCode);
     if (!success) {
       setResellerCode("");
+      setError("El código de acceso no es válido.");
     }
     setLoading(false);
   };
@@ -69,7 +73,11 @@ const LoginPage = () => {
   const handleEmailSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    await loginWithEmail(email, password);
+    setError("");
+    const result = await loginWithEmail(email, password);
+    if (!result.success) {
+      setError(result.message || "Error al iniciar sesión.");
+    }
     setLoading(false);
   };
 
@@ -286,6 +294,23 @@ const LoginPage = () => {
         >
           <CardContent>
             <AuthBranding lightMode={true} />
+
+            {error && (
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 2,
+                  borderRadius: "12px",
+                  backgroundColor: "rgba(211, 47, 47, 0.1)",
+                  color: "#ffcdd2",
+                  "& .MuiAlert-icon": {
+                    color: "#ffcdd2",
+                  },
+                }}
+              >
+                {error}
+              </Alert>
+            )}
 
             <Box
               sx={{

@@ -11,6 +11,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import NavBranding from "../components/common/NavBranding"; // Reutilizamos el componente de branding
 
 const Footer = () => {
@@ -121,12 +122,23 @@ const Footer = () => {
             >
               Alajuela, Costa Rica
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ ...linkStyle, cursor: "default" }}
+            <MuiLink
+              href="https://wa.me/50672317420"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ ...linkStyle, display: "inline-block" }}
             >
-              (506) 7231-7420
-            </Typography>
+              <IconButton
+                aria-label="WhatsApp"
+                sx={{
+                  color: "grey.400",
+                  padding: 0,
+                  "&:hover": { color: "#25D366" },
+                }}
+              >
+                <WhatsAppIcon />
+              </IconButton>
+            </MuiLink>
           </Grid>
         </Grid>
 

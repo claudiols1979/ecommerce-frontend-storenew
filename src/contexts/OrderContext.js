@@ -5,7 +5,6 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { calculatePriceWithTax, getTaxRate } from "../utils/taxCalculations";
 import { formatPrice } from "../utils/formatters";
@@ -64,7 +63,6 @@ export const OrderProvider = ({ children }) => {
         return;
       }
       if (!productId || quantity < 0) {
-        toast.error("Cantidad inválida.");
         return;
       }
       setLoading(true);
@@ -291,11 +289,9 @@ export const OrderProvider = ({ children }) => {
   const initiateTilopayPayment = useCallback(
     async (shippingDetails) => {
       if (!user || !user.token) {
-        toast.error("Debes iniciar sesión para procesar el pago.");
         return null;
       }
       if (cartItems.length === 0) {
-        toast.error("No puedes iniciar el pago con el carrito vacío.");
         return null;
       }
 
@@ -321,7 +317,6 @@ export const OrderProvider = ({ children }) => {
         const { paymentUrl } = response.data;
 
         if (!paymentUrl) {
-          toast.error("Error al obtener la URL de pago de Tilopay.");
           return null;
         }
 
@@ -334,7 +329,6 @@ export const OrderProvider = ({ children }) => {
         const errorMessage =
           err.response?.data?.message || "Error al iniciar el pago.";
         setError({ message: errorMessage });
-        toast.error(errorMessage);
         return null;
       } finally {
         setLoading(false);

@@ -21,7 +21,6 @@ import { useProducts } from "../contexts/ProductContext";
 import { useNavigate } from "react-router-dom";
 import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
-import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import PromotionalBanner from "../components/common/PromotionBanner";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -158,9 +157,6 @@ const HomePage = () => {
   const handleAddToCart = useCallback(
     async (product) => {
       if (typeof addItemToCart !== "function") {
-        toast.error(
-          "La funcionalidad para añadir al carrito no está disponible.",
-        );
         return;
       }
 
@@ -194,7 +190,6 @@ const HomePage = () => {
 
       const priceToPass = getPriceForCart();
       if (priceToPass <= 0) {
-        toast.error("No se puede añadir al carrito: precio no disponible.");
         setAddingProductId(null);
         return;
       }
@@ -202,7 +197,7 @@ const HomePage = () => {
       try {
         await addItemToCart(product._id, 1, priceToPass);
       } catch (err) {
-        toast.error(err.message || "No se pudo añadir el producto.");
+        console.error(err);
       } finally {
         setAddingProductId(null);
       }

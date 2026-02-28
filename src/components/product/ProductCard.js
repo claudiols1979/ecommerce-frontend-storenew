@@ -19,7 +19,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useConfig } from "../../contexts/ConfigContext";
-import { toast } from "react-toastify";
 import { formatPrice } from "../../utils/formatters";
 import { calculatePriceWithTax } from "../../utils/taxCalculations";
 
@@ -97,16 +96,16 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
 
   const handleAddToCartClick = () => {
     if (!isAuthenticated) {
-      toast.info("Por favor, inicia sesión para añadir productos al carrito.");
+      console.log("Por favor, inicia sesión para añadir productos al carrito.");
       navigate("/login");
       return;
     }
     if (product.countInStock <= 0) {
-      toast.error("Este producto está agotado.");
+      console.log("Este producto está agotado.");
       return;
     }
     if (!displayPrice || displayPrice <= 0) {
-      toast.error("No se puede añadir al carrito: Precio no disponible.");
+      console.log("No se puede añadir al carrito: Precio no disponible.");
       return;
     }
     if (hasVariants) {

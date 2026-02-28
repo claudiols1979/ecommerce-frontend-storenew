@@ -16,9 +16,7 @@ import { HeroCarouselProvider } from "./contexts/HeroCarouselContext";
 import { AdGridProvider } from "./contexts/AdGridContext";
 import { HeroCarouselVideoProvider } from "./contexts/HeroCarouselVideoContext";
 import { ConfigProvider } from "./contexts/ConfigContext";
-import { ToastContainer } from "react-toastify";
 import { HelmetProvider } from "react-helmet-async";
-import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -46,17 +44,6 @@ root.render(
                       </SearchProvider>
                     </DepartmentalProvider>
                   </ReviewProvider>
-                  <ToastContainer
-                    position="bottom-right"
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                  />
                 </OrderProvider>
               </ProductProvider>
             </ConfigProvider>

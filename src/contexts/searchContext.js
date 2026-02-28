@@ -1,7 +1,6 @@
 // contexts/SearchContext.js
 import React, { createContext, useContext, useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import axios from "axios";
 import API_URL from "../config"; // Asegúrate de tener tu config
 
@@ -69,7 +68,6 @@ export const SearchProvider = ({ children }) => {
         const errorMessage =
           err.response?.data?.message || "Error al buscar productos.";
         setSearchError({ message: errorMessage });
-        toast.error(errorMessage);
         throw err;
       } finally {
         setSearchLoading(false);

@@ -20,6 +20,7 @@ function CRAddressSelector({
   vertical = false,
   customStyle = {},
   icon = null,
+  disabled = false,
 }) {
   const [provincesList, setProvincesList] = useState([]);
   const [cantonesList, setCantonesList] = useState([]);
@@ -99,7 +100,13 @@ function CRAddressSelector({
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={itemCols}>
-        <FormControl fullWidth variant="outlined" required sx={customStyle}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          required
+          sx={customStyle}
+          disabled={disabled}
+        >
           <InputLabel id="provincia-label">Provincia</InputLabel>
           <Select
             labelId="provincia-label"
@@ -127,7 +134,7 @@ function CRAddressSelector({
           fullWidth
           variant="outlined"
           required
-          disabled={!provincia}
+          disabled={disabled || !provincia}
           sx={customStyle}
         >
           <InputLabel id="canton-label">Cantón</InputLabel>
@@ -157,7 +164,7 @@ function CRAddressSelector({
           fullWidth
           variant="outlined"
           required
-          disabled={!canton}
+          disabled={disabled || !canton}
           sx={customStyle}
         >
           <InputLabel id="distrito-label">Distrito</InputLabel>

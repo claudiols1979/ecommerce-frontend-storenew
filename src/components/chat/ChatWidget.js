@@ -11,6 +11,8 @@ import {
     CircularProgress,
     Avatar,
     styled,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import CloseIcon from "@mui/icons-material/Close";
@@ -25,11 +27,15 @@ const ChatContainer = styled(Box)(({ theme }) => ({
     position: "fixed",
     bottom: 25,
     right: 25,
-    zIndex: 1000,
+    zIndex: 2000, // Increased to be on top of Header (drawer is usually 1200, header 1100)
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-end",
     fontFamily: "'Inter', sans-serif",
+    [theme.breakpoints.down("sm")]: {
+        bottom: 15,
+        right: 15,
+    },
 }));
 
 const ChatWindow = styled(Paper)(({ theme }) => ({
@@ -46,6 +52,11 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
     boxShadow: "0 12px 40px rgba(0,0,0,0.3)",
     border: "1px solid rgba(255,255,255,0.1)",
     color: "#fff",
+    [theme.breakpoints.down("sm")]: {
+        width: "calc(100vw - 30px)",
+        height: "calc(100vh - 200px)", // More room at the top (lowest top edge)
+        maxHeight: "500px",
+    },
 }));
 
 const ChatHeader = styled(Box)(({ theme }) => ({
@@ -128,18 +139,21 @@ const GradientButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const ChatWidget = () => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const { user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [history, setHistory] = useState([
         {
             role: "assistant",
-            content: "¡Hola! Soy su asistente de Software Factory ERP. Te puedo ayudar dándote información de productos de la tienda o estado sus órdenes de compra.",
+            content: "Indique el producto o número de pedido que desea consultar.",
         },
     ]);
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState("");
     const scrollRef = useRef(null);
+    const chatContainerRef = useRef(null);
 
     useEffect(() => {
         let sId = sessionStorage.getItem("chat_session_id");
@@ -155,6 +169,23 @@ const ChatWidget = () => {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [history, isLoading]);
+
+    // Click outside to close logic
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isOpen && chatContainerRef.current && !chatContainerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
 
     const handleSend = async () => {
         if (!message.trim() || isLoading) return;
@@ -208,7 +239,7 @@ const ChatWidget = () => {
     if (!user) return null;
 
     return (
-        <ChatContainer>
+        <ChatContainer ref={chatContainerRef}>
             <Fade in={isOpen}>
                 <Box sx={{ display: isOpen ? "block" : "none" }}>
                     <ChatWindow elevation={0}>
@@ -229,7 +260,7 @@ const ChatWidget = () => {
                                         Asistente Virtual
                                     </Typography>
                                     <Typography variant="caption" sx={{ opacity: 0.7, textTransform: "uppercase", fontSize: 10, fontWeight: 700 }}>
-                                        Online • Software Factory ERP
+                                        Online
                                     </Typography>
                                 </Box>
                             </Box>

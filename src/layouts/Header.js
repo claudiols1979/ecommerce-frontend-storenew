@@ -26,7 +26,6 @@ import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useDepartmental } from "../contexts/DepartmentalContext";
-import { toast } from "react-toastify";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import NavBranding from "../components/common/NavBranding";
 import { amber } from "@mui/material/colors";
@@ -171,6 +170,20 @@ const Header = () => {
           sx={getMobileNavStyle("/products")}
         >
           <ListItemText primary="Productos" sx={{ mr: 1, color: "#fff" }} />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => handleMenuNavigate("/privacy")}
+          sx={getMobileNavStyle("/privacy")}
+        >
+          <ListItemText primary="Política de Privacidad" sx={{ mr: 1, color: "#fff" }} />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => handleMenuNavigate("/conditions")}
+          sx={getMobileNavStyle("/conditions")}
+        >
+          <ListItemText primary="Términos y Condiciones" sx={{ mr: 1, color: "#fff" }} />
         </ListItem>
 
         {user ? (

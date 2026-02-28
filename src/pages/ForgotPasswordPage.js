@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { toast } from "react-toastify";
 import AuthBranding from "../components/common/AuthBranding";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
@@ -22,6 +21,7 @@ const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const { forgotPassword } = useAuth();
   const navigate = useNavigate();
@@ -30,20 +30,17 @@ const ForgotPasswordPage = () => {
     event.preventDefault();
     setLoading(true);
     setMessage("");
+    setError("");
 
     const result = await forgotPassword(email);
 
     if (result.success) {
-      toast.success(
-        result.message ||
-          "Si el correo existe, recibirás un enlace de reseteo.",
-      );
       setMessage(
         result.message ||
-          "Si tu correo está registrado, recibirás las instrucciones en breve.",
+        "Si tu correo está registrado, recibirás las instrucciones en breve.",
       );
     } else {
-      toast.error(result.message);
+      setError(result.message || "Error al solicitar el enlace.");
     }
 
     setLoading(false);
@@ -285,6 +282,22 @@ const ForgotPasswordPage = () => {
                   noValidate
                   sx={{ mt: 2 }}
                 >
+                  {error && (
+                    <Alert
+                      severity="error"
+                      sx={{
+                        mb: 3,
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(211, 47, 47, 0.1)",
+                        color: "#ffcdd2",
+                        "& .MuiAlert-icon": {
+                          color: "#ffcdd2",
+                        },
+                      }}
+                    >
+                      {error}
+                    </Alert>
+                  )}
                   <TextField
                     margin="normal"
                     required

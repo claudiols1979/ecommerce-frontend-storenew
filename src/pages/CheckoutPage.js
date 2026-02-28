@@ -19,6 +19,7 @@ import {
   useTheme,
   InputLabel,
   alpha,
+  Alert,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useOrders } from "../contexts/OrderContext";
@@ -26,7 +27,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useConfig } from "../contexts/ConfigContext";
 import { useUpdateInfo } from "../contexts/UpdateInfoContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { formatPrice } from "../utils/formatters";
 import { calculatePriceWithTax } from "../utils/taxCalculations";
 import RateReviewIcon from "@mui/icons-material/RateReview";
@@ -73,6 +73,7 @@ const CheckoutPage = () => {
   const [shippingMessage, setShippingMessage] = useState("");
   const [provinceTouched, setProvinceTouched] = useState(false);
   const [paymentButtonLoading, setPaymentButtonLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const [touchedFields, setTouchedFields] = useState({
     name: false,
@@ -165,10 +166,10 @@ const CheckoutPage = () => {
   const normalize = (str) =>
     str
       ? str
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
       : "";
 
   const isGAM = (prov, cant) => {
@@ -221,11 +222,11 @@ const CheckoutPage = () => {
       taxRegime === "simplified"
         ? 0
         : cartItems.reduce((acc, item) => {
-            const iva = parseFloat(item.product?.iva) || 0;
-            return (
-              acc + Math.round(item.quantity * item.priceAtSale * (iva / 100))
-            );
-          }, 0);
+          const iva = parseFloat(item.product?.iva) || 0;
+          return (
+            acc + Math.round(item.quantity * item.priceAtSale * (iva / 100))
+          );
+        }, 0);
     const currentCanton = selectedCanton || shippingDetails.city;
     const sBaseRaw = calculateShippingFee(
       selectedProvince,
@@ -294,35 +295,17 @@ const CheckoutPage = () => {
   };
 
   const updateUserProfileWithShippingInfo = async () => {
-    if (!user || !user._id) return;
-    try {
-      const nameParts = shippingDetails.name.split(" ");
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
-      const updatedData = {
-        firstName,
-        lastName,
-        email: shippingDetails.email,
-        phoneNumber: shippingDetails.phone,
-        address: shippingDetails.address,
-        city: selectedCanton || shippingDetails.city,
-        provincia: selectedProvince,
-        canton: selectedCanton || shippingDetails.city,
-        distrito: selectedDistrito,
-      };
-      await updateResellerProfile(user._id, updatedData);
-    } catch (error) {
-      console.error("Error al actualizar perfil del usuario:", error);
-    }
+    // FUNCIÓN DESHABILITADA: Los datos ya no se actualizan desde el checkout
+    return;
   };
 
   const handleInitiatePayment = async () => {
     if (!user) {
-      toast.error("Debes iniciar sesión para finalizar el pedido.");
+      setCheckoutError("Debes iniciar sesión para finalizar el pedido.");
       return;
     }
     if (cartItems.length === 0) {
-      toast.error("No puedes procesar el pago con un carrito vacío.");
+      setCheckoutError("No puedes procesar el pago con un carrito vacío.");
       return;
     }
     if (
@@ -333,12 +316,13 @@ const CheckoutPage = () => {
       !shippingDetails.city ||
       !selectedProvince
     ) {
-      toast.error("Por favor, completa toda la información de envío.");
+      setCheckoutError("Por favor, completa toda la información de envío.");
       return;
     }
+    setCheckoutError("");
     setPaymentButtonLoading(true);
     try {
-      await updateUserProfileWithShippingInfo();
+      // await updateUserProfileWithShippingInfo(); // Eliminado para no actualizar perfil
       const finalShippingDetails = {
         ...shippingDetails,
         provincia: selectedProvince,
@@ -352,7 +336,7 @@ const CheckoutPage = () => {
       }
     } catch (err) {
       console.error("Error en la página al iniciar el pago:", err);
-      toast.error("Hubo un problema al redirigir al pago.");
+      setCheckoutError("Hubo un problema al redirigir al pago.");
     } finally {
       setPaymentButtonLoading(false);
     }
@@ -499,6 +483,21 @@ const CheckoutPage = () => {
           Finalizar Compra
         </Typography>
 
+        {checkoutError && (
+          <Alert
+            severity="error"
+            sx={{
+              mb: 4,
+              borderRadius: "16px",
+              background: "rgba(211, 47, 47, 0.2)",
+              color: "#ffcdd2",
+              border: "1px solid rgba(211, 47, 47, 0.3)",
+            }}
+          >
+            {checkoutError}
+          </Alert>
+        )}
+
         <Grid container spacing={4}>
           {/* Order Summary - LEFT SIDE */}
           <Grid item xs={12} lg={5} className="animate-fade-in-up">
@@ -521,9 +520,9 @@ const CheckoutPage = () => {
                         ? taxRegime === "simplified"
                           ? Math.round(item.priceAtSale)
                           : calculatePriceWithTax(
-                              item.priceAtSale,
-                              item.product.iva,
-                            )
+                            item.priceAtSale,
+                            item.product.iva,
+                          )
                         : item.priceAtSale;
                       return (
                         <ListItem
@@ -648,6 +647,22 @@ const CheckoutPage = () => {
                         </Typography>
                       </Box>
                     )}
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#4CAF50",
+                        fontWeight: 600,
+                        mt: 1.5,
+                        display: "block",
+                        lineHeight: 1.4,
+                        opacity: 0.9,
+                      }}
+                    >
+                      El envío se gestiona a través de Correos de Costa Rica. El
+                      precio es calculado según las tarifas de Correos de Costa
+                      Rica tomando en cuenta la dirección del usuario y peso del
+                      producto.
+                    </Typography>
                   </Box>
 
                   <Box
@@ -749,6 +764,21 @@ const CheckoutPage = () => {
 
             <Card sx={{ ...glassStyle, mb: 4 }}>
               <CardContent sx={{ p: 4 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 3,
+                    p: 2,
+                    background: "rgba(33, 150, 243, 0.1)",
+                    borderRadius: "12px",
+                    color: "#90CAF9",
+                    border: "1px solid rgba(144, 202, 249, 0.3)",
+                  }}
+                >
+                  * La información de envío se toma de su perfil. Si necesita
+                  cambiarla, por favor actualice su perfil antes de completar el
+                  pedido.
+                </Typography>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <TextField
@@ -761,6 +791,7 @@ const CheckoutPage = () => {
                       fullWidth
                       required
                       variant="outlined"
+                      disabled={true}
                       InputLabelProps={{
                         sx: { color: "rgba(255,255,255,0.7) !important" },
                       }}
@@ -776,6 +807,10 @@ const CheckoutPage = () => {
                             borderColor: "rgba(255,255,255,0.3)",
                           },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                        },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          color: "white !important",
+                          WebkitTextFillColor: "white !important",
                         },
                       }}
                     />
@@ -792,6 +827,7 @@ const CheckoutPage = () => {
                       fullWidth
                       required
                       variant="outlined"
+                      disabled={true}
                       InputLabelProps={{
                         sx: { color: "rgba(255,255,255,0.7) !important" },
                       }}
@@ -808,6 +844,10 @@ const CheckoutPage = () => {
                           },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
                         },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          color: "white !important",
+                          WebkitTextFillColor: "white !important",
+                        },
                       }}
                     />
                   </Grid>
@@ -822,6 +862,7 @@ const CheckoutPage = () => {
                       fullWidth
                       required
                       variant="outlined"
+                      disabled={true}
                       InputLabelProps={{
                         sx: { color: "rgba(255,255,255,0.7) !important" },
                       }}
@@ -837,6 +878,10 @@ const CheckoutPage = () => {
                             borderColor: "rgba(255,255,255,0.3)",
                           },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                        },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          color: "white !important",
+                          WebkitTextFillColor: "white !important",
                         },
                       }}
                     />
@@ -859,7 +904,7 @@ const CheckoutPage = () => {
                             borderColor: "rgba(255,255,255,0.3)",
                           },
                           "&.Mui-focused fieldset": { borderColor: "#A855F7" },
-                          "& input, & select, & .MuiSelect-select": {
+                          "& input, & select, & .MuiSelect-select, & .MuiSelect-select.Mui-disabled": {
                             color: "white !important",
                             WebkitTextFillColor: "white !important",
                           },
@@ -888,6 +933,7 @@ const CheckoutPage = () => {
                         setDistrito={setSelectedDistrito}
                         icon={null}
                         vertical={false}
+                        disabled={true}
                       />
                     </Box>
                   </Grid>
@@ -905,6 +951,7 @@ const CheckoutPage = () => {
                   variant="outlined"
                   multiline
                   rows={2}
+                  disabled={true}
                   InputLabelProps={{
                     sx: { color: "rgba(255,255,255,0.7) !important" },
                   }}
@@ -919,6 +966,10 @@ const CheckoutPage = () => {
                         borderColor: "rgba(255,255,255,0.3)",
                       },
                       "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                    },
+                    "& .MuiInputBase-input.Mui-disabled": {
+                      color: "white !important",
+                      WebkitTextFillColor: "white !important",
                     },
                   }}
                 />

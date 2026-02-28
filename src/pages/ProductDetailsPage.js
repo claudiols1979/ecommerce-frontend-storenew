@@ -47,7 +47,6 @@ import { useDepartmental } from "../contexts/DepartmentalContext";
 import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useReviews } from "../contexts/ReviewContext";
-import { toast } from "react-toastify";
 import ProductImageCarousel from "../components/product/ProductImageCarousel";
 import ProductCard from "../components/product/ProductCard";
 import axios from "axios";
@@ -73,6 +72,7 @@ const HTMLContent = ({
   return (
     <Typography
       {...typographyProps}
+      className={`rich-text-content ${typographyProps.className || ""}`}
       dangerouslySetInnerHTML={createMarkup(html)}
     />
   );
@@ -144,6 +144,8 @@ const ProductDetailsPage = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [addingProductId, setAddingProductId] = useState(null);
   const [customerQuestion, setCustomerQuestion] = useState("");
+  const [faqs, setFaqs] = useState([]);
+  const [faqsLoading, setFaqsLoading] = useState(true);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [canReview, setCanReview] = useState(false);
@@ -153,11 +155,10 @@ const ProductDetailsPage = () => {
   const [availableOptions, setAvailableOptions] = useState({});
   const [attributeOptions, setAttributeOptions] = useState([]);
   const [currentProductId, setCurrentProductId] = useState(null);
-  const [productsLoaded, setProductsLoaded] = useState(false);
   const [loadingAttributes, setLoadingAttributes] = useState(false);
   const [allAttributesLoaded, setAllAttributesLoaded] = useState(false);
 
-  const getProductsToUse = () => {
+  const getProductsToUse = useCallback(() => {
     // ✅ PRIMERO intentar determinar hasActiveFilters desde el cache
     if (product) {
       const currentVariantAttributes = extractVariantAttributes(product.code);
@@ -185,11 +186,9 @@ const ProductDetailsPage = () => {
       currentFilters && Object.keys(currentFilters).length > 0;
     console.log("🔍 Usando estado de filtros actual:", hasActiveFilters);
     return hasActiveFilters ? departmentalProducts : defaultProducts;
-  };
+  }, [product, currentFilters, departmentalProducts, defaultProducts]);
 
-  console.log("attributeOptions: ", attributeOptions);
-
-  const areAllAttributesSelected = () => {
+  const areAllAttributesSelected = useCallback(() => {
     // Si los atributos no han terminado de cargar, retornar false
     if (!allAttributesLoaded) return false;
 
@@ -200,7 +199,7 @@ const ProductDetailsPage = () => {
         selectedAttributes[attribute.type] &&
         selectedAttributes[attribute.type] !== "",
     );
-  };
+  }, [allAttributesLoaded, attributeOptions, selectedAttributes]);
 
   const WHATSAPP_AGENT_NUMBER = "50672317420";
 
@@ -236,7 +235,7 @@ const ProductDetailsPage = () => {
   );
 
   // Helper functions para el agrupamiento de productos relacionados
-  const groupProductsByBase = (products) => {
+  const groupProductsByBase = useCallback((products) => {
     const groups = {};
 
     products.forEach((product) => {
@@ -250,16 +249,9 @@ const ProductDetailsPage = () => {
     });
 
     return groups;
-  };
+  }, []);
 
-  const getBaseCodeFromProductCode = (code) => {
-    const firstUnderscoreIndex = code.indexOf("_");
-    return firstUnderscoreIndex === -1
-      ? code
-      : code.substring(0, firstUnderscoreIndex);
-  };
-
-  const selectRandomVariantFromEachGroup = (groupedProducts) => {
+  const selectRandomVariantFromEachGroup = useCallback((groupedProducts) => {
     const displayProducts = [];
 
     for (const baseCode in groupedProducts) {
@@ -295,6 +287,14 @@ const ProductDetailsPage = () => {
     }
 
     return displayProducts;
+  }, []);
+
+  // Estas funciones pueden estar fuera o ser estables
+  const getBaseCodeFromProductCode = (code) => {
+    const firstUnderscoreIndex = code.indexOf("_");
+    return firstUnderscoreIndex === -1
+      ? code
+      : code.substring(0, firstUnderscoreIndex);
   };
 
   const extractBaseNameFromProduct = (productName, productCode) => {
@@ -348,7 +348,6 @@ const ProductDetailsPage = () => {
       setAttributeOptions([]);
       setAvailableOptions(new Map());
       setSelectedAttributes({});
-      setProductsLoaded(false);
     };
   }, []);
 
@@ -364,7 +363,7 @@ const ProductDetailsPage = () => {
     }
   }, [id, currentProductId]);
 
-  const buildAttributeOptionsFromScratch = async (
+  const buildAttributeOptionsFromScratch = useCallback(async (
     productData,
     currentVariantAttributes,
   ) => {
@@ -372,15 +371,10 @@ const ProductDetailsPage = () => {
     console.log("Producto:", productData.code);
     console.log("BaseCode:", currentVariantAttributes.baseCode);
 
-    // VERIFICAR SI ES PRODUCTO SIMPLE
-    // Se elimina el early return para que los productos base
-    // puedan consultar también si tienen variantes asociadas.
-
     setLoadingAttributes(true);
     setAllAttributesLoaded(false);
 
     try {
-      // ✅ NUEVA LLAMADA A LA API - OBTENER TODAS LAS VARIANTES
       console.log("🔍 Buscando variantes via nuevo endpoint...");
 
       const token = user?.token;
@@ -388,30 +382,20 @@ const ProductDetailsPage = () => {
         ? { headers: { Authorization: `Bearer ${token}` } }
         : {};
 
-      console.log(
-        "currentVariantAttributes.baseCode: ",
-        currentVariantAttributes.baseCode,
-      );
+      const timestamp = new Date().getTime();
       const response = await axios.get(
-        `${API_URL}/api/products/variants/${currentVariantAttributes.baseCode}`,
+        `${API_URL}/api/products/variants/${currentVariantAttributes.baseCode}?_t=${timestamp}`,
         config,
       );
 
       const allVariants = response.data.variants || [];
       console.log("📊 Variantes encontradas via API:", allVariants.length);
 
-      // ✅ FILTRAR SOLO VARIANTES DE LA MISMA ESTRUCTURA (IGNORANDO STOCK)
       const validVariants = allVariants.filter((variant) => {
         const variantAttributes = extractVariantAttributes(variant.code);
         return variantAttributes.baseCode === currentVariantAttributes.baseCode;
       });
 
-      console.log(
-        "📊 Variantes válidas (con stock y misma estructura):",
-        validVariants.length,
-      );
-
-      // ✅ PROCESAR LAS VARIANTES
       if (validVariants.length > 0) {
         console.log("🎯 Procesando variantes con nueva API");
         await processVariants(validVariants, currentVariantAttributes);
@@ -426,7 +410,6 @@ const ProductDetailsPage = () => {
     } catch (error) {
       console.error("❌ Error con nueva API, usando fallback local:", error);
 
-      // ✅ FALLBACK A LÓGICA ORIGINAL (por si la API falla)
       try {
         const hasActiveFilters =
           currentFilters && Object.keys(currentFilters).length > 0;
@@ -440,7 +423,7 @@ const ProductDetailsPage = () => {
             return (
               attr.baseCode === currentVariantAttributes.baseCode &&
               attr.attributes.length ===
-                currentVariantAttributes.attributes.length
+              currentVariantAttributes.attributes.length
             );
           });
 
@@ -463,11 +446,11 @@ const ProductDetailsPage = () => {
     } finally {
       setLoadingAttributes(false);
     }
-  };
+  }, [user?.token, currentFilters, departmentalProducts, defaultProducts]);
 
   // ✅ FUNCIÓN AUXILIAR ACTUALIZADA - AGREGAR GUARDADO EN LOCALSTORAGE
   // ✅ FUNCIÓN AUXILIAR ACTUALIZADA - MANEJAR DIFERENTES NÚMEROS DE ATRIBUTOS
-  const processVariants = async (variants, currentVariantAttributes) => {
+  const processVariants = useCallback(async (variants, currentVariantAttributes) => {
     console.log("🔄 Procesando variantes:", variants.length);
 
     variants.sort((a, b) => a.code.localeCompare(b.code));
@@ -543,7 +526,7 @@ const ProductDetailsPage = () => {
 
     localStorage.setItem(cacheKey, JSON.stringify(cacheData));
     console.log("✅ Atributos guardados en localStorage");
-  };
+  }, []);
 
   useEffect(() => {
     if (id && id !== currentProductId) {
@@ -558,35 +541,49 @@ const ProductDetailsPage = () => {
     }
   }, [id, currentProductId]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  const fetchProductDetails = useCallback(async (isRefresh = false) => {
+    if (!id) return;
 
-    const fetchProductDetails = async () => {
+    if (!isRefresh) {
       setLoadingSpecificProduct(true);
-      setErrorSpecificProduct(null);
-      setAllAttributesLoaded(false);
+    }
+    setErrorSpecificProduct(null);
+    setAllAttributesLoaded(false);
 
-      try {
-        const token = user?.token;
-        const config = token
-          ? { headers: { Authorization: `Bearer ${token}` } }
-          : {};
-        const { data } = await axios.get(
-          `${API_URL}/api/products/${id}`,
-          config,
-        );
-        setProduct(data);
+    try {
+      const token = user?.token;
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : {};
+      const timestamp = new Date().getTime();
+      const { data } = await axios.get(
+        `${API_URL}/api/products/${id}?_t=${timestamp}`,
+        config,
+      );
+      setProduct(data);
 
-        const currentVariantAttributes = extractVariantAttributes(data.code);
+      const currentVariantAttributes = extractVariantAttributes(data.code);
 
-        // SOLO PROCESAR SI TIENE ATRIBUTOS (es variante)
-        const cacheKey = `attributeOptions_${currentVariantAttributes.baseCode}`;
-        const cachedData = localStorage.getItem(cacheKey);
+      // SOLO PROCESAR SI TIENE ATRIBUTOS (es variante)
+      const cacheKey = `attributeOptions_${currentVariantAttributes.baseCode}`;
 
-        if (cachedData) {
-          try {
-            const parsedData = JSON.parse(cachedData);
+      // Si es refresh, forzamos la reconstrucción de los atributos o al menos evitamos el cache antiguo
+      if (isRefresh) {
+        localStorage.removeItem(cacheKey);
+      }
 
+      const cachedData = localStorage.getItem(cacheKey);
+
+      if (cachedData) {
+        try {
+          const parsedData = JSON.parse(cachedData);
+          const cacheAge = Date.now() - (parsedData.timestamp || 0);
+
+          // Invalida el cache si tiene más de 15 minutos
+          if (cacheAge > 15 * 60 * 1000) {
+            localStorage.removeItem(cacheKey);
+            buildAttributeOptionsFromScratch(data, currentVariantAttributes);
+          } else {
             // ✅ LEER EL ESTADO DE FILTROS GUARDADO
             const savedHasActiveFilters = parsedData.hasActiveFilters;
             console.log(
@@ -598,51 +595,65 @@ const ProductDetailsPage = () => {
             setAvailableOptions(new Map(parsedData.optionsMap));
             setSelectedAttributes(parsedData.initialSelections || {});
             setAllAttributesLoaded(true);
-          } catch (error) {
-            console.error("Error parsing cached data:", error);
-            localStorage.removeItem(cacheKey);
-            buildAttributeOptionsFromScratch(data, currentVariantAttributes);
           }
-        } else {
+        } catch (error) {
+          console.error("Error parsing cached data:", error);
+          localStorage.removeItem(cacheKey);
           buildAttributeOptionsFromScratch(data, currentVariantAttributes);
         }
+      } else {
+        buildAttributeOptionsFromScratch(data, currentVariantAttributes);
+      }
 
-        // ✅ FALTABA ESTA PARTE: Cargar reviews y related products
-        fetchReviews(id);
+      // ✅ Cargar reviews
+      fetchReviews(id);
 
-        const productsToUse = getProductsToUse();
-        if (productsToUse.length > 1) {
-          const filtered = productsToUse.filter((p) => p._id !== id);
-          const groupedRelated = groupProductsByBase(filtered);
-          const displayRelatedProducts =
-            selectRandomVariantFromEachGroup(groupedRelated);
-          const shuffled = [...displayRelatedProducts].sort(
-            () => 0.5 - Math.random(),
-          );
-          setRelatedProducts(shuffled.slice(0, 3));
-        }
-      } catch (err) {
-        setErrorSpecificProduct(
-          err.response?.data?.message ||
-            "Producto no encontrado o error al cargar.",
-        );
-        setAllAttributesLoaded(true);
-      } finally {
+    } catch (err) {
+      setErrorSpecificProduct(
+        err.response?.data?.message ||
+        "Producto no encontrado o error al cargar.",
+      );
+      setAllAttributesLoaded(true);
+    } finally {
+      if (!isRefresh) {
         setLoadingSpecificProduct(false);
       }
-    };
+    }
+    // We remove unstable dependencies to break the loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, user?.token, fetchReviews, buildAttributeOptionsFromScratch]);
 
+  // useEffect separado para productos relacionados para evitar loops
+  useEffect(() => {
+    if (!product) return;
+
+    const productsToUse = getProductsToUse();
+    if (productsToUse.length > 1) {
+      const filtered = productsToUse.filter((p) => p._id !== id);
+      const groupedRelated = groupProductsByBase(filtered);
+      const displayRelatedProducts = selectRandomVariantFromEachGroup(groupedRelated);
+      const shuffled = [...displayRelatedProducts].sort(() => 0.5 - Math.random());
+      setRelatedProducts(shuffled.slice(0, 3));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product, id, getProductsToUse]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setQuantity(1);
+  }, [id]);
+
+  useEffect(() => {
     if (id) {
       fetchProductDetails();
     }
-    setQuantity(1);
-  }, [id, user?.token, fetchReviews, productsLoaded]);
+  }, [id, fetchProductDetails]);
 
   // 3. Agrega un useEffect ESPECÍFICO para manejar filtros
   useEffect(() => {
     const productsToUse = getProductsToUse();
     // Si los productos cambian (por filtros) y ya teníamos un producto cargado
-    if (product && productsToUse.length > 0 && productsLoaded) {
+    if (product && productsToUse.length > 0) {
       const currentVariantAttributes = extractVariantAttributes(product.code);
 
       if (currentVariantAttributes.attributes.length > 0) {
@@ -728,6 +739,25 @@ const ProductDetailsPage = () => {
 
   // --- useEffect para determinar si el usuario puede dejar una reseña ---
   useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        setFaqsLoading(true);
+        const res = await axios.get(`${API_URL}/api/faqs`);
+        setFaqs(res.data);
+      } catch (error) {
+        console.error("Error fetching FAQs:", error);
+      } finally {
+        setFaqsLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, []);
+
+  useEffect(() => {
     if (!user) {
       setCanReview(false);
       setReviewDisabledMessage("Inicia sesión para dejar una reseña.");
@@ -801,7 +831,6 @@ const ProductDetailsPage = () => {
     }
 
     if (quantity > selectedVariant.countInStock) {
-      toast.error(`Solo ${selectedVariant.countInStock} disponibles en stock`);
       return;
     }
 
@@ -837,9 +866,6 @@ const ProductDetailsPage = () => {
 
   const handleWhatsAppInquiry = () => {
     if (!product) {
-      toast.error(
-        "No se puede enviar la consulta, los detalles del producto no están disponibles.",
-      );
       return;
     }
 
@@ -860,11 +886,9 @@ const ProductDetailsPage = () => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!canReview) {
-      toast.info("No cumples los requisitos para dejar una reseña.");
       return;
     }
     if (newRating === 0) {
-      toast.error("Por favor, selecciona una calificación de estrellas.");
       return;
     }
     try {
@@ -875,39 +899,17 @@ const ProductDetailsPage = () => {
       });
       setNewRating(0);
       setNewComment("");
+      // ✅ ACTUALIZAR DATOS DEL PRODUCTO (calificación y conteo) AL INSTANTE SIN RECARGA TOTAL
+      fetchProductDetails(true);
     } catch (err) {
       console.error("Fallo al enviar la reseña:", err);
     }
   };
 
-  // FAQ Data (unchanged)
   const WHATSAPP_AGENT_NUMBER_ = "50672317420";
   const wholesaleMessage =
     "Hola, estoy interesado/a en sus precios de mayoreo y me gustaría recibir más información. Gracias.";
   const whatsappUrl = `https://wa.me/${WHATSAPP_AGENT_NUMBER_}?text=${encodeURIComponent(wholesaleMessage)}`;
-
-  const faqData = [
-    {
-      question: "1. ¿Cuáles son los métodos de pago aceptados?",
-      answer:
-        "Aceptamos pagos a través de tarjeta de crédito o débito. Los pagos se procesan através de TiloPay una pasarela de pago establecida en Costa Rica.",
-    },
-    {
-      question: "2. ¿Cuál es el tiempo de entrega estimado?",
-      answer:
-        "Para envíos dentro de la GAM, trabajamos con Mensajería Fonseca para garantizar una entrega rápida, usualmente en las siguientes 24 a 48 horas. Dependiendo de la demanda, el plazo puede extenderse. Tu entrega es nuestra prioridad y está 100% garantizada.",
-    },
-    {
-      question: "3. ¿Son productos originales?",
-      answer:
-        "Absolutamente. Garantizamos que todos nuestros productos son 100% originales, nuevos y se entregan sellados en su empaque de fábrica. La autenticidad es el pilar de nuestra marca.",
-    },
-    {
-      question: "4. ¿Realizan envíos fuera de la GAM?",
-      answer:
-        "Sí. Los envíos se gestionan a través de Correos de Costa Rica a todo el territorio nacional. El costo se calcula automáticamente según el peso de su pedido y su ubicación exacta.",
-    },
-  ];
 
   if (loadingSpecificProduct) {
     return (
@@ -1191,8 +1193,8 @@ const ProductDetailsPage = () => {
               <Divider sx={{ my: 2 }} />
 
               {!loadingAttributes &&
-              attributeOptions &&
-              attributeOptions.length > 0 ? (
+                attributeOptions &&
+                attributeOptions.length > 0 ? (
                 attributeOptions.map((attribute, index) => {
                   // MOSTRAR LOADING SI LOS ATRIBUTOS NO HAN TERMINADO DE CARGAR
                   if (!allAttributesLoaded) {
@@ -1279,12 +1281,12 @@ const ProductDetailsPage = () => {
                                 }),
                                 ...(isLastAttribute &&
                                   !option.isAvailable && {
-                                    bgcolor: "grey.100",
-                                    color: "grey.500",
-                                    borderColor: "grey.300",
-                                    cursor: "not-allowed",
-                                    opacity: 0.7,
-                                  }),
+                                  bgcolor: "grey.100",
+                                  color: "grey.500",
+                                  borderColor: "grey.300",
+                                  cursor: "not-allowed",
+                                  opacity: 0.7,
+                                }),
                                 // ESTILO ADICIONAL MIENTRAS LOS ATRIBUTOS SE CARGAN
                                 ...(!allAttributesLoaded && {
                                   opacity: 0.6,
@@ -1455,49 +1457,6 @@ const ProductDetailsPage = () => {
             sx={{ lineHeight: 1.7 }}
           />
 
-          {/* --- 4. NUEVA SECCIÓN DE CONSULTA POR WHATSAPP --- */}
-          <Card sx={{ ...contentSectionStyle, mt: 5 }}>
-            <CardContent>
-              <Typography
-                variant="h5"
-                component="h2"
-                gutterBottom
-                sx={sectionTitleStyle}
-              >
-                ¿Tienes alguna consulta?
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                Escríbenos directamente a WhatsApp y te ayudaremos con gusto.
-              </Typography>
-              <TextField
-                label="Escribe tu pregunta aquí..."
-                multiline
-                rows={3}
-                fullWidth
-                variant="outlined"
-                value={customerQuestion}
-                onChange={(e) => setCustomerQuestion(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-              <Button
-                variant="contained"
-                color="success"
-                startIcon={<WhatsAppIcon />}
-                onClick={handleWhatsAppInquiry}
-                sx={{
-                  py: 1.5,
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                  bgcolor: "#25D366",
-                  "&:hover": {
-                    bgcolor: "#1EBE57",
-                  },
-                }}
-              >
-                Consultar por WhatsApp
-              </Button>
-            </CardContent>
-          </Card>
         </Box>
 
         <Box sx={contentSectionStyle}>
@@ -1666,50 +1625,68 @@ const ProductDetailsPage = () => {
             </Box>
           )}
 
-        {/* --- 4. NUEVA SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) --- */}
-        <Box sx={contentSectionStyle}>
-          <Typography variant="h5" sx={sectionTitleStyle}>
-            Preguntas Frecuentes
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            {faqData.map((faq, index) => (
-              <Accordion
-                key={index}
-                sx={{
-                  backgroundColor: "transparent",
-                  boxShadow: "none",
-                  borderBottom: "1px solid rgba(0,0,0,0.05)",
-                  "&:before": { display: "none" },
-                  "&.Mui-expanded": { margin: 0 },
-                  py: 1,
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: "#263C5C" }} />}
-                  sx={{ px: 0, "& .MuiAccordionSummary-content": { my: 2 } }}
+        {/* --- 4. SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) DINÁMICA --- */}
+        {faqs && faqs.length > 0 && (
+          <Box
+            sx={{
+              ...contentSectionStyle,
+              background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important',
+              borderRadius: "24px",
+              p: { xs: 3, md: 5 },
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              color: "common.white"
+            }}
+          >
+            <Typography variant="h5" sx={{ ...sectionTitleStyle, mb: 3, color: "common.white" }}>
+              Preguntas Frecuentes
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              {faqs.map((faq, index) => (
+                <Accordion
+                  key={faq._id || index}
+                  sx={{
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    backdropFilter: "blur(10px)",
+                    boxShadow: "none",
+                    mb: 1,
+                    borderRadius: "12px !important",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    color: "common.white",
+                    "&:before": { display: "none" },
+                    "&.Mui-expanded": {
+                      margin: "0 0 16px 0",
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
+                    },
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      color: "#1A1A1A",
-                      fontSize: "1.05rem",
-                    }}
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon sx={{ color: "common.white" }} />}
+                    sx={{ px: 2, "& .MuiAccordionSummary-content": { my: 2 } }}
                   >
-                    {faq.question}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ px: 0, pb: 3 }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ color: "#666", lineHeight: 1.8 }}
-                  >
-                    {faq.answer}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            ))}
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        color: "common.white",
+                        fontSize: "1.05rem",
+                      }}
+                    >
+                      {faq.question}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ px: 2, pb: 3 }}>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.8 }}
+                    >
+                      {faq.answer}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {/* --- SECCIÓN DE CALIFICACIONES Y RESEÑAS ACTUALIZADA --- */}
         <Box sx={contentSectionStyle}>

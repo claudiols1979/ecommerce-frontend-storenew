@@ -7,7 +7,6 @@ import React, {
   useRef,
 } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 
 const ProductContext = createContext();
@@ -82,7 +81,6 @@ export const ProductProvider = ({ children }) => {
           err.response?.data?.message ||
           "Error al cargar los productos filtrados.";
         setError({ message: errorMessage });
-        toast.error(errorMessage);
       } finally {
         setLoading(false);
         isLoadingRef.current = false;

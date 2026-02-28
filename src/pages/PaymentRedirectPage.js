@@ -273,7 +273,7 @@ const PaymentRedirectPage = () => {
                   <List sx={{ maxWidth: 600, mx: "auto" }}>
                     {orderInfo.items.map((item) => (
                       <ListItem
-                        key={item.product}
+                        key={item.product?._id || item.product}
                         sx={{
                           background: "rgba(255,255,255,0.03)",
                           borderRadius: "20px",
@@ -293,7 +293,7 @@ const PaymentRedirectPage = () => {
                         <Button
                           size="small"
                           startIcon={<RateReviewIcon />}
-                          onClick={() => navigate(`/products/${item.product}`)}
+                          onClick={() => navigate(`/products/${item.product?._id || item.product}`)}
                           sx={{
                             color: "#F72585",
                             fontWeight: 700,

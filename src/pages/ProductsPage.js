@@ -17,7 +17,6 @@ import { useTheme } from "@mui/material/styles";
 import { Helmet } from "react-helmet-async";
 import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
-import { toast } from "react-toastify";
 
 const ProductsPage = () => {
   const theme = useTheme();
@@ -227,7 +226,7 @@ const ProductsPage = () => {
   const handleScroll = useCallback(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop <
-        document.documentElement.offsetHeight - 500 ||
+      document.documentElement.offsetHeight - 500 ||
       loading
     )
       return;
@@ -261,7 +260,6 @@ const ProductsPage = () => {
       }
 
       if (priceToPass <= 0) {
-        toast.error("Precio no disponible.");
         setAddingProductId(null);
         return;
       }
@@ -269,7 +267,7 @@ const ProductsPage = () => {
       try {
         await addItemToCart(product._id, 1, priceToPass);
       } catch (err) {
-        toast.error(err.message || "Error al añadir.");
+        console.error(err);
       } finally {
         setAddingProductId(null);
       }

@@ -30,7 +30,6 @@ import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useConfig } from "../contexts/ConfigContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { formatPrice } from "../utils/formatters";
 import { calculatePriceWithTax } from "../utils/taxCalculations";
 
@@ -88,9 +87,7 @@ const CartPage = () => {
     if (changeType === "increment") {
       newQuantity = item.quantity + 1;
       if (newQuantity > totalAvailableStock) {
-        toast.warn(
-          `No puedes agregar más. Stock máximo: ${totalAvailableStock} unidades.`,
-        );
+        console.warn(`Stock máximo: ${totalAvailableStock} unidades.`);
         return;
       }
     } else if (changeType === "decrement") {
@@ -100,9 +97,7 @@ const CartPage = () => {
       newQuantity = parseInt(changeType, 10);
       if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
       if (newQuantity > totalAvailableStock) {
-        toast.warn(
-          `El stock máximo es ${totalAvailableStock}. Se ajustó la cantidad.`,
-        );
+        console.warn(`Stock máximo excedido, ajustando a ${totalAvailableStock}.`);
         newQuantity = totalAvailableStock;
       }
     }
@@ -282,9 +277,9 @@ const CartPage = () => {
                       ? taxRegime === "simplified"
                         ? Math.round(item.priceAtSale)
                         : calculatePriceWithTax(
-                            item.priceAtSale,
-                            item.product.iva,
-                          )
+                          item.priceAtSale,
+                          item.product.iva,
+                        )
                       : item.priceAtSale;
                     const totalAvailableStock =
                       (item.product?.countInStock || 0) + item.quantity;

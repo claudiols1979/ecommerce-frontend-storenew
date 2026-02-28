@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import API_URL from "../config";
 import authService from "../services/authService";
@@ -103,7 +102,6 @@ export const AuthProvider = ({ children }) => {
         "Login de revendedor fallido:",
         error.response?.data?.message || error.message,
       );
-      toast.error(error.response?.data?.message || "Código inválido.");
       return false;
     }
   };
@@ -119,7 +117,6 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         const message =
           error.response?.data?.message || "Credenciales inválidas.";
-        toast.error(message);
         return { success: false, message };
       }
     },
@@ -136,7 +133,6 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         const message =
           error.response?.data?.message || "Error durante el registro.";
-        toast.error(message);
         return { success: false, message };
       }
     },

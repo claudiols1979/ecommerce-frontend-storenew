@@ -30,7 +30,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { useOrders } from "../contexts/OrderContext";
 import { useConfig } from "../contexts/ConfigContext";
 import { useUpdateInfo } from "../contexts/UpdateInfoContext"; // Import the new context
-import { toast } from "react-toastify";
 
 // Importaciones de iconos de Material-UI
 import EmailIcon from "@mui/icons-material/Email";
@@ -312,9 +311,6 @@ const ProfilePage = () => {
     }
 
     if (Object.keys(errors).length > 0) {
-      // Mostrar el primer error
-      const firstError = Object.values(errors)[0];
-      toast.error(firstError);
       return;
     }
 
@@ -1058,8 +1054,8 @@ const ProfilePage = () => {
                           {user.provincia
                             ? `${user.provincia}, ${user.canton}, ${user.distrito}`
                             : [user.address, user.city, user.province]
-                                .filter(Boolean)
-                                .join(", ") || "No especificada"}
+                              .filter(Boolean)
+                              .join(", ") || "No especificada"}
                         </Typography>
                         {user.address && (
                           <Typography
@@ -1167,43 +1163,43 @@ const ProfilePage = () => {
                       order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
                         ? order.taxBreakdown
                         : (() => {
-                            const iSubtotal = order.items.reduce(
-                              (sum, item) =>
-                                sum + item.quantity * item.priceAtSale,
-                              0,
+                          const iSubtotal = order.items.reduce(
+                            (sum, item) =>
+                              sum + item.quantity * item.priceAtSale,
+                            0,
+                          );
+                          const iTax = order.items.reduce((acc, item) => {
+                            const iva = parseFloat(item.product?.iva) || 0;
+                            return (
+                              acc +
+                              Math.round(
+                                item.quantity *
+                                item.priceAtSale *
+                                (iva / 100),
+                              )
                             );
-                            const iTax = order.items.reduce((acc, item) => {
-                              const iva = parseFloat(item.product?.iva) || 0;
-                              return (
-                                acc +
-                                Math.round(
-                                  item.quantity *
-                                    item.priceAtSale *
-                                    (iva / 100),
-                                )
-                              );
-                            }, 0);
+                          }, 0);
 
-                            const currentOrderRegime =
-                              order.taxRegime || globalTaxRegime;
-                            const sBaseRaw = 3000;
-                            const sTax =
-                              currentOrderRegime === "simplified" ? 0 : 390;
-                            const sBase =
-                              currentOrderRegime === "simplified"
-                                ? Math.round(sBaseRaw * 1.13)
-                                : sBaseRaw;
+                          const currentOrderRegime =
+                            order.taxRegime || globalTaxRegime;
+                          const sBaseRaw = 3000;
+                          const sTax =
+                            currentOrderRegime === "simplified" ? 0 : 390;
+                          const sBase =
+                            currentOrderRegime === "simplified"
+                              ? Math.round(sBaseRaw * 1.13)
+                              : sBaseRaw;
 
-                            return {
-                              itemsSubtotal: iSubtotal,
-                              itemsTax: iTax,
-                              shippingBase: sBase,
-                              shippingTax: sTax,
-                              total: Math.round(
-                                iSubtotal + iTax + sBase + sTax,
-                              ),
-                            };
-                          })();
+                          return {
+                            itemsSubtotal: iSubtotal,
+                            itemsTax: iTax,
+                            shippingBase: sBase,
+                            shippingTax: sTax,
+                            total: Math.round(
+                              iSubtotal + iTax + sBase + sTax,
+                            ),
+                          };
+                        })();
 
                     const totalFinal = breakdown.total;
                     const shippingCost =
@@ -1531,7 +1527,7 @@ const ProfilePage = () => {
                                   sx={{ color: "rgba(255,255,255,0.6)" }}
                                 >
                                   {(order.taxRegime || globalTaxRegime) ===
-                                  "simplified"
+                                    "simplified"
                                     ? "Subtotal Productos:"
                                     : "Subtotal Productos (Sin IVA):"}
                                 </Typography>
@@ -1544,27 +1540,27 @@ const ProfilePage = () => {
                               </Box>
                               {(order.taxRegime || globalTaxRegime) !==
                                 "simplified" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "rgba(255,255,255,0.6)" }}
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    IVA Productos (13%):
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 700 }}
-                                  >
-                                    {formatPrice(breakdown.itemsTax)}
-                                  </Typography>
-                                </Box>
-                              )}
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ color: "rgba(255,255,255,0.6)" }}
+                                    >
+                                      IVA Productos (13%):
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ fontWeight: 700 }}
+                                    >
+                                      {formatPrice(breakdown.itemsTax)}
+                                    </Typography>
+                                  </Box>
+                                )}
                               <Box
                                 sx={{
                                   display: "flex",
@@ -1577,7 +1573,7 @@ const ProfilePage = () => {
                                   sx={{ color: "rgba(255,255,255,0.6)" }}
                                 >
                                   {(order.taxRegime || globalTaxRegime) ===
-                                  "simplified"
+                                    "simplified"
                                     ? "Envío:"
                                     : "Envío (Sin IVA):"}
                                 </Typography>
@@ -1590,27 +1586,27 @@ const ProfilePage = () => {
                               </Box>
                               {(order.taxRegime || globalTaxRegime) !==
                                 "simplified" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "rgba(255,255,255,0.6)" }}
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    IVA Envío (13%):
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 700 }}
-                                  >
-                                    {formatPrice(breakdown.shippingTax)}
-                                  </Typography>
-                                </Box>
-                              )}
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ color: "rgba(255,255,255,0.6)" }}
+                                    >
+                                      IVA Envío (13%):
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ fontWeight: 700 }}
+                                    >
+                                      {formatPrice(breakdown.shippingTax)}
+                                    </Typography>
+                                  </Box>
+                                )}
                               <Box
                                 sx={{
                                   display: "flex",
