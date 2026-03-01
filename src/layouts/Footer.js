@@ -158,8 +158,61 @@ const Footer = () => {
 
         <Divider sx={{ my: 4, borderColor: "rgba(255, 255, 255, 0.1)" }} />
 
+        {/* Socios Comerciales */}
+        <Box sx={{ textAlign: "center", mb: 3 }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "common.white", fontWeight: "bold", mb: 2 }}
+          >
+            Socios Comerciales
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: { xs: 2, sm: 4 },
+              flexWrap: "wrap",
+            }}
+          >
+            {[
+              { src: "/logos/correos-cr.png", alt: "Correos de Costa Rica", h: { xs: 45, sm: 60 } },
+              { src: "/logos/tilopay.png", alt: "Tilopay", h: { xs: 45, sm: 60 } },
+              { src: "/logos/sufacturafacil.png", alt: "Su Factura Fácil", h: { xs: 55, sm: 70 } },
+              { src: "/logos/ministerio-hacienda.png", alt: "Ministerio de Hacienda", h: { xs: 45, sm: 60 } },
+            ].map((logo) => (
+              <Box
+                key={logo.alt}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "transform 0.2s ease",
+                  "&:hover": {
+                    transform: "scale(1.08)",
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={logo.src}
+                  alt={logo.alt}
+                  sx={{
+                    height: logo.h,
+                    width: "auto",
+                    maxWidth: 180,
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
+        <Divider sx={{ my: 3, borderColor: "rgba(255, 255, 255, 0.1)" }} />
+
         <Typography variant="body2" sx={{ textAlign: "center" }}>
-          &copy; {new Date().getFullYear()} Tienda en linea (demo) - Software
+          &copy; {new Date().getFullYear()} Tienda en linea - Software
           Factory CR. Todos los derechos reservados.
         </Typography>
       </Container>
