@@ -22,6 +22,8 @@ import TermsConditions from "./pages/TermsConditions";
 import PaymentRedirectPage from "./pages/PaymentRedirectPage";
 import DepartmentalFilterBar from "./layouts/DepartmentalFilterBar";
 import ChatWidget from "./components/chat/ChatWidget";
+import ContactPage from "./pages/ContactPage";
+import ClaimPage from "./pages/ClaimPage";
 
 // PrivateRoute component
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -76,12 +78,14 @@ function App() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/products/:id" element={<ProductDetailsPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/privacy" element={<PrivacyPolicies />} />
               <Route path="/conditions" element={<TermsConditions />} />
               {/* Rutas que requieren autenticación */}
               <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/claims" element={<ClaimPage />} />
               </Route>
 
               {/* Fallback para cualquier ruta desconocida dentro de este layout */}

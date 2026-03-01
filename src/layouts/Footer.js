@@ -90,6 +90,20 @@ const Footer = () => {
             <MuiLink href="/products" sx={linkStyle}>
               Productos
             </MuiLink>
+            <MuiLink href="/contact" sx={linkStyle}>
+              Contacto
+            </MuiLink>
+            <MuiLink href="/profile" sx={linkStyle}>
+              Mi Perfil
+            </MuiLink>
+            <MuiLink
+              href="https://correos.go.cr/rastreo/"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={linkStyle}
+            >
+              Rastreo Correos de CR
+            </MuiLink>
           </Grid>
 
           {/* Columna 3: Legal */}

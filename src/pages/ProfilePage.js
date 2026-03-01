@@ -18,6 +18,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   useTheme,
+  useMediaQuery,
   TextField,
   Dialog,
   DialogActions,
@@ -68,6 +69,7 @@ const ProfilePage = () => {
   const { taxRegime: globalTaxRegime } = useConfig();
 
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [localLoading, setLocalLoading] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editFormData, setEditFormData] = useState({
@@ -478,15 +480,15 @@ const ProfilePage = () => {
           onClose={handleCloseDialog}
           maxWidth="sm"
           fullWidth
+          fullScreen={isMobile}
           PaperProps={{
             sx: {
-              borderRadius: "32px",
+              borderRadius: isMobile ? 0 : "32px",
               background: "rgba(255, 255, 255, 0.15)",
               backdropFilter: "blur(40px)",
               WebkitBackdropFilter: "blur(40px)",
               border: "1px solid rgba(255, 255, 255, 0.2)",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-              overflow: "hidden",
               color: "white",
             },
           }}
@@ -1389,6 +1391,72 @@ const ProfilePage = () => {
                           >
                             Detalle de Productos
                           </Typography>
+
+                          {order.trackingNumber && (
+                            <Box
+                              sx={{
+                                mb: 4,
+                                p: 2.5,
+                                borderRadius: "20px",
+                                background: "rgba(255,255,255,0.03)",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                position: "relative",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "rgba(255,255,255,0.5)",
+                                  display: "block",
+                                  mb: 0.5,
+                                  fontWeight: 700,
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.05em",
+                                }}
+                              >
+                                Guía Correos de Costa Rica
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: { xs: "column", sm: "row" },
+                                  alignItems: { xs: "flex-start", sm: "center" },
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography
+                                  variant="h6"
+                                  sx={{
+                                    fontWeight: 800,
+                                    color:
+                                      order.trackingNumber === "Pendiente"
+                                        ? "rgba(255,255,255,0.4)"
+                                        : "#fff",
+                                    fontFamily: "monospace",
+                                  }}
+                                >
+                                  {order.trackingNumber}
+                                </Typography>
+                                {order.trackingNumber !== "Pendiente" && (
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    href={`https://correos.go.cr/rastreo/`}
+                                    target="_blank"
+                                    sx={{
+                                      ...accentButtonStyle,
+                                      py: 0.5,
+                                      px: 3,
+                                      fontSize: "0.8rem",
+                                    }}
+                                  >
+                                    Rastrear Paquete
+                                  </Button>
+                                )}
+                              </Box>
+                            </Box>
+                          )}
 
                           <List disablePadding>
                             {order.items.map((item, itemIndex) => {

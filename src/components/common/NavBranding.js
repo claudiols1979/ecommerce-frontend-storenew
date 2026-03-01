@@ -42,7 +42,7 @@ const NavBranding = () => {
           >
             Linea
           </Typography>
-          (Demo)
+          
         </Typography>
       </Box>
     </RouterLink>
