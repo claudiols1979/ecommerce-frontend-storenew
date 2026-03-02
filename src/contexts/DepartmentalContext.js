@@ -82,6 +82,11 @@ export const DepartmentalProvider = ({ children }) => {
       setDepartmentalLoading(true);
       setDepartmentalError(null);
 
+      // Eagerly clear old items to present a clean loading spinner immediately
+      if (page === 1) {
+        setDepartmentalProducts([]);
+      }
+
       try {
         const params = {
           limit: limit.toString(),

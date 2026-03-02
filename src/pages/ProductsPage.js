@@ -149,6 +149,7 @@ const ProductsPage = () => {
       setPage(1);
     } else if (searchFromUrl !== submittedSearchTerm) {
       console.log("🔍 Syncing search term from URL:", searchFromUrl);
+      clearProducts();
       setSearchTerm(searchFromUrl);
       setSubmittedSearchTerm(searchFromUrl);
       setPage(1);

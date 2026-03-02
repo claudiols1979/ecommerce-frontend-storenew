@@ -99,8 +99,15 @@ const Header = () => {
   };
 
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     if (searchTerm.trim()) {
+      // Forzar que el teclado del móvil se cierre
+      if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+
       setCurrentFilters({});
       resetSearch();
       // Si ya estamos en /products, forzar recarga con replace
@@ -643,6 +650,19 @@ const Header = () => {
                 )}
                 <IconButton
                   type="submit"
+                  onTouchStart={(e) => {
+                    // Prevenir que el teclado se cierre y desplace el layout antes del click
+                    if (searchTerm.trim()) {
+                      e.preventDefault();
+                      handleSearch(e);
+                    }
+                  }}
+                  onMouseDown={(e) => {
+                    if (searchTerm.trim()) {
+                      e.preventDefault();
+                      handleSearch(e);
+                    }
+                  }}
                   sx={{
                     p: 1,
                     color: "white",

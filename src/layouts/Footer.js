@@ -160,12 +160,6 @@ const Footer = () => {
 
         {/* Socios Comerciales */}
         <Box sx={{ textAlign: "center", mb: 3 }}>
-          <Typography
-            variant="h6"
-            sx={{ color: "common.white", fontWeight: "bold", mb: 2 }}
-          >
-            Socios Comerciales
-          </Typography>
           <Box
             sx={{
               display: "flex",

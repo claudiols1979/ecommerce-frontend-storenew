@@ -39,6 +39,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import LoginIcon from "@mui/icons-material/Login";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate } from "react-router-dom";
@@ -127,7 +128,7 @@ const ProductDetailsPage = () => {
   const { products: defaultProducts } = useProducts();
   const { departmentalProducts, currentFilters } = useDepartmental();
   const { addItemToCart, loading: cartLoading, myOrders } = useOrders();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { taxRegime } = useConfig();
 
   const {
@@ -1313,20 +1314,40 @@ const ProductDetailsPage = () => {
               ) : null}
 
               <Box sx={{ mb: 4 }}>
-                <Typography
-                  variant="h4"
-                  sx={{ mb: 1, fontWeight: 900, color: "#263C5C" }}
-                >
-                  {priceWithTax !== null
-                    ? formatPrice(priceWithTax)
-                    : "Precio no disponible"}
-                </Typography>
-                {taxRegime !== "simplified" && (
+                {isAuthenticated ? (
+                  <>
+                    <Typography
+                      variant="h4"
+                      sx={{ mb: 1, fontWeight: 900, color: "#263C5C" }}
+                    >
+                      {priceWithTax !== null
+                        ? formatPrice(priceWithTax)
+                        : "Precio no disponible"}
+                    </Typography>
+                    {taxRegime !== "simplified" && (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "#999", fontWeight: 500 }}
+                      >
+                        IVA INCLUIDO
+                      </Typography>
+                    )}
+                  </>
+                ) : (
                   <Typography
-                    variant="body2"
-                    sx={{ color: "#999", fontWeight: 500 }}
+                    onClick={() => navigate("/login")}
+                    variant="body1"
+                    sx={{
+                      color: "text.primary",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      cursor: "pointer",
+                      "&:hover": { color: "primary.main", textDecoration: "underline" }
+                    }}
                   >
-                    IVA INCLUIDO
+                    <LoginIcon sx={{ fontSize: "1.2rem" }} color="primary" /> Inicia sesión para ver precio
                   </Typography>
                 )}
               </Box>
@@ -1351,8 +1372,8 @@ const ProductDetailsPage = () => {
                   }}
                 />
                 {isOutOfStock
-                  ? "Agotado"
-                  : `${getSelectedVariantFunction().countInStock} unidades disponibles`}
+                  ? "Fuera de stock"
+                  : "En Stock"}
               </Typography>
 
               <Box display="flex" alignItems="center" gap={2}>

@@ -247,6 +247,22 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           {product.name}
         </Typography>
 
+        {product.brand && (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              fontWeight: 600,
+              textTransform: "uppercase",
+              mb: 1,
+              mt: -0.5,
+              display: "block",
+            }}
+          >
+            {product.brand}
+          </Typography>
+        )}
+
         {/* Show variant chip if this product has variants */}
         {hasVariants && (
           <Chip
@@ -350,34 +366,55 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             width: "100%",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
-            <Typography
-              variant="h6"
-              color="primary"
-              sx={{ fontWeight: 800, lineHeight: 1.2 }}
-            >
-              {priceWithTax !== null
-                ? formatPrice(priceWithTax)
-                : "Precio no disponible"}
-            </Typography>
-            {taxRegime !== "simplified" && (
-              <Typography variant="body2" color="text.secondary">
-                IVA incluido
-              </Typography>
-            )}
-            {originalPrice && (
+          {isAuthenticated ? (
+            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
               <Typography
-                variant="body2"
-                sx={{
-                  color: "text.secondary",
-                  textDecoration: "line-through",
-                  lineHeight: 1.1,
-                }}
+                variant="h6"
+                color="primary"
+                sx={{ fontWeight: 800, lineHeight: 1.2 }}
               >
-                {formatPrice(originalPrice)}
+                {priceWithTax !== null
+                  ? formatPrice(priceWithTax)
+                  : "Precio no disponible"}
               </Typography>
-            )}
-          </Box>
+              {taxRegime !== "simplified" && (
+                <Typography variant="body2" color="text.secondary">
+                  IVA incluido
+                </Typography>
+              )}
+              {originalPrice && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    textDecoration: "line-through",
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {formatPrice(originalPrice)}
+                </Typography>
+              )}
+            </Box>
+          ) : (
+            <Typography
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/login");
+              }}
+              variant="caption"
+              sx={{
+                color: "text.primary",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                cursor: "pointer",
+                "&:hover": { color: "primary.main", textDecoration: "underline" }
+              }}
+            >
+              <LoginIcon sx={{ fontSize: "1rem" }} color="primary" /> Inicia sesión para ver precio
+            </Typography>
+          )}
           {isOutOfStock && (
             <Typography
               variant="body2"

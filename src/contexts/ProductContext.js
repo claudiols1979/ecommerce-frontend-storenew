@@ -46,6 +46,12 @@ export const ProductProvider = ({ children }) => {
       isLoadingRef.current = true;
       setLoading(true);
       setError(null);
+
+      // Eagerly clear old items to present a clean loading spinner immediately
+      if (page === 1) {
+        setProducts([]);
+      }
+
       try {
         const queryParams = new URLSearchParams({
           page: page.toString(),
