@@ -28,10 +28,10 @@ const NavBranding = () => {
             // No se especifica color para que herede el de la AppBar
           }}
         >
-          Tienda
+          SIGAME
           <Typography
             component="span"
-            variant="h4" // Mantenemos el mismo tamaño para el '&'
+            variant="body2" // Mantenemos el mismo tamaño para el '&'
             sx={{
               fontFamily: '"Lato", sans-serif',
               fontWeight: 300,
@@ -40,9 +40,8 @@ const NavBranding = () => {
               mx: 1, // Margen horizontal reducido para un look más compacto
             }}
           >
-            Linea
-          </Typography>
-          
+            Tu tienda en linea
+          </Typography>          
         </Typography>
       </Box>
     </RouterLink>

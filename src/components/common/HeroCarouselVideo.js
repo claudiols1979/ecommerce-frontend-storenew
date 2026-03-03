@@ -121,16 +121,18 @@ const HeroCarouselVideo = () => {
           sx={{
             px: { xs: 4, sm: 6 },
             py: { xs: 1.5, sm: 2 },
-            borderRadius: 8,
+            borderRadius: "50px",
             fontWeight: "bold",
             background:
-              "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
+              "linear-gradient(90deg, rgba(176, 70, 233, 0.7) 0%, rgba(246, 41, 133, 0.7) 100%) !important",
             color: "white",
-            "&:hover": { backgroundColor: "#ff0000ff" },
+            textTransform: "none",
+            boxShadow: 2,
             fontSize: { xs: "0.9rem", sm: "1rem" },
-            transition: "transform 0.2s ease-in-out",
+            transition: "all 0.3s ease",
             "&:hover": {
-              transform: "scale(1.05)",
+              transform: "scale(1.05) translateY(-2px)",
+              boxShadow: 6,
             },
           }}
         >

@@ -122,16 +122,16 @@ const HeroCarousel = () => {
                 sx={{
                   px: { xs: 3, sm: 5 },
                   py: { xs: 1, sm: 1.5 },
-                  borderRadius: 10,
+                  borderRadius: "50px",
                   background:
-                    "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
+                    "linear-gradient(90deg, rgba(176, 70, 233, 0.7) 0%, rgba(246, 41, 133, 0.7) 100%) !important",
                   color: "white",
+                  textTransform: "none",
                   boxShadow: "0 4px 15px rgba(247, 37, 133, 0.4) !important",
                   transition: "all 0.3s ease !important",
                   "&:hover": {
                     transform: "translateY(-2px)",
                     boxShadow: "0 6px 20px rgba(247, 37, 133, 0.6) !important",
-                    opacity: 0.9,
                   },
                   "& *": {
                     pointerEvents: "none",

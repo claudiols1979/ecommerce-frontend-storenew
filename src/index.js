@@ -14,6 +14,8 @@ import { SearchProvider } from "./contexts/searchContext";
 import { UpdateInfoProvider } from "./contexts/UpdateInfoContext";
 import { HeroCarouselProvider } from "./contexts/HeroCarouselContext";
 import { AdGridProvider } from "./contexts/AdGridContext";
+import { AdGrid2Provider } from "./contexts/AdGrid2Context";
+import { AdGrid3Provider } from "./contexts/AdGrid3Context";
 import { HeroCarouselVideoProvider } from "./contexts/HeroCarouselVideoContext";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import { HelmetProvider } from "react-helmet-async";
@@ -35,9 +37,13 @@ root.render(
                         <UpdateInfoProvider>
                           <HeroCarouselProvider>
                             <AdGridProvider>
-                              <HeroCarouselVideoProvider>
-                                <App />
-                              </HeroCarouselVideoProvider>
+                              <AdGrid2Provider>
+                                <AdGrid3Provider>
+                                  <HeroCarouselVideoProvider>
+                                    <App />
+                                  </HeroCarouselVideoProvider>
+                                </AdGrid3Provider>
+                              </AdGrid2Provider>
                             </AdGridProvider>
                           </HeroCarouselProvider>
                         </UpdateInfoProvider>

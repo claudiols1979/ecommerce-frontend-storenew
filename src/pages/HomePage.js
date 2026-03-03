@@ -17,6 +17,9 @@ import {
 import ProductCard from "../components/product/ProductCard";
 import HeroCarousel from "../components/common/HeroCarousel";
 import HeroCarouselVideo from "../components/common/HeroCarouselVideo";
+import AdGridSystem2 from "../components/common/AdGridSystem2";
+import AdGridSystem3 from "../components/common/AdGridSystem3";
+import ProductMarqueeSection from "../components/home/ProductMarqueeSection";
 import { useProducts } from "../contexts/ProductContext";
 import { useNavigate } from "react-router-dom";
 import { useOrders } from "../contexts/OrderContext";
@@ -112,6 +115,8 @@ const HomePage = () => {
   const [addingProductId, setAddingProductId] = useState(null);
   const [homeSearchTerm, setHomeSearchTerm] = useState("");
   const [groupedProducts, setGroupedProducts] = useState([]);
+  const [randomRecomendados, setRandomRecomendados] = useState([]);
+  const [randomMasVendido, setRandomMasVendido] = useState([]);
 
   // useEffect(() => {
   //   fetchProducts(1, 20, 'createdAt_desc');
@@ -134,6 +139,19 @@ const HomePage = () => {
       const grouped = groupProductsByBase(products);
       const displayProducts = selectRandomVariantFromEachGroup(grouped);
       setGroupedProducts(displayProducts);
+
+      // Select 5 random products for "Recomendados" exactly once when products load
+      if (randomRecomendados.length === 0 && displayProducts.length >= 5) {
+        const shuffled1 = [...displayProducts].sort(() => 0.5 - Math.random());
+        setRandomRecomendados(shuffled1.slice(0, 5));
+
+        // Pick 5 different ones or just re-shuffle for "Lo más vendido"
+        const shuffled2 = [...displayProducts].sort(() => 0.5 - Math.random());
+        setRandomMasVendido(shuffled2.slice(0, 5));
+      } else if (randomRecomendados.length === 0) {
+        setRandomRecomendados(displayProducts);
+        setRandomMasVendido(displayProducts);
+      }
     }
   }, [products]);
 
@@ -354,7 +372,11 @@ const HomePage = () => {
         </Box>
 
         {/* ad secion 4 pics in 2x2 frame*/}
-        <PictureGrid />
+        <Box mt={8}>
+          <AdGridSystem3 />
+          {/* Sección de Grid de Categorías Original (Departamentos) */}
+          <PictureGrid />
+        </Box>
 
         {/* Explore All Products Button */}
         <Box sx={{ textAlign: "center", my: 6 }}>
@@ -554,6 +576,36 @@ const HomePage = () => {
             ))}
           </Grid>
         </Box>
+
+        {/* Novedades Section  */}
+        <ProductMarqueeSection
+          title="Novedades"
+          products={groupedProducts.slice(0, 5)}
+          onAddToCart={handleAddToCart}
+          addingProductId={addingProductId}
+          linkTo="/products?sort=createdAt_desc"
+        />
+
+        {/* Lo Más Vendido Section */}
+        <ProductMarqueeSection
+          title="Lo Más Vendido"
+          products={randomMasVendido}
+          onAddToCart={handleAddToCart}
+          addingProductId={addingProductId}
+        />
+
+        {/* Recomendados Section */}
+        <ProductMarqueeSection
+          title="Recomendados Para Ti"
+          products={randomRecomendados}
+          onAddToCart={handleAddToCart}
+          addingProductId={addingProductId}
+        />
+
+        <Box mt={4} mb={0}>
+          <AdGridSystem2 />
+        </Box>
+
       </Container>
     </>
   );
