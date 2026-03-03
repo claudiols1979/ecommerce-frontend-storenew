@@ -103,6 +103,11 @@ const CheckoutPage = () => {
 
   const finalTotalPrice = totalCartPrice + shippingCost;
 
+  const totalWeight = cartItems.reduce(
+    (sum, item) => sum + item.quantity * (item.product?.weight || 100),
+    0
+  );
+
   const provinces = [
     "Alajuela",
     "Cartago",
@@ -582,7 +587,7 @@ const CheckoutPage = () => {
                         sx={{ fontSize: 22, color: "#A855F7", mr: 1.5 }}
                       />
                       <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                        Costo de envío
+                        Costo de envío ({totalWeight} gramos)
                       </Typography>
                     </Box>
                     {!selectedProvince ? (
@@ -614,7 +619,7 @@ const CheckoutPage = () => {
                           mb={0.5}
                         >
                           <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                            Envío base:
+                            Envío base (Correos de Costa Rica):
                           </Typography>
                           <Typography variant="body2">
                             {formatPrice(breakdown.shippingBase)}
@@ -701,8 +706,8 @@ const CheckoutPage = () => {
                     <Box display="flex" justifyContent="space-between">
                       <Typography variant="body2" sx={{ opacity: 0.7 }}>
                         {taxRegime === "simplified"
-                          ? "Costo de Envío"
-                          : "Envío (Sin IVA)"}
+                          ? `Costo de Envío (${totalWeight} gramos)`
+                          : `Envío (Sin IVA) (${totalWeight} gramos)`}
                         :
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>

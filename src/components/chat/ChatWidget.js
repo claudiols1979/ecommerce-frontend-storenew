@@ -144,12 +144,19 @@ const ChatWidget = () => {
     const { user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
-    const [history, setHistory] = useState([
-        {
-            role: "assistant",
-            content: "Indique el producto o número de pedido que desea consultar.",
-        },
-    ]);
+    // Initialize history with a personalized message if user data exists
+    const [history, setHistory] = useState(() => {
+        const storedUser = localStorage.getItem("user");
+        const userObj = storedUser ? JSON.parse(storedUser) : null;
+        const userName = userObj?.firstName ? userObj.firstName : 'Cliente';
+
+        return [
+            {
+                role: "assistant",
+                content: `Hola ${userName}, indique el producto o número de pedido que desea consultar.`,
+            },
+        ];
+    });
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState("");
     const scrollRef = useRef(null);
