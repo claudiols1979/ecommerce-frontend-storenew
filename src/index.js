@@ -18,6 +18,7 @@ import { AdGrid2Provider } from "./contexts/AdGrid2Context";
 import { AdGrid3Provider } from "./contexts/AdGrid3Context";
 import { HeroCarouselVideoProvider } from "./contexts/HeroCarouselVideoContext";
 import { ConfigProvider } from "./contexts/ConfigContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 import { HelmetProvider } from "react-helmet-async";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -29,29 +30,31 @@ root.render(
         <HelmetProvider>
           <AuthProvider>
             <ConfigProvider>
-              <ProductProvider>
-                <OrderProvider>
-                  <ReviewProvider>
-                    <DepartmentalProvider>
-                      <SearchProvider>
-                        <UpdateInfoProvider>
-                          <HeroCarouselProvider>
-                            <AdGridProvider>
-                              <AdGrid2Provider>
-                                <AdGrid3Provider>
-                                  <HeroCarouselVideoProvider>
-                                    <App />
-                                  </HeroCarouselVideoProvider>
-                                </AdGrid3Provider>
-                              </AdGrid2Provider>
-                            </AdGridProvider>
-                          </HeroCarouselProvider>
-                        </UpdateInfoProvider>
-                      </SearchProvider>
-                    </DepartmentalProvider>
-                  </ReviewProvider>
-                </OrderProvider>
-              </ProductProvider>
+              <WishlistProvider>
+                <ProductProvider>
+                  <OrderProvider>
+                    <ReviewProvider>
+                      <DepartmentalProvider>
+                        <SearchProvider>
+                          <UpdateInfoProvider>
+                            <HeroCarouselProvider>
+                              <AdGridProvider>
+                                <AdGrid2Provider>
+                                  <AdGrid3Provider>
+                                    <HeroCarouselVideoProvider>
+                                      <App />
+                                    </HeroCarouselVideoProvider>
+                                  </AdGrid3Provider>
+                                </AdGrid2Provider>
+                              </AdGridProvider>
+                            </HeroCarouselProvider>
+                          </UpdateInfoProvider>
+                        </SearchProvider>
+                      </DepartmentalProvider>
+                    </ReviewProvider>
+                  </OrderProvider>
+                </ProductProvider>
+              </WishlistProvider>
             </ConfigProvider>
           </AuthProvider>
         </HelmetProvider>

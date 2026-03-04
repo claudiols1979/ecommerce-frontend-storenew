@@ -650,6 +650,35 @@ const ProductDetailsPage = () => {
     }
   }, [id, fetchProductDetails]);
 
+  // Guardar en el historial de búsqueda
+  useEffect(() => {
+    if (product && product._id) {
+      try {
+        const stored = localStorage.getItem("recentProducts");
+        let recent = stored ? JSON.parse(stored) : [];
+
+        // Helper to extract baseCode securely
+        const getBaseCode = (productObj) => {
+          if (!productObj.code) return productObj._id; // Fallback to ID if no code
+          const firstUnderscoreIndex = productObj.code.indexOf("_");
+          return firstUnderscoreIndex === -1 ? productObj.code : productObj.code.substring(0, firstUnderscoreIndex);
+        };
+
+        const currentBaseCode = getBaseCode(product);
+
+        // Filter out any products that share the same base code as the one we are currently viewing
+        recent = recent.filter(p => getBaseCode(p) !== currentBaseCode);
+
+        recent.unshift(product);
+        if (recent.length > 10) recent = recent.slice(0, 10);
+        localStorage.setItem("recentProducts", JSON.stringify(recent));
+        window.dispatchEvent(new Event("recentProductsUpdated"));
+      } catch (e) {
+        console.error("Error saving to search history", e);
+      }
+    }
+  }, [product]);
+
   // 3. Agrega un useEffect ESPECÍFICO para manejar filtros
   useEffect(() => {
     const productsToUse = getProductsToUse();
@@ -1087,7 +1116,7 @@ const ProductDetailsPage = () => {
       <Helmet>
         <title>
           {product
-            ? `${baseProductName} - Software Factory ERP`
+            ? `${baseProductName} - ORIYINA⅃`
             : "Detalle de Producto"}
         </title>
         <meta

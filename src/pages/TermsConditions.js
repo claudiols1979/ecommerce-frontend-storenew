@@ -45,7 +45,7 @@ const TermsAndConditionsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Términos y Condiciones - Software Factory ERP</title>
+        <title>Términos y Condiciones - ORIYINA⅃</title>
         <meta
           name="description"
           content="Lee los términos y condiciones para el uso de la plataforma. Reglas sobre cuentas, pedidos, precios y envíos."

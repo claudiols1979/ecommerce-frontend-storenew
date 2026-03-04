@@ -12,13 +12,17 @@ import {
   useTheme,
   Chip,
   Rating,
+  IconButton,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LoginIcon from "@mui/icons-material/Login";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useConfig } from "../../contexts/ConfigContext";
+import { useWishlist } from "../../contexts/WishlistContext";
 import { formatPrice } from "../../utils/formatters";
 import { calculatePriceWithTax } from "../../utils/taxCalculations";
 
@@ -40,6 +44,18 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   const { user, isAuthenticated } = useAuth();
   const { taxRegime } = useConfig();
   const theme = useTheme();
+  const { toggleWishlist, isInWishlist, wishlist } = useWishlist();
+
+  // Make sure product exists before calling isInWishlist. 
+  // We depend on `wishlist` here so React re-renders when the array changes.
+  const isLiked = React.useMemo(() => {
+    return product?._id ? isInWishlist(product._id) : false;
+  }, [product?._id, wishlist, isInWishlist]);
+
+  const handleToggleWishlist = (e) => {
+    e.stopPropagation();
+    if (product) toggleWishlist(product);
+  };
 
   // DETECTAR SI EL PRODUCTO TIENE VARIANTES
   const hasVariants = React.useMemo(() => {
@@ -196,6 +212,27 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           </Typography>
         </Box>
       )}
+
+      {/* Ícono de Wishlist  */}
+      <IconButton
+        onClick={handleToggleWishlist}
+        sx={{
+          position: "absolute",
+          top: "8px",
+          right: "8px",
+          zIndex: 2,
+          backgroundColor: isLiked ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.6)",
+          "&:hover": { backgroundColor: "rgba(255,255,255,1)" },
+          padding: "6px",
+          boxShadow: isLiked ? `0 2px 5px rgba(244, 67, 54, 0.4)` : theme.shadows[2],
+        }}
+      >
+        {isLiked ? (
+          <FavoriteIcon color="error" fontSize="small" />
+        ) : (
+          <FavoriteBorderIcon sx={{ color: "grey.500" }} fontSize="small" />
+        )}
+      </IconButton>
 
       <CardMedia
         component="img"

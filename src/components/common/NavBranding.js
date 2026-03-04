@@ -18,17 +18,17 @@ const NavBranding = () => {
     <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Typography
-          variant="h4" // Tamaño más apropiado para un navbar
+          variant="h5" // Tamaño más apropiado para un navbar
           component="div" // Componente 'div' ya que el 'a' es manejado por RouterLink
           sx={{
-            fontFamily: '"Playfair Display", serif',
+            fontFamily: '"BlinkMacSystemFont", serif',
             fontWeight: 700,
-            letterSpacing: "0.1em", // Un espaciado sutil
+            letterSpacing: "0em", // Un espaciado sutil
             color: "#fff",
             // No se especifica color para que herede el de la AppBar
           }}
         >
-          SIGAME
+          ORIYINA⅃
           <Typography
             component="span"
             variant="body2" // Mantenemos el mismo tamaño para el '&'
@@ -40,7 +40,7 @@ const NavBranding = () => {
               mx: 1, // Margen horizontal reducido para un look más compacto
             }}
           >
-            Tu tienda en linea
+            Original como vos!
           </Typography>          
         </Typography>
       </Box>

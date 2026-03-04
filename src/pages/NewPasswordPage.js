@@ -120,7 +120,7 @@ const NewPasswordPage = () => {
   return (
     <>
       <Helmet>
-        <title>Nueva Contraseña - Software Factory ERP</title>
+        <title>Nueva Contraseña - ORIYINA⅃</title>
         <meta
           name="description"
           content="Establece una nueva contraseña para tu cuenta de revendedor."

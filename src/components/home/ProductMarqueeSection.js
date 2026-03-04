@@ -9,9 +9,12 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
 
     if (!products || products.length === 0) return null;
 
+    // Solo animar y duplicar si hay más de 4 productos, para no verse muy corto o duplicado en pantallas grandes
+    const shouldAnimate = products.length >= 4;
+
     return (
-        <Container maxWidth="xl" sx={{ mt: 8, mb: 4, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box sx={{ mt: 8, mb: 4, width: '100%', overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, px: { xs: 2, md: 4 } }}>
                 <Typography
                     variant="h4"
                     sx={{
@@ -57,8 +60,8 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                         display: 'flex',
                         gap: 3,
                         paddingX: 2,
-                        width: 'max-content',
-                        animation: `marquee 30s linear infinite${reverse ? ' reverse' : ''}`,
+                        width: shouldAnimate ? 'max-content' : 'auto',
+                        animation: shouldAnimate ? `marquee 30s linear infinite${reverse ? ' reverse' : ''}` : 'none',
                         '&:hover': {
                             animationPlayState: 'paused', // Pause on hover for better UX
                         },
@@ -88,8 +91,8 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                         </Box>
                     ))}
 
-                    {/* Second set of products exactly identical for seamless infinite loop */}
-                    {products.map((product, index) => (
+                    {/* Second set of products exactly identical for seamless infinite loop (ONLY if animating) */}
+                    {shouldAnimate && products.map((product, index) => (
                         <Box key={`m2-${product._id}-${index}`} sx={{ flexShrink: 0 }}>
                             <ProductCard
                                 product={{
@@ -104,7 +107,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                     ))}
                 </Box>
             </Box>
-        </Container>
+        </Box>
     );
 };
 

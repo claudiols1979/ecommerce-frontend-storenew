@@ -206,8 +206,20 @@ const Footer = () => {
         <Divider sx={{ my: 3, borderColor: "rgba(255, 255, 255, 0.1)" }} />
 
         <Typography variant="body2" sx={{ textAlign: "center" }}>
-          &copy; {new Date().getFullYear()} Tienda en linea - Software
-          Factory CR. Todos los derechos reservados.
+          &copy; {new Date().getFullYear()} Tienda en linea - {" "}
+          <MuiLink
+            href="https://www.softwarefactorycr.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              color: "inherit",
+              textDecoration: "underline",
+              "&:hover": { color: "common.white" },
+            }}
+          >
+            Software Factory CR
+          </MuiLink>
+          . Todos los derechos reservados.
         </Typography>
       </Container>
     </Box>

@@ -32,20 +32,7 @@ const AuthBranding = ({ lightMode = false }) => {
           justifyContent: "center",
         }}
       >
-        Software
-        <Typography
-          component="span"
-          variant="h3" // Ligeramente más pequeño
-          sx={{
-            fontFamily: '"Lato", sans-serif', // Tipografía moderna y limpia para el "&"
-            fontWeight: 300, // Light
-            fontStyle: "italic", // Cursiva para darle un toque especial
-            mx: 2, // Margen horizontal para separarlo
-            color: textColor,
-          }}
-        >
-          Factory
-        </Typography>
+        {"ORIYINA⅃"}
       </Typography>
 
       {/* Un subtítulo o eslogan opcional */}
@@ -55,9 +42,10 @@ const AuthBranding = ({ lightMode = false }) => {
           mt: 1,
           letterSpacing: "0.05em",
           color: lightMode ? "rgba(255,255,255,0.8)" : "#263C5C",
+          fontStyle: "italic",
         }}
       >
-        ERP
+        Original como vos!
       </Typography>
     </Box>
   );

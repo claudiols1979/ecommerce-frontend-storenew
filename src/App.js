@@ -22,6 +22,7 @@ import TermsConditions from "./pages/TermsConditions";
 import PaymentRedirectPage from "./pages/PaymentRedirectPage";
 import DepartmentalFilterBar from "./layouts/DepartmentalFilterBar";
 import ChatWidget from "./components/chat/ChatWidget";
+import SearchHistorySection from "./components/home/SearchHistorySection";
 import ContactPage from "./pages/ContactPage";
 import ClaimPage from "./pages/ClaimPage";
 
@@ -49,6 +50,7 @@ const MainLayout = ({ children }) => (
     <Header />
     <DepartmentalFilterBar />
     <MainContent>{children}</MainContent>
+    <SearchHistorySection />
     <Footer />
     <ChatWidget />
   </AppContainer>

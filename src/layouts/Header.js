@@ -36,11 +36,18 @@ import { amber } from "@mui/material/colors";
 import PromotionalBanner from "../components/common/PromotionBanner";
 import { useAdGrid } from "../contexts/AdGridContext";
 import "./components/CartAnimation.css"; // new
+import { useWishlist } from "../contexts/WishlistContext";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 const Header = () => {
   const { setCurrentFilters, resetSearch, fetchDepartmentalProducts } = useDepartmental();
   const { gridItems } = useAdGrid();
-  const { cartItems } = useOrders();
+  const { cartItems, addItemToCart } = useOrders();
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -55,12 +62,15 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const { wishlist, toggleWishlist } = useWishlist();
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
   );
   const [animate, setAnimate] = useState(false);
   const [prevCount, setPrevCount] = useState(0);
+  const [wishlistDrawerOpen, setWishlistDrawerOpen] = useState(false);
+  const [wishlistQuantities, setWishlistQuantities] = useState({});
 
   useEffect(() => {
     // Solo animar cuando el contador aumenta
@@ -96,6 +106,49 @@ const Header = () => {
 
   const handleProfileMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleWishlistDrawerClose = () => {
+    setWishlistDrawerOpen(false);
+  };
+
+  const handleWishlistDrawerToggle = () => {
+    setWishlistDrawerOpen(!wishlistDrawerOpen);
+  };
+
+  const handleWishlistQuantityChange = (productId, change) => {
+    setWishlistQuantities(prev => {
+      const current = prev[productId] || 1;
+      const newQuantity = Math.max(1, current + change);
+      return { ...prev, [productId]: newQuantity };
+    });
+  };
+
+  const handleWishlistAddToCart = async (product) => {
+    if (typeof addItemToCart !== "function" || !user) return;
+
+    const qty = wishlistQuantities[product._id] || 1;
+    let calculatedPrice = null;
+
+    if (user.role === "Revendedor" && user.resellerCategory && product.resellerPrices) {
+      const priceForCategory = product.resellerPrices[user.resellerCategory];
+      if (typeof priceForCategory === "number" && priceForCategory > 0) {
+        calculatedPrice = priceForCategory;
+      }
+    }
+
+    if (calculatedPrice === null && product.resellerPrices && typeof product.resellerPrices.cat1 === "number" && product.resellerPrices.cat1 > 0) {
+      calculatedPrice = product.resellerPrices.cat1;
+    }
+
+    const priceToPass = calculatedPrice || 0;
+    if (priceToPass <= 0) return;
+
+    try {
+      await addItemToCart(product._id, qty, priceToPass);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleSearch = (e) => {
@@ -336,6 +389,16 @@ const Header = () => {
                 </IconButton>
                 <IconButton
                   color="inherit"
+                  sx={{ mr: 1, color: "#fff" }}
+                  aria-label={`wishlist with ${wishlist.length} items`}
+                  onClick={handleWishlistDrawerToggle}
+                >
+                  <Badge badgeContent={wishlist.length} color="error">
+                    <FavoriteIcon />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  color="inherit"
                   aria-label="open drawer"
                   edge="end"
                   onClick={handleMobileMenuToggle}
@@ -497,6 +560,16 @@ const Header = () => {
                     <ShoppingCartIcon sx={{ color: "#fff" }} />
                   </Badge>
                 </IconButton>
+                <IconButton
+                  color="#fff"
+                  sx={{ ml: 1 }}
+                  aria-label={`wishlist with ${wishlist.length} items`}
+                  onClick={handleWishlistDrawerToggle}
+                >
+                  <Badge badgeContent={wishlist.length} color="error">
+                    <FavoriteIcon sx={{ color: "#fff" }} />
+                  </Badge>
+                </IconButton>
               </Box>
             )}
           </Box>
@@ -537,7 +610,7 @@ const Header = () => {
                   }}
                 >
                   <InputBase
-                    placeholder="Que necesitas hoy?..."
+                    placeholder="Que quieres comprar hoy?..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     sx={{
@@ -736,6 +809,202 @@ const Header = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* --- DRAWER DE WISHLIST --- */}
+      <Drawer
+        anchor="right"
+        open={wishlistDrawerOpen}
+        onClose={handleWishlistDrawerClose}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 3,
+          "& .MuiDrawer-paper": {
+            width: { xs: '300px', sm: '350px' },
+            backgroundColor: '#fff',
+            p: 2,
+          }
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2,
+            px: 2,
+            py: 2,
+            background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important',
+            margin: '-16px -16px 16px -16px', // Compensar el padding interno del Drawer
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              color: '#ffffff',
+              letterSpacing: '0.5px'
+            }}
+          >
+            Lista de deseos
+          </Typography>
+          <IconButton
+            onClick={handleWishlistDrawerClose}
+            sx={{
+              color: '#ffffff',
+              backgroundColor: 'rgba(255,255,255,0.15)',
+              '&:hover': { backgroundColor: 'rgba(255,255,255,0.25)' }
+            }}
+          >
+            <CloseIcon fontSize="small" sx={{ color: '#ffffff' }} />
+          </IconButton>
+        </Box>
+
+        {wishlist.length === 0 ? (
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <FavoriteIcon sx={{ fontSize: 40, color: 'text.disabled', mb: 2 }} />
+            <Typography variant="body1" color="text.secondary">Tu lista de deseos está vacía.</Typography>
+          </Box>
+        ) : (
+          <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}>
+            {wishlist.map((item) => (
+              <React.Fragment key={item._id}>
+                <ListItem alignItems="flex-start" sx={{ px: 0, py: 1 }}>
+                  <Box
+                    component="img"
+                    src={item.imageUrls?.[0]?.secure_url || "https://placehold.co/60x60/E0E0E0/FFFFFF?text=No+Image"}
+                    sx={{ width: 60, height: 60, objectFit: 'contain', borderRadius: 1, mr: 2, cursor: 'pointer', border: '1px solid #eee' }}
+                    onClick={() => {
+                      navigate(`/products/${item._id}`);
+                      handleWishlistDrawerClose();
+                    }}
+                  />
+                  <ListItemText
+                    primary={
+                      <Typography variant="body2" sx={{ fontWeight: 600, cursor: 'pointer', '&:hover': { color: 'primary.main' } }} onClick={() => {
+                        navigate(`/products/${item._id}`);
+                        handleWishlistDrawerClose();
+                      }}>
+                        {item.name}
+                      </Typography>
+                    }
+                    secondary={
+                      <Box sx={{ mt: 0.5 }}>
+                        <Typography variant="caption" color="primary.main" sx={{ fontWeight: 'bold', display: 'block' }}>
+                          {item.brand}
+                        </Typography>
+
+                        {/* QUANTITY SELECTOR AND ACTION BUTTONS */}
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+
+                          {/* Quantities */}
+                          <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '20px',
+                            px: 0.5,
+                            py: 0.2,
+                            width: 'fit-content'
+                          }}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleWishlistQuantityChange(item._id, -1)}
+                              disabled={(wishlistQuantities[item._id] || 1) <= 1}
+                              sx={{ p: 0.5, color: 'text.secondary' }}
+                            >
+                              <RemoveCircleOutlineIcon fontSize="small" />
+                            </IconButton>
+                            <Typography variant="body2" sx={{ mx: 0.5, minWidth: '20px', textAlign: 'center', fontWeight: 'bold' }}>
+                              {wishlistQuantities[item._id] || 1}
+                            </Typography>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleWishlistQuantityChange(item._id, 1)}
+                              sx={{ p: 0.5, color: 'primary.main' }}
+                            >
+                              <AddCircleOutlineIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+
+                          {/* Add to cart / Remove / Detail */}
+                          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              disabled={!user || item.countInStock <= 0}
+                              onClick={() => handleWishlistAddToCart(item)}
+                              startIcon={<AddShoppingCartIcon sx={{ fontSize: '1rem !important' }} />}
+                              sx={{
+                                fontSize: '0.7rem',
+                                py: 0.6,
+                                px: 1.5,
+                                flex: 2,
+                                textTransform: 'none',
+                                borderRadius: '25px',
+                                background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
+                                boxShadow: "0 4px 10px rgba(168, 85, 247, 0.3)",
+                                "&:hover": {
+                                  boxShadow: "0 6px 15px rgba(247, 37, 133, 0.4)",
+                                  transform: "translateY(-1px)"
+                                },
+                                transition: "all 0.2s ease-in-out"
+                              }}
+                            >
+                              Agregar
+                            </Button>
+
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              sx={{
+                                fontSize: '0.65rem',
+                                py: 0.5,
+                                flex: 1,
+                                borderRadius: '20px',
+                                borderColor: 'text.disabled',
+                                color: 'text.secondary',
+                                "&:hover": {
+                                  borderColor: 'primary.main',
+                                  color: 'primary.main',
+                                  backgroundColor: 'rgba(168, 85, 247, 0.05)'
+                                }
+                              }}
+                              onClick={() => {
+                                navigate(`/products/${item._id}`);
+                                handleWishlistDrawerClose();
+                              }}
+                            >
+                              Ver
+                            </Button>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => toggleWishlist(item)}
+                              sx={{
+                                p: 0.5,
+                                border: '1px solid',
+                                borderColor: 'error.light',
+                                borderRadius: '50%',
+                                "&:hover": {
+                                  backgroundColor: 'error.lighter'
+                                }
+                              }}
+                            >
+                              <DeleteOutlineIcon fontSize="small" sx={{ fontSize: '1.1rem' }} />
+                            </IconButton>
+                          </Box>
+
+                        </Box>
+                      </Box>
+                    }
+                  />
+                </ListItem>
+                <Divider component="li" />
+              </React.Fragment>
+            ))}
+          </List>
+        )}
+      </Drawer>
     </Fragment>
   );
 };
