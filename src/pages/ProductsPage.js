@@ -305,7 +305,7 @@ const ProductsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Catálogo - ORIYINA⅃</title>
+        <title>Catálogo - Oriyina⅃</title>
       </Helmet>
 
       <Container maxWidth="xl" sx={{ my: 1, flexGrow: 1 }}>

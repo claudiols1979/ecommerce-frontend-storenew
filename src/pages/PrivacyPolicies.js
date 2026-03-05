@@ -45,7 +45,7 @@ const PrivacyPolicyPage = () => {
   return (
     <>
       <Helmet>
-        <title>Política de Privacidad - ORIYINA⅃</title>
+        <title>Política de Privacidad - Oriyina⅃</title>
         <meta
           name="description"
           content="Conoce cómo se protege y gestiona tus datos personales. Nuestra política de privacidad para revendedores en Costa Rica."

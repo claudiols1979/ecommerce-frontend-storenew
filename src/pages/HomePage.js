@@ -302,7 +302,7 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>ORIYINA⅃</title>
+        <title>Oriyina⅃</title>
         <meta
           name="description"
           content="Descubre el catálogo de perfumes y cosméticos en Look & Smell. Accede a precios exclusivos. Envíos a toda Costa Rica."

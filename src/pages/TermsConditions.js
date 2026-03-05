@@ -45,7 +45,7 @@ const TermsAndConditionsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Términos y Condiciones - ORIYINA⅃</title>
+        <title>Términos y Condiciones - Oriyina⅃</title>
         <meta
           name="description"
           content="Lee los términos y condiciones para el uso de la plataforma. Reglas sobre cuentas, pedidos, precios y envíos."

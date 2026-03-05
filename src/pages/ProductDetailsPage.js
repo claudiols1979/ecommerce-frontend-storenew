@@ -1128,7 +1128,7 @@ const ProductDetailsPage = () => {
       <Helmet>
         <title>
           {product
-            ? `${baseProductName} - ORIYINA⅃`
+            ? `${baseProductName} - Oriyina⅃`
             : "Detalle de Producto"}
         </title>
         <meta
