@@ -29,6 +29,9 @@ import ClaimPage from "./pages/ClaimPage";
 // PrivateRoute component
 import PrivateRoute from "./components/auth/PrivateRoute";
 
+// Navigation components
+import ScrollToTop from "./components/common/ScrollToTop";
+
 // Styled components
 const AppContainer = styled(Box)({
   display: "flex",
@@ -58,45 +61,48 @@ const MainLayout = ({ children }) => (
 
 function App() {
   return (
-    <Routes>
-      {/* --- GRUPO 1: RUTAS PÚBLICAS SIN LAYOUT PRINCIPAL --- */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password/:token" element={<NewPasswordPage />} />
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* --- GRUPO 1: RUTAS PÚBLICAS SIN LAYOUT PRINCIPAL --- */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<NewPasswordPage />} />
 
-      {/* --- AHORA LA RUTA DE PAGO ES UNA RUTA PRINCIPAL CON SU PROPIO LAYOUT --- */}
-      <Route path="/payment-redirect" element={<PaymentRedirectPage />} />
+        {/* --- AHORA LA RUTA DE PAGO ES UNA RUTA PRINCIPAL CON SU PROPIO LAYOUT --- */}
+        <Route path="/payment-redirect" element={<PaymentRedirectPage />} />
 
-      {/* --- GRUPO 2: RUTAS CON LAYOUT PRINCIPAL --- */}
-      {/* Todas las rutas aquí tendrán Header y Footer */}
-      <Route
-        path="/*"
-        element={
-          <MainLayout>
-            <Routes>
-              {/* Rutas públicas dentro del layout principal */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/products/:id" element={<ProductDetailsPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/privacy" element={<PrivacyPolicies />} />
-              <Route path="/conditions" element={<TermsConditions />} />
-              {/* Rutas que requieren autenticación */}
-              <Route element={<PrivateRoute />}>
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/claims" element={<ClaimPage />} />
-              </Route>
+        {/* --- GRUPO 2: RUTAS CON LAYOUT PRINCIPAL --- */}
+        {/* Todas las rutas aquí tendrán Header y Footer */}
+        <Route
+          path="/*"
+          element={
+            <MainLayout>
+              <Routes>
+                {/* Rutas públicas dentro del layout principal */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products/:id" element={<ProductDetailsPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/privacy" element={<PrivacyPolicies />} />
+                <Route path="/conditions" element={<TermsConditions />} />
+                {/* Rutas que requieren autenticación */}
+                <Route element={<PrivateRoute />}>
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/claims" element={<ClaimPage />} />
+                </Route>
 
-              {/* Fallback para cualquier ruta desconocida dentro de este layout */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </MainLayout>
-        }
-      />
-    </Routes>
+                {/* Fallback para cualquier ruta desconocida dentro de este layout */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </MainLayout>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

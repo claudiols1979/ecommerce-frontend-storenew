@@ -112,7 +112,7 @@ const PrivacyPolicyPage = () => {
             }}
           >
             <Box sx={{ mb: 4, display: "flex", justifyContent: "center" }}>
-              <AuthBranding />
+              <AuthBranding lightMode={true} />
             </Box>
 
             <Typography

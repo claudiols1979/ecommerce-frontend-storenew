@@ -21,9 +21,9 @@ const NavBranding = () => {
           variant="h5" // Tamaño más apropiado para un navbar
           component="div" // Componente 'div' ya que el 'a' es manejado por RouterLink
           sx={{
-            fontFamily: '"BlinkMacSystemFont", serif',
+            fontFamily: '"Montserrat", sans-serif',
             fontWeight: 700,
-            letterSpacing: "0em", // Un espaciado sutil
+            letterSpacing: "0.2em", // Un espaciado sutil
             color: "#fff",
             // No se especifica color para que herede el de la AppBar
           }}
@@ -31,17 +31,20 @@ const NavBranding = () => {
           ORIYINA⅃
           <Typography
             component="span"
-            variant="body2" // Mantenemos el mismo tamaño para el '&'
             sx={{
+              display: { xs: "block", md: "inline" }, // Wrap below on small, inline on md+
               fontFamily: '"Lato", sans-serif',
               fontWeight: 300,
+              fontSize: { xs: "0.75rem", md: "0.875rem" }, // Slightly smaller font on mobile to fit nicely below
+              letterSpacing: "0.1em",
               fontStyle: "italic",
               color: "#fff",
-              mx: 1, // Margen horizontal reducido para un look más compacto
+              mx: { xs: 0, md: 1 }, // Horizontal margin only on larger screens
+              mt: { xs: -0.5, md: 0 }, // Pull it up slightly closer to the brand on mobile
             }}
           >
             Original como vos!
-          </Typography>          
+          </Typography>
         </Typography>
       </Box>
     </RouterLink>

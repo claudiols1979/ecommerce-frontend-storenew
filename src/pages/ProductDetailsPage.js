@@ -41,6 +41,8 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LoginIcon from "@mui/icons-material/Login";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../contexts/ProductContext";
@@ -55,6 +57,7 @@ import API_URL from "../config";
 import { formatPrice } from "../utils/formatters";
 import { calculatePriceWithTax } from "../utils/taxCalculations";
 import { useConfig } from "../contexts/ConfigContext";
+import { useWishlist } from "../contexts/WishlistContext";
 import { useLocation } from "react-router-dom";
 
 const HTMLContent = ({
@@ -130,6 +133,7 @@ const ProductDetailsPage = () => {
   const { addItemToCart, loading: cartLoading, myOrders } = useOrders();
   const { user, isAuthenticated } = useAuth();
   const { taxRegime } = useConfig();
+  const { toggleWishlist, isInWishlist, wishlist } = useWishlist();
 
   const {
     reviews,
@@ -158,6 +162,15 @@ const ProductDetailsPage = () => {
   const [currentProductId, setCurrentProductId] = useState(null);
   const [loadingAttributes, setLoadingAttributes] = useState(false);
   const [allAttributesLoaded, setAllAttributesLoaded] = useState(false);
+
+  const isLiked = React.useMemo(() => {
+    return product?._id ? isInWishlist(product._id) : false;
+  }, [product, wishlist, isInWishlist]);
+
+  const handleToggleWishlist = (e) => {
+    e.stopPropagation();
+    if (product) toggleWishlist(product);
+  };
 
   const getProductsToUse = useCallback(() => {
     // ✅ PRIMERO intentar determinar hasActiveFilters desde el cache
@@ -640,7 +653,6 @@ const ProductDetailsPage = () => {
   }, [product, id, getProductsToUse]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     setQuantity(1);
   }, [id]);
 
@@ -1192,21 +1204,44 @@ const ProductDetailsPage = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: { xs: 0, md: 2 } }}>
-              <Typography
-                variant="h3"
-                component="h1"
-                gutterBottom
-                sx={{
-                  fontWeight: 900,
-                  color: "#1A1A1A",
-                  fontSize: { xs: "2.2rem", md: "3rem" },
-                  lineHeight: 1.1,
-                  letterSpacing: "-0.04em",
-                  mb: 1,
-                }}
-              >
-                {baseProductName}
-              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Typography
+                  variant="h3"
+                  component="h1"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 900,
+                    color: "#1A1A1A",
+                    fontSize: { xs: "2.2rem", md: "3rem" },
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.04em",
+                    mb: 1,
+                    flex: 1,
+                  }}
+                >
+                  {baseProductName}
+                </Typography>
+
+                <IconButton
+                  onClick={handleToggleWishlist}
+                  aria-label="add to wishlist"
+                  sx={{
+                    ml: 2,
+                    mt: { xs: 0.5, md: 1 },
+                    backgroundColor: isLiked ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.6)",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,1)" },
+                    padding: { xs: "8px", md: "12px" },
+                    boxShadow: isLiked ? `0 2px 8px rgba(244, 67, 54, 0.4)` : "0 2px 8px rgba(0,0,0,0.05)",
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  {isLiked ? (
+                    <FavoriteIcon color="error" fontSize="medium" />
+                  ) : (
+                    <FavoriteBorderIcon sx={{ color: "grey.500" }} fontSize="medium" />
+                  )}
+                </IconButton>
+              </Box>
               <Typography
                 variant="h6"
                 sx={{

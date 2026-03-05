@@ -610,7 +610,7 @@ const Header = () => {
                   }}
                 >
                   <InputBase
-                    placeholder="Que quieres comprar hoy?..."
+                    placeholder="Buscar productos..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     sx={{
