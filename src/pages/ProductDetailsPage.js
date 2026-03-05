@@ -1619,7 +1619,7 @@ const ProductDetailsPage = () => {
               },
               { label: "Marca", value: getSelectedVariantFunction().brand },
             ]
-              .filter((spec) => spec.value)
+              .filter((spec) => spec.value && (!Array.isArray(spec.value) || spec.value.length > 0))
               .map((spec, idx) => (
                 <Box
                   key={idx}
