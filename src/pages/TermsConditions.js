@@ -206,14 +206,56 @@ const TermsAndConditionsPage = () => {
                   title: "4. Política de Envío",
                   content: (
                     <>
-                      • <strong>GAM:</strong> Se aplicará un costo de envío fijo
-                      de ₡1,800 + IVA, que se sumará al total de su orden.
+                      <strong>📮 Servicio de Envíos (Por Correos de Costa Rica):</strong>
                       <br />
-                      <br />• <strong>Fuera de GAM:</strong> El envío se
-                      realizará mediante "pago contra entrega" a través de
-                      Correos de Costa Rica. El costo del envío no se incluirá
-                      en el total y deberá ser cancelado al servicio de
-                      mensajería.
+                      Para despachos a cualquier parte del territorio nacional, tanto dentro
+                      como fuera de la GAM, realizamos los envíos a través de Correos de Costa
+                      Rica en su modalidad estándar "puerta a puerta". El costo del envío se
+                      calcula en base al peso del paquete y se incluirá en el total de su
+                      orden.
+                      <br />
+                      <br />
+                      <strong>💰 Tarifas de Envío Estándar (Correos de Costa Rica):</strong>
+                      <br />
+                      A continuación, las tarifas de envío aplicadas por rangos de peso. Estos
+                      precios ya incluyen el 13% de IVA.
+                      <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                        <li>
+                          <strong>Hasta 500 gramos:</strong> ₡2,100 (precio final con IVA incluido).
+                        </li>
+                        <li>
+                          <strong>De 501 gramos a 1 kilogramo:</strong> ₡2,800 (precio final con IVA incluido).
+                        </li>
+                        <li>
+                          <strong>De 1 a 2 kilogramos:</strong> ₡4,150 (precio final con IVA incluido).
+                        </li>
+                        <li>
+                          <strong>De 2 a 5 kilogramos:</strong> ₡6,050 (precio final con IVA incluido).
+                        </li>
+                        <li>
+                          <strong>De 5 a 10 kilogramos:</strong> ₡8,950 (precio final con IVA incluido).
+                        </li>
+                      </ul>
+                      <span style={{ fontStyle: 'italic', fontSize: '0.9em' }}>
+                        * Estos precios son estimados basados en las tarifas máximas aprobadas
+                        por ARESEP para 2025 y el servicio de Correos de Costa Rica, e incluyen
+                        el 13% de IVA.
+                      </span>
+                      <br />
+                      <br />
+                      <strong>📅 Tiempo de Entrega:</strong> El tiempo de entrega estimado para
+                      envíos por Correos de Costa Rica (servicio estándar) puede variar entre 1
+                      y 8 días hábiles. En zonas cercanas al GAM, el plazo puede ser de 1 a 2
+                      días hábiles. Para zonas rurales o de difícil acceso, el
+                      plazo puede extenderse hasta 8 días hábiles.
+                      <br />
+                      <br />                     
+                      <span style={{ fontSize: '0.9em', color: '#555' }}>
+                        * Los precios y plazos de Correos de Costa Rica son los aprobados por
+                        la ARESEP y están sujetos a cambios por parte de la institución. 
+                        Los tiempos de entrega son estimados y pueden variar
+                        según la carga operativa del servicio postal.
+                      </span>
                     </>
                   ),
                 },
