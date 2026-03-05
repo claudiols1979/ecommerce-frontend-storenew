@@ -1683,29 +1683,31 @@ const ProductDetailsPage = () => {
         </Box>
 
         {getSelectedVariantFunction().tags &&
-          getSelectedVariantFunction().tags.length > 0 && (
+          getSelectedVariantFunction().tags.filter(t => t && t.trim() !== "").length > 0 && (
             <Box sx={contentSectionStyle}>
               <Typography variant="h5" sx={sectionTitleStyle}>
                 Notas Aromáticas
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
-                {product.tags.map((tagItem, tagIndex) => (
-                  <Box
-                    key={tagIndex}
-                    sx={{
-                      px: 3,
-                      py: 1,
-                      borderRadius: "10px",
-                      background: 'linear-gradient(90deg, #7a4677 0%, #F72585 100%) !important',
-                      color: "#fff",
-                      fontWeight: 700,
-                      fontSize: "0.85rem",
-                      border: "1px solid rgba(38, 60, 92, 0.1)",
-                    }}
-                  >
-                    {tagItem}
-                  </Box>
-                ))}
+                {getSelectedVariantFunction().tags
+                  .filter(tag => tag && tag.trim() !== "")
+                  .map((tagItem, tagIndex) => (
+                    <Box
+                      key={tagIndex}
+                      sx={{
+                        px: 3,
+                        py: 1,
+                        borderRadius: "10px",
+                        background: 'linear-gradient(90deg, #7a4677 0%, #F72585 100%) !important',
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        border: "1px solid rgba(38, 60, 92, 0.1)",
+                      }}
+                    >
+                      {tagItem}
+                    </Box>
+                  ))}
               </Box>
             </Box>
           )}
