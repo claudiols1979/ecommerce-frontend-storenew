@@ -2004,16 +2004,18 @@ const ProductDetailsPage = () => {
             </Typography>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: { xs: "nowrap", md: "nowrap" },
-                justifyContent: { xs: "flex-start", md: "center" },
-                gap: { xs: 2, md: 3 },
-                overflowX: { xs: "auto", md: "hidden" },
+                display: { xs: "flex", md: "grid" },
+                gridTemplateColumns: { md: "repeat(3, 1fr)" }, // Starting point with 3 columns
+                gap: { xs: 1.5, md: 4 },
+                overflowX: { xs: "auto", md: "visible" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
-                width: "100%",
-                px: { xs: 2, md: 0 }, // Mobile padding only
+                pb: { xs: 2, md: 0 },
+                px: { xs: 2, md: 0 },
+                mx: { xs: -2, md: 0 },
                 "&::-webkit-scrollbar": { display: "none" },
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                justifyContent: { md: "center" },
               }}
             >
               {relatedProducts.map((p) => (
@@ -2021,8 +2023,9 @@ const ProductDetailsPage = () => {
                   key={p._id}
                   sx={{
                     scrollSnapAlign: { xs: "center", md: "none" },
-                    flexShrink: 0,
-                    width: { xs: "280px", sm: "300px", md: "320px" }, // Consistent widths
+                    minWidth: { xs: "240px", sm: "300px", md: "100%" },
+                    flexShrink: { xs: 0, md: 1 },
+                    width: "100%",
                   }}
                 >
                   <ProductCard
