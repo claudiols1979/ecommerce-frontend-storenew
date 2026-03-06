@@ -647,7 +647,7 @@ const ProductDetailsPage = () => {
       const groupedRelated = groupProductsByBase(filtered);
       const displayRelatedProducts = selectRandomVariantFromEachGroup(groupedRelated);
       const shuffled = [...displayRelatedProducts].sort(() => 0.5 - Math.random());
-      setRelatedProducts(shuffled.slice(0, 4));
+      setRelatedProducts(shuffled.slice(0, 3));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, id, getProductsToUse]);
@@ -2029,8 +2029,7 @@ const ProductDetailsPage = () => {
                     flex: {
                       xs: "0 0 240px",
                       sm: "0 0 300px",
-                      md: "0 1 calc(33.333% - 32px)",
-                      lg: "0 1 calc(25% - 32px)"
+                      md: "0 1 350px", // Use a fixed maxWidth base for perfect 3-item fit
                     },
                     maxWidth: { md: "350px" },
                     width: "100%",
