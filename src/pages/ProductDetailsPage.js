@@ -2004,28 +2004,27 @@ const ProductDetailsPage = () => {
             </Typography>
             <Box
               sx={{
-                display: { xs: "flex", md: "grid" },
-                gridTemplateColumns: { md: "repeat(3, 1fr)" }, // Starting point with 3 columns
-                gap: { xs: 1.5, md: 4 },
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: { xs: "flex-start", md: "center" },
+                gap: { xs: 2.8, md: 2 }, // Reverted md, increased xs
                 overflowX: { xs: "auto", md: "visible" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
                 pb: { xs: 2, md: 0 },
-                px: { xs: 2, md: 0 },
-                mx: { xs: -2, md: 0 },
+                px: { xs: 2, md: 4 },
                 "&::-webkit-scrollbar": { display: "none" },
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                justifyContent: { md: "center" },
+                width: "100%",
               }}
             >
               {relatedProducts.map((p) => (
                 <Box
                   key={p._id}
                   sx={{
+                    flexShrink: 0,
                     scrollSnapAlign: { xs: "center", md: "none" },
-                    minWidth: { xs: "240px", sm: "300px", md: "100%" },
-                    flexShrink: { xs: 0, md: 1 },
-                    width: "100%",
+                    width: { xs: "240px", md: "250px" }, // Match ProductCard fixed width
                   }}
                 >
                   <ProductCard
