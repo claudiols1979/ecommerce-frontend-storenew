@@ -328,8 +328,10 @@ const HomePage = () => {
       </Container> */}
 
       <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>
-        {/* Hero Carousel */}
-        <HeroCarousel />
+        {/* Hero Carousel - Hidden on mobile, visible on tablet and larger */}
+        <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <HeroCarousel />
+        </Box>
 
         {/* Top Widgets Section */}
         <Box sx={{ my: 6, textAlign: "center", display: { xs: "none", md: "block" } }}>
