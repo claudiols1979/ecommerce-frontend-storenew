@@ -1993,9 +1993,32 @@ const ProductDetailsPage = () => {
             >
               Productos Relacionados
             </Typography>
-            <Grid container spacing={4} justifyContent="center">
+            <Box
+              sx={{
+                display: { xs: "flex", md: "grid" },
+                gridTemplateColumns: { md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+                gap: { xs: 1.5, md: 4 },
+                overflowX: { xs: "auto", md: "visible" },
+                scrollSnapType: { xs: "x mandatory", md: "none" },
+                pb: { xs: 2, md: 0 },
+                px: { xs: 2, md: 0 },
+                mx: { xs: -2, md: 0 },
+                "&::-webkit-scrollbar": { display: "none" },
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                justifyContent: { md: "center" },
+              }}
+            >
               {relatedProducts.map((p) => (
-                <Grid item key={p._id} xs={12} sm={6} md={3}>
+                <Box
+                  key={p._id}
+                  sx={{
+                    scrollSnapAlign: { xs: "center", md: "none" },
+                    minWidth: { xs: "240px", sm: "300px", md: "auto" },
+                    flexShrink: { xs: 0, md: 1 },
+                    width: { md: "100%" },
+                  }}
+                >
                   <ProductCard
                     product={{
                       ...p,
@@ -2005,9 +2028,9 @@ const ProductDetailsPage = () => {
                     onAddToCart={() => handleRelatedProductAddToCart(p, 1)}
                     isAdding={addingProductId === p._id}
                   />
-                </Grid>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           </Box>
         )}
         {relatedProducts.length === 0 && !loadingSpecificProduct && (
