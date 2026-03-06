@@ -2004,11 +2004,10 @@ const ProductDetailsPage = () => {
             </Typography>
             <Box
               sx={{
-                display: { xs: "flex", md: "grid" },
-                gridTemplateColumns: {
-                  md: relatedProducts.length < 3 ? `repeat(${relatedProducts.length}, 1fr)` : "repeat(3, 1fr)",
-                  lg: relatedProducts.length < 4 ? `repeat(${relatedProducts.length}, 1fr)` : "repeat(4, 1fr)"
-                },
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: { xs: "nowrap", md: "wrap" },
+                justifyContent: "center",
                 gap: { xs: 1.5, md: 4 },
                 overflowX: { xs: "auto", md: "visible" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
@@ -2018,10 +2017,8 @@ const ProductDetailsPage = () => {
                 "&::-webkit-scrollbar": { display: "none" },
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                justifyContent: "center",
                 maxWidth: "100%",
-                width: "fit-content",
-                margin: "0 auto",
+                width: "100%",
               }}
             >
               {relatedProducts.map((p) => (
@@ -2029,9 +2026,14 @@ const ProductDetailsPage = () => {
                   key={p._id}
                   sx={{
                     scrollSnapAlign: { xs: "center", md: "none" },
-                    minWidth: { xs: "240px", sm: "300px", md: "auto" },
-                    flexShrink: { xs: 0, md: 1 },
-                    width: { md: "100%" },
+                    flex: {
+                      xs: "0 0 240px",
+                      sm: "0 0 300px",
+                      md: "0 1 calc(33.333% - 32px)",
+                      lg: "0 1 calc(25% - 32px)"
+                    },
+                    maxWidth: { md: "350px" },
+                    width: "100%",
                   }}
                 >
                   <ProductCard
