@@ -1996,7 +1996,10 @@ const ProductDetailsPage = () => {
             <Box
               sx={{
                 display: { xs: "flex", md: "grid" },
-                gridTemplateColumns: { md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+                gridTemplateColumns: {
+                  md: relatedProducts.length < 3 ? `repeat(${relatedProducts.length}, 1fr)` : "repeat(3, 1fr)",
+                  lg: relatedProducts.length < 4 ? `repeat(${relatedProducts.length}, 1fr)` : "repeat(4, 1fr)"
+                },
                 gap: { xs: 1.5, md: 4 },
                 overflowX: { xs: "auto", md: "visible" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
@@ -2006,7 +2009,10 @@ const ProductDetailsPage = () => {
                 "&::-webkit-scrollbar": { display: "none" },
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                justifyContent: { md: "center" },
+                justifyContent: "center",
+                maxWidth: "100%",
+                width: "fit-content",
+                margin: "0 auto",
               }}
             >
               {relatedProducts.map((p) => (
