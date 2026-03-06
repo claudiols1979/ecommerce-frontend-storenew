@@ -58,10 +58,18 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                 <Box
                     sx={{
                         display: 'flex',
-                        gap: 3,
+                        gap: { xs: 1.5, md: 3 },
                         paddingX: 2,
-                        width: shouldAnimate ? 'max-content' : 'auto',
-                        animation: shouldAnimate ? `marquee 30s linear infinite${reverse ? ' reverse' : ''}` : 'none',
+                        width: { xs: 'auto', md: shouldAnimate ? 'max-content' : 'auto' },
+                        animation: {
+                            xs: 'none',
+                            md: shouldAnimate ? `marquee 30s linear infinite${reverse ? ' reverse' : ''}` : 'none'
+                        },
+                        overflowX: { xs: 'auto', md: 'visible' },
+                        scrollSnapType: { xs: 'x mandatory', md: 'none' },
+                        '&::-webkit-scrollbar': { display: 'none' },
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
                         '&:hover': {
                             animationPlayState: 'paused', // Pause on hover for better UX
                         },
@@ -78,7 +86,14 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                 >
                     {/* First set of products */}
                     {products.map((product, index) => (
-                        <Box key={`m1-${product._id}-${index}`} sx={{ flexShrink: 0 }}>
+                        <Box
+                            key={`m1-${product._id}-${index}`}
+                            sx={{
+                                flexShrink: 0,
+                                scrollSnapAlign: { xs: 'center', md: 'none' },
+                                minWidth: { xs: '240px', md: 'auto' }
+                            }}
+                        >
                             <ProductCard
                                 product={{
                                     ...product,
@@ -91,20 +106,24 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                         </Box>
                     ))}
 
-                    {/* Second set of products exactly identical for seamless infinite loop (ONLY if animating) */}
-                    {shouldAnimate && products.map((product, index) => (
-                        <Box key={`m2-${product._id}-${index}`} sx={{ flexShrink: 0 }}>
-                            <ProductCard
-                                product={{
-                                    ...product,
-                                    name: product.baseName || product.name,
-                                    variantCount: product.variantCount,
-                                }}
-                                onAddToCart={() => onAddToCart(product)}
-                                isAdding={addingProductId === product._id}
-                            />
+                    {/* Second set of products exactly identical for seamless infinite loop (ONLY if animating AND NOT on mobile) */}
+                    {shouldAnimate && (
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+                            {products.map((product, index) => (
+                                <Box key={`m2-${product._id}-${index}`} sx={{ flexShrink: 0 }}>
+                                    <ProductCard
+                                        product={{
+                                            ...product,
+                                            name: product.baseName || product.name,
+                                            variantCount: product.variantCount,
+                                        }}
+                                        onAddToCart={() => onAddToCart(product)}
+                                        isAdding={addingProductId === product._id}
+                                    />
+                                </Box>
+                            ))}
                         </Box>
-                    ))}
+                    )}
                 </Box>
             </Box>
         </Box>

@@ -113,7 +113,29 @@ const AdGridSystem = () => {
   const [loadedImages, setLoadedImages] = useState({});
   const { fetchDepartmentalProducts } = useDepartmental();
   const { gridItems, loading, processCloudinaryUrl } = useAdGrid(); // Usar el contexto
+  const [activeDepartmentIndex, setActiveDepartmentIndex] = useState(1);
   const navigate = useNavigate();
+
+  const handleScroll = (e) => {
+    if (!isMobile) return;
+    const scrollLeft = e.target.scrollLeft;
+    const width = e.target.offsetWidth - 40; // Aproximación por el gap/padding
+    const index = Math.round(scrollLeft / width) + 1;
+    if (index !== activeDepartmentIndex && index > 0 && index <= processedGridItems.length) {
+      setActiveDepartmentIndex(index);
+    }
+  };
+
+  const scrollToDepartment = (index) => {
+    const container = document.getElementById("department-slider");
+    if (container) {
+      const width = container.offsetWidth - 40;
+      container.scrollTo({
+        left: (index - 1) * width,
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Procesar las URLs de las imágenes
   const processedGridItems = gridItems.map((item) => ({
@@ -190,27 +212,67 @@ const AdGridSystem = () => {
       <SectionTitle variant="h4" component="h4">
         Departamentos
       </SectionTitle>
-      <PictureGridContainer>
-        <Grid
-          container
-          spacing={3}
+      {isMobile && processedGridItems.length > 0 && (
+        <Box
           sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 1,
+            mb: 2,
+            px: 2,
+          }}
+        >
+          {processedGridItems.map((_, idx) => (
+            <Box
+              key={idx}
+              onClick={() => scrollToDepartment(idx + 1)}
+              sx={{
+                height: "4px",
+                flex: 1,
+                maxWidth: "40px",
+                borderRadius: "2px",
+                cursor: "pointer",
+                bgcolor: activeDepartmentIndex === idx + 1 ? "transparent" : "rgba(0,0,0,0.8)",
+                background:
+                  activeDepartmentIndex === idx + 1
+                    ? "linear-gradient(90deg, #A855F7 0%, #F72585 100%)"
+                    : "none",
+                transition: "all 0.3s ease",
+              }}
+            />
+          ))}
+        </Box>
+      )}
+      <PictureGridContainer sx={{ mt: isMobile ? 0 : 6 }}>
+        <Box
+          id="department-slider"
+          sx={{
+            display: { xs: "flex", md: "grid" },
+            gridTemplateColumns: { md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+            gap: { xs: 1.5, md: 3 },
             maxWidth: "1200px",
             width: "100%",
             margin: "0 auto",
-            justifyContent: "center",
+            overflowX: { xs: "auto", md: "visible" },
+            scrollSnapType: { xs: "x mandatory", md: "none" },
+            pb: { xs: 2, md: 0 },
+            px: { xs: 2, md: 0 },
+            "&::-webkit-scrollbar": { display: "none" },
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
+          onScroll={handleScroll}
         >
           {processedGridItems.map((item, index) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
+            <Box
               key={item._id || index}
               sx={{
                 height: { xs: "250px", sm: "300px", md: "350px" },
                 display: "flex",
                 justifyContent: "center",
+                scrollSnapAlign: { xs: "center", md: "none" },
+                minWidth: { xs: "calc(100% - 60px)", sm: "300px", md: "auto" },
+                flexShrink: 0,
               }}
             >
               <Fade in={loadedImages[index]} timeout={800}>
@@ -253,9 +315,9 @@ const AdGridSystem = () => {
                   </Overlay>
                 </ImageContainer>
               </Fade>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </PictureGridContainer>
     </Fragment>
   );

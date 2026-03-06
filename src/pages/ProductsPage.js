@@ -353,17 +353,40 @@ const ProductsPage = () => {
           <Alert severity="info">{getNoProductsMessage()}</Alert>
         ) : (
           <>
-            <Grid container spacing={4} justifyContent="center">
+            <Box
+              sx={{
+                display: { xs: "flex", md: "grid" },
+                gridTemplateColumns: { md: "repeat(4, 1fr)", lg: "repeat(5, 1fr)" },
+                gap: { xs: 1.5, md: 4 },
+                overflowX: { xs: "auto", md: "visible" },
+                scrollSnapType: { xs: "x mandatory", md: "none" },
+                pb: { xs: 2, md: 0 },
+                px: { xs: 2, md: 0 },
+                mx: { xs: -2, md: 0 },
+                "&::-webkit-scrollbar": { display: "none" },
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                justifyContent: { md: "center" },
+              }}
+            >
               {groupedProducts.map((product) => (
-                <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
+                <Box
+                  key={product._id}
+                  sx={{
+                    scrollSnapAlign: { xs: "center", md: "none" },
+                    minWidth: { xs: "240px", sm: "300px", md: "auto" },
+                    flexShrink: { xs: 0, md: 1 },
+                    width: { md: "100%" },
+                  }}
+                >
                   <ProductCard
                     product={product}
                     onAddToCart={() => handleAddToCart(product)}
                     isAdding={addingProductId === product._id}
                   />
-                </Grid>
+                </Box>
               ))}
-            </Grid>
+            </Box>
             {loading && products.length > 0 && (
               <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
                 <CircularProgress />
@@ -371,7 +394,7 @@ const ProductsPage = () => {
             )}
           </>
         )}
-      </Container>
+      </Container >
     </>
   );
 };
