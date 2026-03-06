@@ -332,7 +332,7 @@ const HomePage = () => {
         <HeroCarousel />
 
         {/* Top Widgets Section */}
-        <Box sx={{ my: 6, textAlign: "center" }}>
+        <Box sx={{ my: 6, textAlign: "center", display: { xs: "none", md: "block" } }}>
           <Grid container spacing={4} justifyContent="center">
             {topWidgetData.map((widget, index) => (
               <Grid item key={index} xs={12} sm={6} md={3}>
@@ -480,7 +480,7 @@ const HomePage = () => {
         <HeroCarouselVideo />
 
         {/* Middle Widgets Section */}
-        <Box sx={{ my: 8, textAlign: "center" }}>
+        <Box sx={{ my: 8, textAlign: "center", display: { xs: "none", md: "block" } }}>
           <Grid container spacing={4} justifyContent="center">
             {middleWidgetData.map((widget, index) => (
               <Grid item key={index} xs={12} sm={6} md={3}>
@@ -539,6 +539,7 @@ const HomePage = () => {
             p: { xs: 4, sm: 6 },
             borderRadius: 3,
             boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+            display: { xs: "none", md: "block" },
           }}
         >
           <Typography
