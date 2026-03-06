@@ -60,6 +60,7 @@ const CartPage = () => {
   const { taxRegime } = useConfig();
 
   const [confirmClearCartOpen, setConfirmClearCartOpen] = useState(false);
+  const [stockAlert, setStockAlert] = useState({ show: false, message: "" });
 
   // Calcular el total del carrito con IVA incluido
   const totalCartPrice = cartItems.reduce((acc, item) => {
@@ -81,13 +82,16 @@ const CartPage = () => {
     const productId = item.product?._id;
     if (!productId) return;
 
-    const totalAvailableStock =
-      (item.product?.countInStock || 0) + item.quantity;
+    const totalAvailableStock = item.product?.countInStock || 0;
     let newQuantity;
     if (changeType === "increment") {
       newQuantity = item.quantity + 1;
       if (newQuantity > totalAvailableStock) {
-        console.warn(`Stock máximo: ${totalAvailableStock} unidades.`);
+        setStockAlert({
+          show: true,
+          message: `Stock máximo alcanzado: solo hay ${totalAvailableStock} unidades disponibles de "${item.name}".`,
+        });
+        setTimeout(() => setStockAlert({ show: false, message: "" }), 5000);
         return;
       }
     } else if (changeType === "decrement") {
@@ -97,7 +101,11 @@ const CartPage = () => {
       newQuantity = parseInt(changeType, 10);
       if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
       if (newQuantity > totalAvailableStock) {
-        console.warn(`Stock máximo excedido, ajustando a ${totalAvailableStock}.`);
+        setStockAlert({
+          show: true,
+          message: `Stock máximo excedido, ajustando a ${totalAvailableStock} unidades.`,
+        });
+        setTimeout(() => setStockAlert({ show: false, message: "" }), 5000);
         newQuantity = totalAvailableStock;
       }
     }
@@ -241,6 +249,23 @@ const CartPage = () => {
           </Alert>
         )}
 
+        {stockAlert.show && (
+          <Alert
+            severity="warning"
+            onClose={() => setStockAlert({ show: false, message: "" })}
+            sx={{
+              mb: 4,
+              borderRadius: "16px",
+              background: "rgba(255, 193, 7, 0.15)",
+              color: "#fff",
+              border: "1px solid rgba(255, 193, 7, 0.3)",
+              fontWeight: 600,
+            }}
+          >
+            {stockAlert.message}
+          </Alert>
+        )}
+
         {cartItems.length === 0 ? (
           <Card
             className="animate-fade-in-up"
@@ -281,8 +306,7 @@ const CartPage = () => {
                           item.product.iva,
                         )
                       : item.priceAtSale;
-                    const totalAvailableStock =
-                      (item.product?.countInStock || 0) + item.quantity;
+                    const totalAvailableStock = item.product?.countInStock || 0;
 
                     return (
                       <Box
