@@ -647,7 +647,7 @@ const ProductDetailsPage = () => {
       const groupedRelated = groupProductsByBase(filtered);
       const displayRelatedProducts = selectRandomVariantFromEachGroup(groupedRelated);
       const shuffled = [...displayRelatedProducts].sort(() => 0.5 - Math.random());
-      setRelatedProducts(shuffled.slice(0, 3));
+      setRelatedProducts(shuffled.slice(0, 4));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, id, getProductsToUse]);
