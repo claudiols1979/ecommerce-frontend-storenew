@@ -2006,10 +2006,10 @@ const ProductDetailsPage = () => {
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                flexWrap: { xs: "nowrap", md: "wrap" },
+                flexWrap: "nowrap", // Force single row
                 justifyContent: "center",
                 gap: { xs: 1.5, md: 4 },
-                overflowX: { xs: "auto", md: "visible" },
+                overflowX: { xs: "auto", md: "hidden" }, // Prevent extra scrollbars on desktop
                 scrollSnapType: { xs: "x mandatory", md: "none" },
                 pb: { xs: 2, md: 0 },
                 px: { xs: 2, md: 0 },
@@ -2029,9 +2029,10 @@ const ProductDetailsPage = () => {
                     flex: {
                       xs: "0 0 240px",
                       sm: "0 0 300px",
-                      md: "0 1 350px", // Use a fixed maxWidth base for perfect 3-item fit
+                      md: "0 1 350px", // Can shrink but won't grow past 350px
                     },
                     maxWidth: { md: "350px" },
+                    minWidth: { md: "250px" }, // Ensure they don't get too small
                     width: "100%",
                   }}
                 >
