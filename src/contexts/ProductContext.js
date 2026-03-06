@@ -22,6 +22,7 @@ export const ProductProvider = ({ children }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
 
+  const requestVersionRef = useRef(0);
   const isLoadingRef = useRef(false);
 
   const clearProducts = useCallback(() => {
@@ -29,6 +30,7 @@ export const ProductProvider = ({ children }) => {
     setCurrentPage(1);
     setTotalPages(1);
     setTotalProducts(0);
+    requestVersionRef.current += 1; // Invalidate any ongoing request
   }, []);
 
   const fetchProducts = useCallback(
@@ -41,8 +43,10 @@ export const ProductProvider = ({ children }) => {
       minPrice = 0,
       maxPrice = 300000,
     ) => {
-      if (isLoadingRef.current) return;
+      // If page > 1, respect the lock. If page === 1, we always allow (new search)
+      if (page > 1 && isLoadingRef.current) return;
 
+      const currentVersion = ++requestVersionRef.current;
       isLoadingRef.current = true;
       setLoading(true);
       setError(null);
@@ -66,6 +70,11 @@ export const ProductProvider = ({ children }) => {
 
         const response = await api.get(`/api/products-filtered?${queryParams}`);
 
+        // Only update state if this is still the most recent request
+        if (currentVersion !== requestVersionRef.current) {
+          return;
+        }
+
         if (page === 1) {
           setProducts(response.data.products);
         } else {
@@ -79,6 +88,7 @@ export const ProductProvider = ({ children }) => {
         setTotalPages(response.data.pages);
         setTotalProducts(response.data.totalProducts);
       } catch (err) {
+        if (currentVersion !== requestVersionRef.current) return;
         console.error(
           "ProductContext: Error al obtener productos filtrados:",
           err.response?.data || err,
@@ -88,8 +98,10 @@ export const ProductProvider = ({ children }) => {
           "Error al cargar los productos filtrados.";
         setError({ message: errorMessage });
       } finally {
-        setLoading(false);
-        isLoadingRef.current = false;
+        if (currentVersion === requestVersionRef.current) {
+          setLoading(false);
+          isLoadingRef.current = false;
+        }
       }
     },
     [api],

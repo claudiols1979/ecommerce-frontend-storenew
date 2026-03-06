@@ -28,6 +28,7 @@ export const DepartmentalProvider = ({ children }) => {
   const [currentFilters, setCurrentFilters] = useState({});
 
   // Ref para evitar peticiones concurrentes/infinitas
+  const requestVersionRef = useRef(0);
   const isLoadingRef = useRef(false);
 
   // Estado para taxonomía
@@ -76,8 +77,10 @@ export const DepartmentalProvider = ({ children }) => {
   // Función principal para obtener productos
   const fetchDepartmentalProducts = useCallback(
     async (filters = {}, page = 1, limit = 18) => {
-      if (isLoadingRef.current) return;
+      // If page > 1, respect the lock. If page === 1, we always allow (new search)
+      if (page > 1 && isLoadingRef.current) return;
 
+      const currentVersion = ++requestVersionRef.current;
       isLoadingRef.current = true;
       setDepartmentalLoading(true);
       setDepartmentalError(null);
@@ -110,6 +113,11 @@ export const DepartmentalProvider = ({ children }) => {
           params,
         });
 
+        // Only update state if this is still the most recent request
+        if (currentVersion !== requestVersionRef.current) {
+          return;
+        }
+
         // ✅ Manejo correcto de la paginación
         if (page === 1) {
           setDepartmentalProducts(response.data.products);
@@ -128,13 +136,16 @@ export const DepartmentalProvider = ({ children }) => {
           `📊 Página ${page} cargada. Productos: ${response.data.products.length}, ¿Hay más?: ${page < response.data.pages}`,
         );
       } catch (err) {
+        if (currentVersion !== requestVersionRef.current) return;
         console.error("Error al obtener productos departamentales:", err);
         const errorMessage =
           err.response?.data?.message || "Error al cargar los productos.";
         setDepartmentalError({ message: errorMessage });
       } finally {
-        setDepartmentalLoading(false);
-        isLoadingRef.current = false;
+        if (currentVersion === requestVersionRef.current) {
+          setDepartmentalLoading(false);
+          isLoadingRef.current = false;
+        }
       }
     },
     [api],
