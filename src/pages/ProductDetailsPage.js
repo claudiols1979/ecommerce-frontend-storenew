@@ -1707,7 +1707,7 @@ const ProductDetailsPage = () => {
                         px: 3,
                         py: 1,
                         borderRadius: "10px",
-                        background: 'linear-gradient(90deg, #7a4677 0%, #F72585 100%) !important',
+                        background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
                         color: "#fff",
                         fontWeight: 700,
                         fontSize: "0.85rem",
@@ -2006,19 +2006,14 @@ const ProductDetailsPage = () => {
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                flexWrap: "nowrap", // Force single row
-                justifyContent: "center",
-                gap: { xs: 1.5, md: 4 },
-                overflowX: { xs: "auto", md: "hidden" }, // Prevent extra scrollbars on desktop
+                flexWrap: { xs: "nowrap", md: "nowrap" },
+                justifyContent: { xs: "flex-start", md: "center" },
+                gap: { xs: 2, md: 3 },
+                overflowX: { xs: "auto", md: "hidden" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
-                pb: { xs: 2, md: 0 },
-                px: { xs: 2, md: 0 },
-                mx: { xs: -2, md: 0 },
-                "&::-webkit-scrollbar": { display: "none" },
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-                maxWidth: "100%",
                 width: "100%",
+                px: { xs: 2, md: 0 }, // Mobile padding only
+                "&::-webkit-scrollbar": { display: "none" },
               }}
             >
               {relatedProducts.map((p) => (
@@ -2026,14 +2021,8 @@ const ProductDetailsPage = () => {
                   key={p._id}
                   sx={{
                     scrollSnapAlign: { xs: "center", md: "none" },
-                    flex: {
-                      xs: "0 0 240px",
-                      sm: "0 0 300px",
-                      md: "0 1 350px", // Can shrink but won't grow past 350px
-                    },
-                    maxWidth: { md: "350px" },
-                    minWidth: { md: "250px" }, // Ensure they don't get too small
-                    width: "100%",
+                    flexShrink: 0,
+                    width: { xs: "280px", sm: "300px", md: "320px" }, // Consistent widths
                   }}
                 >
                   <ProductCard
