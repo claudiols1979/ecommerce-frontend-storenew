@@ -1191,18 +1191,27 @@ const ProductDetailsPage = () => {
           </Button> */}
         </Box>
 
-        <Grid
-          container
-          spacing={{ xs: 3, sm: 6, md: 8 }}
-          sx={{ alignItems: "flex-start" }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 4, md: 8 },
+            alignItems: "flex-start",
+            mb: 5,
+            p: { xs: 0, sm: 4 },
+            bgcolor: { xs: "transparent", sm: "#ffffff" },
+            borderRadius: "32px",
+            border: { xs: "none", sm: "1px solid rgba(0, 0, 0, 0.05)" },
+            boxShadow: { xs: "none", sm: "0 4px 20px rgba(0, 0, 0, 0.02)" },
+          }}
         >
-          <Grid item xs={12} sm={6}>
+          <Box sx={{ flex: { xs: "1 1 100%", sm: "0 0 50%" }, width: "100%" }}>
             <ProductImageCarousel
               imageUrls={getSelectedVariantFunction().imageUrls}
               productName={baseProductName}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Box>
+          <Box sx={{ flex: 1, width: "100%" }}>
             <Box sx={{ p: { xs: 0, md: 2 } }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography
@@ -1521,8 +1530,8 @@ const ProductDetailsPage = () => {
                 </Button>
               </Box>
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         <Box sx={contentSectionStyle}>
           <Typography

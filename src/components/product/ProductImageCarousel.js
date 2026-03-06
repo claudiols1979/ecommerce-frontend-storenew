@@ -15,6 +15,7 @@ const MainImageContainer = styled(Box)(({ theme }) => ({
   justifyContent: "center",
   alignItems: "center",
   transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+  position: "relative",
   "&:hover": {
     boxShadow: "0 30px 60px rgba(0, 0, 0, 0.08)",
     borderColor: "rgba(0, 0, 0, 0.08)",
@@ -24,11 +25,32 @@ const MainImageContainer = styled(Box)(({ theme }) => ({
 const StyledMainImage = styled("img")({
   maxWidth: "100%",
   maxHeight: "100%",
-  width: "auto",
-  height: "auto",
+  width: "100%",
+  height: "100%",
   objectFit: "contain",
-  padding: "40px", // Standardized padding for absolute normalization
+  padding: "20px", // Reduced padding to maximize image visibility
   transition: "all 0.4s ease-in-out",
+});
+
+const MobileCarouselContainer = styled(Box)({
+  display: "flex",
+  overflowX: "auto",
+  scrollSnapType: "x mandatory",
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": { display: "none" },
+  width: "100%",
+  borderRadius: "24px",
+});
+
+const MobileImageWrapper = styled(Box)({
+  flex: "0 0 100%",
+  scrollSnapAlign: "start",
+  aspectRatio: "1 / 1",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#ffffff",
+  overflow: "hidden",
 });
 
 const StyledThumbnail = styled(Box)(({ theme, isSelected }) => ({
@@ -63,8 +85,20 @@ const StyledThumbnailImage = styled("img")({
 
 const ProductImageCarousel = ({ imageUrls = [], productName }) => {
   const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const scrollContainerRef = React.useRef(null);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const scrollLeft = scrollContainerRef.current.scrollLeft;
+      const width = scrollContainerRef.current.offsetWidth;
+      const newIndex = Math.round(scrollLeft / width);
+      if (newIndex !== selectedImageIndex) {
+        setSelectedImageIndex(newIndex);
+      }
+    }
+  };
 
   useEffect(() => {
     if (imageUrls.length > 0 && selectedImageIndex >= imageUrls.length) {
@@ -75,37 +109,66 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
   }, [imageUrls, selectedImageIndex]);
 
   if (!imageUrls || imageUrls.length === 0) {
+    const placeholder = "https://placehold.co/600x600/FFFFFF/E0E0E0?text=No+Image";
     return (
       <MainImageContainer>
-        <StyledMainImage
-          src="https://placehold.co/600x600/FFFFFF/E0E0E0?text=No+Image"
-          alt="No disponible"
-        />
+        <StyledMainImage src={placeholder} alt="No disponible" />
       </MainImageContainer>
     );
   }
 
-  const renderThumbnails = () =>
-    imageUrls.map((img, index) => (
-      <Grid item key={index}>
-        <StyledThumbnail
-          isSelected={index === selectedImageIndex}
-          onClick={() => setSelectedImageIndex(index)}
+  // Mobile View: Swipable Carousel
+  if (isMobile) {
+    return (
+      <Box sx={{ width: "100%", position: "relative" }}>
+        <MobileCarouselContainer
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
         >
-          <StyledThumbnailImage
-            src={img.secure_url}
-            alt={`Thumbnail ${index + 1}`}
-          />
-        </StyledThumbnail>
-      </Grid>
-    ));
+          {imageUrls.map((img, index) => (
+            <MobileImageWrapper key={index}>
+              <StyledMainImage
+                src={img.secure_url}
+                alt={`${productName} - ${index + 1}`}
+                sx={{ padding: "10px" }}
+              />
+            </MobileImageWrapper>
+          ))}
+        </MobileCarouselContainer>
+        {imageUrls.length > 1 && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 1,
+              mt: 2,
+            }}
+          >
+            {imageUrls.map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  bgcolor: index === selectedImageIndex ? "primary.main" : "grey.300",
+                  transition: "all 0.3s ease",
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+    );
+  }
 
+  // Desktop View: Sidebar Thumbnails + Main Image
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column-reverse", sm: "row" },
-        gap: { xs: 2, sm: 3 },
+        flexDirection: "row",
+        gap: 3,
         width: "100%",
         alignItems: "flex-start",
       }}
@@ -114,45 +177,41 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
       {imageUrls.length > 1 && (
         <Box
           sx={{
-            width: { xs: "100%", sm: "80px" },
+            width: "80px",
             flexShrink: 0,
-            overflowX: { xs: "auto", sm: "visible" },
-            overflowY: { xs: "visible", sm: "auto" },
-            maxHeight: { sm: "500px" },
+            maxHeight: "500px",
+            overflowY: "auto",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
-            pb: { xs: 1, sm: 0 },
           }}
         >
-          <Grid
-            container
-            direction={{ xs: "row", sm: "column" }}
-            spacing={1.5}
-            sx={{ flexWrap: "nowrap" }}
-          >
-            {renderThumbnails()}
+          <Grid container direction="column" spacing={1.5}>
+            {imageUrls.map((img, index) => (
+              <Grid item key={index}>
+                <StyledThumbnail
+                  isSelected={index === selectedImageIndex}
+                  onClick={() => setSelectedImageIndex(index)}
+                >
+                  <StyledThumbnailImage
+                    src={img.secure_url}
+                    alt={`Thumbnail ${index + 1}`}
+                  />
+                </StyledThumbnail>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       )}
 
       {/* Main Image View */}
-      <Box
-        sx={{
-          flex: 1,
-          minWidth: 0, // Important for flexbox overflow
-          width: "100%",
-        }}
-      >
+      <Box sx={{ flex: 1, minWidth: 0 }}>
         <MainImageContainer>
           <StyledMainImage
             key={selectedImageIndex}
-            src={
-              imageUrls[selectedImageIndex]?.secure_url ||
-              "https://placehold.co/600x600/FFFFFF/E0E0E0?text=No+Image"
-            }
+            src={imageUrls[selectedImageIndex]?.secure_url}
             alt={productName}
             sx={{
-              animation: "fadeIn 0.5s ease-in-out",
+              animation: "fadeIn 0.4s ease-in-out",
               "@keyframes fadeIn": {
                 from: { opacity: 0 },
                 to: { opacity: 1 },
