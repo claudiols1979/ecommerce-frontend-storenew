@@ -31,6 +31,8 @@ import { useDepartmental } from "../contexts/DepartmentalContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 
+import useScrollDirection from "../hooks/useScrollDirection";
+
 const DepartmentalFilterBar = () => {
   const {
     taxonomy,
@@ -46,6 +48,7 @@ const DepartmentalFilterBar = () => {
   const location = useLocation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const { isHiding } = useScrollDirection(10, isSmallScreen);
 
   const [uiFilters, setUiFilters] = useState({
     department: "",
@@ -314,6 +317,8 @@ const DepartmentalFilterBar = () => {
         position: "sticky",
         top: isSmallScreen ? 10 : 120,
         zIndex: 700,
+        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), top 0.4s ease",
+        transform: isHiding ? "translateY(-110px)" : "translateY(0)",
       }}
     >
       {/* Encabezado del acordeón */}

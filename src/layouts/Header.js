@@ -44,6 +44,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
+import useScrollDirection from "../hooks/useScrollDirection";
+
 const Header = () => {
   const { setCurrentFilters, resetSearch, fetchDepartmentalProducts } = useDepartmental();
   const { gridItems } = useAdGrid();
@@ -51,6 +53,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { isHiding, toggleForceShow } = useScrollDirection(10, isMobile);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
@@ -318,17 +321,19 @@ const Header = () => {
       <PromotionalBanner />
       <AppBar
         position="sticky"
+        onClick={isHiding ? toggleForceShow : undefined}
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           width: "98%",
           mx: "auto",
-          //background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           background:
             "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important",
-          //backgroundColor: 'rgba(38, 60, 92, 0.9)',
           backgroundImage: `linear-gradient(to bottom, transparent, ${amber[0]})`,
           boxShadow: 0,
           borderRadius: 2,
+          transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          transform: isHiding ? "translateY(-110px)" : "translateY(0)",
+          cursor: isHiding ? "pointer" : "default",
         }}
       >
         <Toolbar
