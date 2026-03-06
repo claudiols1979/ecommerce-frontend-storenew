@@ -61,14 +61,28 @@ const ProductsPage = () => {
     : currentPage < totalPages;
 
   // --- ESTADOS DE FILTRADO ---
-  const getSearchFromUrl = useCallback(
-    () => new URLSearchParams(location.search).get("search") || "",
-    [location.search],
-  );
+  const getParamsFromUrl = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    const stripQuotes = (val) => {
+      if (!val) return "";
+      // Strip literal double quotes if they surround the value
+      return val.replace(/^"|"$/g, "");
+    };
 
-  const [searchTerm, setSearchTerm] = useState(getSearchFromUrl());
+    return {
+      search: stripQuotes(params.get("search")),
+      department: stripQuotes(params.get("department")),
+      category: stripQuotes(params.get("category")),
+      brand: stripQuotes(params.get("brand")),
+      subcategory: stripQuotes(params.get("subcategory")),
+    };
+  }, [location.search]);
+
+  const initialParams = useMemo(() => getParamsFromUrl(), [getParamsFromUrl]);
+
+  const [searchTerm, setSearchTerm] = useState(initialParams.search);
   const [submittedSearchTerm, setSubmittedSearchTerm] =
-    useState(getSearchFromUrl());
+    useState(initialParams.search);
   const [selectedGender, setSelectedGender] = useState("");
   const [priceRange, setPriceRange] = useState([0, 300000]);
   const [sortOrder, setSortOrder] = useState("updatedAt_desc");
@@ -136,10 +150,13 @@ const ProductsPage = () => {
 
   // --- REINICIO AL MONTAR O CAMBIAR RUTA ---
   useEffect(() => {
-    const searchFromUrl = getSearchFromUrl();
+    const paramsFromUrl = getParamsFromUrl();
+    const hasDeptParams = paramsFromUrl.department || paramsFromUrl.category || paramsFromUrl.brand || paramsFromUrl.subcategory;
+
     if (
       location.pathname === "/products" &&
-      !searchFromUrl &&
+      !paramsFromUrl.search &&
+      !hasDeptParams &&
       !isDepartmentalMode
     ) {
       console.log("✨ Fresh visit, clearing state...");
@@ -147,19 +164,42 @@ const ProductsPage = () => {
       setSearchTerm("");
       setSubmittedSearchTerm("");
       setPage(1);
-    } else if (searchFromUrl !== submittedSearchTerm) {
-      console.log("🔍 Syncing search term from URL:", searchFromUrl);
+    } else if (paramsFromUrl.search !== submittedSearchTerm) {
+      console.log("🔍 Syncing search term from URL:", paramsFromUrl.search);
       clearProducts();
-      setSearchTerm(searchFromUrl);
-      setSubmittedSearchTerm(searchFromUrl);
+      setSearchTerm(paramsFromUrl.search);
+      setSubmittedSearchTerm(paramsFromUrl.search);
       setPage(1);
+    }
+
+    // Si hay parámetros de departamento en la URL, los inyectamos en el contexto
+    if (hasDeptParams) {
+      const deptFiltersFromUrl = {
+        department: paramsFromUrl.department,
+        category: paramsFromUrl.category,
+        brand: paramsFromUrl.brand,
+        subcategory: paramsFromUrl.subcategory
+      };
+
+      // Limpiar filtros vacíos
+      const cleanUrlFilters = Object.fromEntries(
+        Object.entries(deptFiltersFromUrl).filter(([_, v]) => v !== "")
+      );
+
+      // Solo actualizamos si son diferentes a los actuales para evitar bucles
+      if (JSON.stringify(cleanUrlFilters) !== JSON.stringify(currentFilters)) {
+        console.log("📂 Syncing departmental filters from URL:", cleanUrlFilters);
+        fetchDepartmentalProducts(cleanUrlFilters, 1);
+      }
     }
   }, [
     location.pathname,
-    getSearchFromUrl,
+    getParamsFromUrl,
     isDepartmentalMode,
     clearProducts,
     submittedSearchTerm,
+    currentFilters,
+    fetchDepartmentalProducts
   ]);
 
   // --- EFFECT DE CARGA DE DATOS ---
