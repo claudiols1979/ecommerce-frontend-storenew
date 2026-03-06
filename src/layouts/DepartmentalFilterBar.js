@@ -77,7 +77,7 @@ const DepartmentalFilterBar = () => {
     { enabled: expanded },
   );
 
-  // Cargar taxonomía completa al montar
+  // ✅ Cargar taxonomía completa al montar
   useEffect(() => {
     if (initialLoad) {
       fetchTaxonomy({});
@@ -99,20 +99,9 @@ const DepartmentalFilterBar = () => {
     }
   }, [currentFilters]);
 
-  // ✅ Aplicar filtros automáticamente cuando cambian (con debounce)
-  useEffect(() => {
-    if (!initialLoad) {
-      const timeoutId = setTimeout(() => {
-        applyFiltersAutomatically();
-      }, 500); // Debounce de 500ms
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [uiFilters, initialLoad]);
-
-  const applyFiltersAutomatically = useCallback(async () => {
-    // No aplicar si está cargando o si son filtros vacíos
-    if (filterLoading || taxonomyLoading) return;
+  const applyFiltersToSearch = useCallback(async () => {
+    // No aplicar si está cargando
+    if (departmentalLoading) return;
 
     // Crear filtros no vacíos
     const nonEmptyFilters = Object.fromEntries(
@@ -121,34 +110,26 @@ const DepartmentalFilterBar = () => {
       ),
     );
 
-    // Solo aplicar si hay filtros diferentes a los activos
-    if (JSON.stringify(nonEmptyFilters) !== JSON.stringify(activeFilters)) {
-      console.log("🚀 Aplicando filtros automáticamente:", nonEmptyFilters);
-      setFilterLoading(true);
+    console.log("🚀 Aplicando filtros seleccionados:", nonEmptyFilters);
 
-      try {
-        await searchWithFilters(nonEmptyFilters);
-        setActiveFilters(nonEmptyFilters);
+    try {
+      await searchWithFilters(nonEmptyFilters);
+      setActiveFilters(nonEmptyFilters);
 
-        // Navegar a /products si hay filtros y no estamos allí
-        if (
-          Object.keys(nonEmptyFilters).length > 0 &&
-          location.pathname !== "/products"
-        ) {
-          navigate("/products");
-        }
-      } catch (error) {
-        console.error("Error applying filters:", error);
-      } finally {
-        setFilterLoading(false);
+      // Navegar a /products si hay filtros y no estamos allí
+      if (
+        Object.keys(nonEmptyFilters).length > 0 &&
+        location.pathname !== "/products"
+      ) {
+        navigate("/products");
       }
+    } catch (error) {
+      console.error("Error applying filters:", error);
     }
   }, [
     uiFilters,
-    activeFilters,
     searchWithFilters,
-    filterLoading,
-    taxonomyLoading,
+    departmentalLoading,
     location.pathname,
     navigate,
   ]);
@@ -201,9 +182,9 @@ const DepartmentalFilterBar = () => {
   // ✅ Buscar manualmente (botón)
   const handleManualSearch = useCallback(() => {
     console.log("🔍 Búsqueda manual solicitada");
-    applyFiltersAutomatically();
+    applyFiltersToSearch();
     setExpanded(false);
-  }, [applyFiltersAutomatically]);
+  }, [applyFiltersToSearch]);
 
   // ✅ Limpiar filtro individual
   const handleClearFilter = useCallback(
@@ -294,7 +275,10 @@ const DepartmentalFilterBar = () => {
   const hasActiveFilters = Object.values(activeFilters).some(
     (value) => value !== "",
   );
-  const isLoading = filterLoading || taxonomyLoading || departmentalLoading;
+
+  // No bloqueamos los selectores ni el botón mientras carga la taxonomía
+  // para evitar el efecto de parpadeo y disabled innecesario.
+  const isSearchLoading = departmentalLoading;
 
   const filteredOptions = useMemo(
     () => ({
@@ -379,7 +363,6 @@ const DepartmentalFilterBar = () => {
                 onChange={(e) =>
                   handleFilterChange("department", e.target.value)
                 }
-                disabled={isLoading}
                 displayEmpty
                 sx={{
                   color: "white",
@@ -403,7 +386,7 @@ const DepartmentalFilterBar = () => {
 
           {/* Marca */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>
+            <FormControl fullWidth size="small">
               <Select
                 value={uiFilters.brand}
                 onChange={(e) => handleFilterChange("brand", e.target.value)}
@@ -427,7 +410,7 @@ const DepartmentalFilterBar = () => {
 
           {/* Categoría */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>
+            <FormControl fullWidth size="small">
               <Select
                 value={uiFilters.category}
                 onChange={(e) => handleFilterChange("category", e.target.value)}
@@ -451,7 +434,7 @@ const DepartmentalFilterBar = () => {
 
           {/* Subcategoría */}
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small" disabled={isLoading}>
+            <FormControl fullWidth size="small">
               <Select
                 value={uiFilters.subcategory}
                 onChange={(e) =>
@@ -481,9 +464,9 @@ const DepartmentalFilterBar = () => {
               variant="contained"
               fullWidth
               onClick={handleManualSearch}
-              disabled={isLoading}
+              disabled={isSearchLoading}
               startIcon={
-                isLoading ? <CircularProgress size={16} /> : <SearchIcon />
+                isSearchLoading ? <CircularProgress size={16} /> : <SearchIcon />
               }
               sx={{
                 height: "40px",
@@ -493,7 +476,7 @@ const DepartmentalFilterBar = () => {
                   "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
               }}
             >
-              {isLoading ? "Cargando..." : "Buscar"}
+              {isSearchLoading ? "Cargando..." : "Buscar"}
             </Button>
           </Grid>
         </Grid>
@@ -558,28 +541,6 @@ const DepartmentalFilterBar = () => {
           </Box>
         )}
 
-        {/* Loading indicator */}
-        {isLoading && (
-          <Box
-            sx={{
-              mt: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CircularProgress
-              size={20}
-              sx={{ color: "rgba(255, 255, 255, 0.7)" }}
-            />
-            <Typography
-              variant="body2"
-              sx={{ color: "rgba(255, 255, 255, 0.8)", ml: 1 }}
-            >
-              Aplicando filtros...
-            </Typography>
-          </Box>
-        )}
       </Collapse>
     </Paper>
   );
