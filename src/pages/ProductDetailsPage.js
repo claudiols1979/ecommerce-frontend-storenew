@@ -2007,10 +2007,10 @@ const ProductDetailsPage = () => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: { xs: "flex-start", md: "center" },
-                gap: { xs: 2.8, md: 2 }, // Reverted md, increased xs
+                gap: { xs: 2.8, md: 2 },
                 overflowX: { xs: "auto", md: "visible" },
                 scrollSnapType: { xs: "x mandatory", md: "none" },
-                pb: { xs: 2, md: 0 },
+                py: 5, // Significant vertical padding to prevent clipping of shadows/ribbons
                 px: { xs: 2, md: 4 },
                 "&::-webkit-scrollbar": { display: "none" },
                 scrollbarWidth: "none",
@@ -2024,7 +2024,7 @@ const ProductDetailsPage = () => {
                   sx={{
                     flexShrink: 0,
                     scrollSnapAlign: { xs: "center", md: "none" },
-                    width: { xs: "240px", md: "250px" }, // Match ProductCard fixed width
+                    minWidth: { xs: "260px", md: "auto" }, // Increased from 240px to exceed ProductCard width (250px)
                   }}
                 >
                   <ProductCard

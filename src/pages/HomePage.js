@@ -437,7 +437,8 @@ const HomePage = () => {
               gap: { xs: 1.5, md: 2 },
               overflowX: { xs: "auto", md: "visible" },
               scrollSnapType: { xs: "x mandatory", md: "none" },
-              pb: { xs: 2, md: 0 },
+              pt: { xs: 5, md: 0 },
+              pb: { xs: 5, md: 0 },
               px: { xs: 2, md: 0 },
               mx: { xs: -2, md: 0 },
               "&::-webkit-scrollbar": { display: "none" },
@@ -451,7 +452,7 @@ const HomePage = () => {
                 key={product._id}
                 sx={{
                   scrollSnapAlign: { xs: "center", md: "none" },
-                  minWidth: { xs: "240px", sm: "300px", md: "auto" },
+                  minWidth: { xs: "260px", sm: "300px", md: "auto" },
                   flexShrink: { xs: 0, md: 1 },
                   width: { md: "100%" },
                 }}

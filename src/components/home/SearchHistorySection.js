@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Box } from "@mui/material";
 import axios from 'axios';
 import ProductMarqueeSection from "./ProductMarqueeSection";
 import { useOrders } from "../../contexts/OrderContext";
@@ -112,14 +113,14 @@ const SearchHistorySection = () => {
     }
 
     return (
-        <div style={{ marginTop: '2rem', marginBottom: '1rem', width: '100%', overflow: 'hidden' }}>
+        <Box sx={{ py: 5, width: '100%', overflow: 'hidden' }}>
             <ProductMarqueeSection
                 title="Tu Historial de Búsqueda"
                 products={recentProducts}
                 onAddToCart={handleAddToCart}
                 addingProductId={addingProductId}
             />
-        </div>
+        </Box>
     );
 };
 

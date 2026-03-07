@@ -52,7 +52,8 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                     overflow: 'hidden',
                     width: '100%',
                     position: 'relative',
-                    paddingBottom: 2,
+                    pt: 1, // Space for card shadows/hover at the top
+                    pb: 3, // Space for card shadows at the bottom
                 }}
             >
                 <Box
@@ -65,6 +66,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                             xs: 'none',
                             md: shouldAnimate ? `marquee 30s linear infinite${reverse ? ' reverse' : ''}` : 'none'
                         },
+                        py: 5, // Significant vertical padding to prevent clipping of shadows/ribbons
                         overflowX: { xs: 'auto', md: 'visible' },
                         scrollSnapType: { xs: 'x mandatory', md: 'none' },
                         '&::-webkit-scrollbar': { display: 'none' },
@@ -91,7 +93,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                             sx={{
                                 flexShrink: 0,
                                 scrollSnapAlign: { xs: 'center', md: 'none' },
-                                minWidth: { xs: '240px', md: 'auto' }
+                                minWidth: { xs: '260px', md: 'auto' } // Increased from 240px to exceed ProductCard width (250px)
                             }}
                         >
                             <ProductCard
