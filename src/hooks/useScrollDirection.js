@@ -9,7 +9,10 @@ const useScrollDirection = (threshold = 10, isMobile = true) => {
     const lastScrollY = useRef(0);
 
     const handleScroll = useCallback(() => {
-        // Enable hiding for all screen sizes to ensure it works regardless of media query detection
+        if (!isMobile) {
+            setScrollDir("up");
+            return;
+        }
 
         const scrollY = window.pageYOffset;
         const previousScrollY = lastScrollY.current;

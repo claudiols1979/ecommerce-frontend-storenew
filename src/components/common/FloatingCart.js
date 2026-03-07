@@ -16,12 +16,10 @@ const FloatingCart = () => {
         0,
     );
 
-    console.log("FloatingCart: Rendered. itemCount:", cartItemCount, "pathname:", location.pathname);
-
     // Position state
     const [position, setPosition] = useState({
-        x: window.innerWidth - (isMobile ? 76 : 94),
-        y: isMobile ? 120 : 150 // Starting at the top but below header
+        x: (typeof window !== 'undefined' ? window.innerWidth : 400) - (isMobile ? 76 : 94),
+        y: isMobile ? 120 : 150
     });
     const [isDragging, setIsDragging] = useState(false);
     const dragInfo = useRef({
@@ -84,10 +82,13 @@ const FloatingCart = () => {
         setIsDragging(false);
     };
 
-    // FORCE SHOW EVERYWHERE FOR DEBUGGING
+    // MOBILE ONLY and hide on cart page or if empty
+    if (!isMobile || location.pathname === "/cart" || cartItemCount === 0) {
+        return null;
+    }
+
     return (
         <Fab
-            variant="extended"
             aria-label="cart"
             onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
             onMouseMove={(e) => handleMove(e.clientX, e.clientY)}

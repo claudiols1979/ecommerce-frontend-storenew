@@ -53,7 +53,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding, toggleForceShow } = useScrollDirection(10, isMobile);
+  const { isHiding, toggleForceShow } = useScrollDirection(0, isMobile);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
@@ -321,7 +321,7 @@ const Header = () => {
       <Box
         sx={{
           transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-          transform: isHiding ? "translateY(-200px)" : "translateY(0)",
+          transform: (isMobile && isHiding) ? "translateY(-400px)" : "translateY(0)",
           position: "sticky",
           top: 0,
           zIndex: (theme) => theme.zIndex.drawer + 2,

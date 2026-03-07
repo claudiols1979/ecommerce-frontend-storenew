@@ -50,8 +50,6 @@ const DepartmentalFilterBar = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { isHiding } = useScrollDirection(0, isSmallScreen); // Use 0 threshold for immediate reaction
 
-  console.log("DepartmentalFilterBar: isHiding =", isHiding);
-
   const [uiFilters, setUiFilters] = useState({
     department: "",
     brand: "",
