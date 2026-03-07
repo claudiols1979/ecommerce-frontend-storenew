@@ -3,13 +3,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 /**
  * Hook to track scroll direction and provide a "force show" mechanism
  */
-const useScrollDirection = (threshold = 10, isMobile = true) => {
+const useScrollDirection = (threshold = 10, enabled = true) => {
     const [scrollDir, setScrollDir] = useState("up");
     const [forceShow, setForceShow] = useState(false);
     const lastScrollY = useRef(0);
 
     const handleScroll = useCallback(() => {
-        if (!isMobile) {
+        if (!enabled) {
             setScrollDir("up");
             return;
         }
@@ -35,7 +35,7 @@ const useScrollDirection = (threshold = 10, isMobile = true) => {
         }
 
         lastScrollY.current = scrollY;
-    }, [scrollDir, threshold]);
+    }, [scrollDir, threshold, enabled]);
 
     useEffect(() => {
         lastScrollY.current = window.pageYOffset;
