@@ -48,7 +48,7 @@ const DepartmentalFilterBar = () => {
   const location = useLocation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding } = useScrollDirection(0, true); // Use 0 threshold for immediate reaction
+  const { isHiding: scrollHiding } = useScrollDirection(15, true);
 
   const [uiFilters, setUiFilters] = useState({
     department: "",
@@ -61,6 +61,10 @@ const DepartmentalFilterBar = () => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [filterLoading, setFilterLoading] = useState(false);
+
+  // Determinar si la barra debe esconderse realmente
+  // No se esconde si está expandida o si hay una carga de filtros en curso
+  const isHiding = scrollHiding && !expanded && !filterLoading && !departmentalLoading;
 
   console.log("🔍 Current Filters from Context: ", currentFilters);
   console.log("🎯 UI Filters: ", uiFilters);

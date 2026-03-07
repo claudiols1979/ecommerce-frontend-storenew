@@ -53,7 +53,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding, toggleForceShow } = useScrollDirection(0, true);
+  const { isHiding, toggleForceShow } = useScrollDirection(15, true);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
