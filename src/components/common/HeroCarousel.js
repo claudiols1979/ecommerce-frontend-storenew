@@ -64,6 +64,19 @@ const HeroCarousel = () => {
         borderRadius: 2,
         overflow: "hidden",
         boxShadow: 3,
+        backgroundColor: "transparent",
+        "& .carousel .slide": {
+          backgroundColor: "transparent !important",
+        },
+        "& .carousel .slider-wrapper": {
+          backgroundColor: "transparent !important",
+        },
+        "& .carousel .slider": {
+          backgroundColor: "transparent !important",
+        },
+        // Forzar renderizado por hardware para mejorar el recorte de bordes redondeados
+        transform: "translateZ(0)",
+        WebkitBackdropFilter: "blur(0)",
       }}
     >
       <Carousel
