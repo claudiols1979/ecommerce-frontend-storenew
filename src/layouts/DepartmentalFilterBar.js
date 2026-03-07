@@ -48,7 +48,9 @@ const DepartmentalFilterBar = () => {
   const location = useLocation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding } = useScrollDirection(10, isSmallScreen);
+  const { isHiding } = useScrollDirection(0, isSmallScreen); // Use 0 threshold for immediate reaction
+
+  console.log("DepartmentalFilterBar: isHiding =", isHiding);
 
   const [uiFilters, setUiFilters] = useState({
     department: "",
@@ -317,8 +319,11 @@ const DepartmentalFilterBar = () => {
         position: "sticky",
         top: isSmallScreen ? 10 : 120,
         zIndex: 700,
-        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), top 0.4s ease",
-        transform: isHiding ? "translateY(-110px)" : "translateY(0)",
+        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), top 0.4s ease, opacity 0.3s ease",
+        transform: isHiding ? "translateY(-600px)" : "translateY(0)",
+        opacity: isHiding ? 0 : 1,
+        visibility: isHiding ? "hidden" : "visible",
+        pointerEvents: isHiding ? "none" : "auto",
       }}
     >
       {/* Encabezado del acordeón */}

@@ -318,285 +318,380 @@ const Header = () => {
 
   return (
     <Fragment>
-      <PromotionalBanner />
-      <AppBar
-        position="sticky"
-        onClick={isHiding ? toggleForceShow : undefined}
+      <Box
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          width: "98%",
-          mx: "auto",
-          background:
-            "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important",
-          backgroundImage: `linear-gradient(to bottom, transparent, ${amber[0]})`,
-          boxShadow: 0,
-          borderRadius: 2,
           transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-          transform: isHiding ? "translateY(-110px)" : "translateY(0)",
-          cursor: isHiding ? "pointer" : "default",
+          transform: isHiding ? "translateY(-200px)" : "translateY(0)",
+          position: "sticky",
+          top: 0,
+          zIndex: (theme) => theme.zIndex.drawer + 2,
         }}
       >
-        <Toolbar
+        {!isMobile && <PromotionalBanner />}
+        <AppBar
+          position="relative"
+          onClick={isHiding ? toggleForceShow : undefined}
           sx={{
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            py: { xs: 1, sm: 0 },
-            flexDirection: { xs: "row", lg: "row" },
-            alignItems: "center",
+            width: "98%",
+            mx: "auto",
+            background:
+              "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important",
+            backgroundImage: `linear-gradient(to bottom, transparent, ${amber[0]})`,
+            boxShadow: 0,
+            borderRadius: 2,
+            cursor: isHiding ? "pointer" : "default",
           }}
         >
-          {/* Primera fila: Branding y menú */}
-          <Box
+          <Toolbar
             sx={{
-              display: "flex",
-              alignItems: "center",
               justifyContent: "space-between",
-              width: "100%",
-              order: 1,
+              flexWrap: "wrap",
+              py: { xs: 1, sm: 0 },
+              flexDirection: { xs: "row", lg: "row" },
+              alignItems: "center",
             }}
           >
-            <NavBranding />
-
-            {isMobile ? (
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                {user && (
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "white",
-                      fontWeight: 700,
-                      mr: 1,
-                      display: { xs: "block", sm: "block" },
-                    }}
-                  >
-                    Hola, {user.firstName || "Usuario"}
-                  </Typography>
-                )}
-                <IconButton
-                  component={RouterLink}
-                  to="/cart"
-                  color="inherit"
-                  sx={{ mr: 1, color: "#fff" }}
-                  aria-label={`cart with ${cartItemCount} items`}
-                  className={animate ? "cart-pulse" : ""}
-                >
-                  <Badge
-                    badgeContent={cartItemCount}
-                    color="success"
-                    componentsProps={{
-                      badge: {
-                        className: animate ? "badge-bounce" : "",
-                      },
-                    }}
-                  >
-                    <ShoppingCartIcon />
-                  </Badge>
-                </IconButton>
-                <IconButton
-                  color="inherit"
-                  sx={{ mr: 1, color: "#fff" }}
-                  aria-label={`wishlist with ${wishlist.length} items`}
-                  onClick={handleWishlistDrawerToggle}
-                >
-                  <Badge badgeContent={wishlist.length} color="error">
-                    <FavoriteIcon />
-                  </Badge>
-                </IconButton>
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  edge="end"
-                  onClick={handleMobileMenuToggle}
-                >
-                  <MenuIcon sx={{ color: "#fff" }} />
-                </IconButton>
-                <Drawer
-                  anchor="right"
-                  open={mobileMenuOpen}
-                  onClose={handleMobileMenuClose}
-                  ModalProps={{
-                    BackdropProps: {
-                      sx: {
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        backdropFilter: "blur(2px)",
-                      },
-                    },
-                  }}
-                  sx={{
-                    zIndex: (theme) => theme.zIndex.drawer + 2,
-                    "& .MuiDrawer-paper": {
-                      backgroundColor: "rgba(236, 59, 230, 0.92)",
-                      backdropFilter: "blur(14px)",
-                      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-                      width: 230,
-                      top: "70px",
-                      height: "calc(100% - 100px)",
-                      borderTopLeftRadius: "16px",
-                      borderBottomLeftRadius: "18px",
-                      border: "0.5px solid rgba(255, 255, 255, 0.1)",
-                      color: "white",
-                      "& .MuiListItemText-primary": {
-                        color: "white",
-                        fontWeight: 400,
-                      },
-                      "& .MuiDivider-root": {
-                        backgroundColor: "rgba(255, 255, 255, 0.2)",
-                      },
-                    },
-                  }}
-                >
-                  {drawerContent}
-                </Drawer>
-              </Box>
-            ) : (
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/"
-                  sx={getNavButtonStyle("/")}
-                >
-                  Inicio
-                </Button>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/products"
-                  sx={getNavButtonStyle("/products")}
-                >
-                  Productos
-                </Button>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/contact"
-                  sx={getNavButtonStyle("/contact")}
-                >
-                  Contacto
-                </Button>
-                {user ? (
-                  <>
-                    <Button
-                      color="inherit"
-                      onClick={handleProfileMenuOpen}
-                      sx={{
-                        ...getNavButtonStyle("/profile"),
-                        textTransform: "none",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      endIcon={<KeyboardArrowDownIcon />}
-                    >
-                      Hola, {user.firstName || "Usuario"}
-                    </Button>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleProfileMenuClose}
-                      PaperProps={{
-                        sx: {
-                          mt: 1.5,
-                          backgroundColor: "rgba(49, 0, 138, 0.95)",
-                          backdropFilter: "blur(10px)",
-                          color: "white",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
-                          borderRadius: "12px",
-                          minWidth: 180,
-                          "& .MuiMenuItem-root": {
-                            fontSize: "0.9rem",
-                            py: 1.5,
-                            "&:hover": {
-                              backgroundColor: "rgba(255, 255, 255, 0.1)",
-                            },
-                          },
-                        },
-                      }}
-                      transformOrigin={{ horizontal: "right", vertical: "top" }}
-                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                    >
-                      <MenuItem onClick={() => handleMenuNavigate("/profile")}>
-                        Mi perfil / Órdenes
-                      </MenuItem>
-                      <MenuItem onClick={() => handleMenuNavigate("/privacy")}>
-                        Política de Privacidad
-                      </MenuItem>
-                      <MenuItem onClick={() => handleMenuNavigate("/conditions")}>
-                        Términos y Condiciones
-                      </MenuItem>
-                      <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
-                      <MenuItem
-                        onClick={() => {
-                          handleLogout();
-                          handleProfileMenuClose();
-                        }}
-                      >
-                        <ExitToAppIcon sx={{ fontSize: 20, mr: 1 }} />
-                        Cerrar Sesión
-                      </MenuItem>
-                    </Menu>
-                  </>
-                ) : (
-                  <Button
-                    color="#fff"
-                    component={RouterLink}
-                    to="/login"
-                    sx={getNavButtonStyle("/login")}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                )}
-                <IconButton
-                  component={RouterLink}
-                  to="/cart"
-                  color="#fff"
-                  sx={{ ml: 2 }}
-                  aria-label={`cart with ${cartItemCount} items`}
-                  className={animate ? "cart-pulse" : ""}
-                >
-                  <Badge
-                    badgeContent={cartItemCount}
-                    color="success"
-                    componentsProps={{
-                      badge: {
-                        className: animate ? "badge-bounce" : "",
-                      },
-                    }}
-                  >
-                    <ShoppingCartIcon sx={{ color: "#fff" }} />
-                  </Badge>
-                </IconButton>
-                <IconButton
-                  color="#fff"
-                  sx={{ ml: 1 }}
-                  aria-label={`wishlist with ${wishlist.length} items`}
-                  onClick={handleWishlistDrawerToggle}
-                >
-                  <Badge badgeContent={wishlist.length} color="error">
-                    <FavoriteIcon sx={{ color: "#fff" }} />
-                  </Badge>
-                </IconButton>
-              </Box>
-            )}
-          </Box>
-
-          {/* Search Box - Posición diferente según el dispositivo */}
-          {isDesktop ? (
-            /* Desktop: Search box en línea con el resto */
+            {/* Primera fila: Branding y menú */}
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
                 width: "100%",
-                order: 3,
-                mt: 1,
+                order: 1,
               }}
             >
+              <NavBranding />
+
+              {isMobile ? (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {user && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "white",
+                        fontWeight: 700,
+                        mr: 1,
+                        display: { xs: "block", sm: "block" },
+                      }}
+                    >
+                      Hola, {user.firstName || "Usuario"}
+                    </Typography>
+                  )}
+                  <IconButton
+                    component={RouterLink}
+                    to="/cart"
+                    color="inherit"
+                    sx={{ mr: 1, color: "#fff" }}
+                    aria-label={`cart with ${cartItemCount} items`}
+                    className={animate ? "cart-pulse" : ""}
+                  >
+                    <Badge
+                      badgeContent={cartItemCount}
+                      color="success"
+                      componentsProps={{
+                        badge: {
+                          className: animate ? "badge-bounce" : "",
+                        },
+                      }}
+                    >
+                      <ShoppingCartIcon />
+                    </Badge>
+                  </IconButton>
+                  <IconButton
+                    color="inherit"
+                    sx={{ mr: 1, color: "#fff" }}
+                    aria-label={`wishlist with ${wishlist.length} items`}
+                    onClick={handleWishlistDrawerToggle}
+                  >
+                    <Badge badgeContent={wishlist.length} color="error">
+                      <FavoriteIcon />
+                    </Badge>
+                  </IconButton>
+                  <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    edge="end"
+                    onClick={handleMobileMenuToggle}
+                  >
+                    <MenuIcon sx={{ color: "#fff" }} />
+                  </IconButton>
+                  <Drawer
+                    anchor="right"
+                    open={mobileMenuOpen}
+                    onClose={handleMobileMenuClose}
+                    ModalProps={{
+                      BackdropProps: {
+                        sx: {
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          backdropFilter: "blur(2px)",
+                        },
+                      },
+                    }}
+                    sx={{
+                      zIndex: (theme) => theme.zIndex.drawer + 2,
+                      "& .MuiDrawer-paper": {
+                        backgroundColor: "rgba(236, 59, 230, 0.92)",
+                        backdropFilter: "blur(14px)",
+                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+                        width: 230,
+                        top: "70px",
+                        height: "calc(100% - 100px)",
+                        borderTopLeftRadius: "16px",
+                        borderBottomLeftRadius: "18px",
+                        border: "0.5px solid rgba(255, 255, 255, 0.1)",
+                        color: "white",
+                        "& .MuiListItemText-primary": {
+                          color: "white",
+                          fontWeight: 400,
+                        },
+                        "& .MuiDivider-root": {
+                          backgroundColor: "rgba(255, 255, 255, 0.2)",
+                        },
+                      },
+                    }}
+                  >
+                    {drawerContent}
+                  </Drawer>
+                </Box>
+              ) : (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Button
+                    color="inherit"
+                    component={RouterLink}
+                    to="/"
+                    sx={getNavButtonStyle("/")}
+                  >
+                    Inicio
+                  </Button>
+                  <Button
+                    color="inherit"
+                    component={RouterLink}
+                    to="/products"
+                    sx={getNavButtonStyle("/products")}
+                  >
+                    Productos
+                  </Button>
+                  <Button
+                    color="inherit"
+                    component={RouterLink}
+                    to="/contact"
+                    sx={getNavButtonStyle("/contact")}
+                  >
+                    Contacto
+                  </Button>
+                  {user ? (
+                    <>
+                      <Button
+                        color="inherit"
+                        onClick={handleProfileMenuOpen}
+                        sx={{
+                          ...getNavButtonStyle("/profile"),
+                          textTransform: "none",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                        endIcon={<KeyboardArrowDownIcon />}
+                      >
+                        Hola, {user.firstName || "Usuario"}
+                      </Button>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleProfileMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1.5,
+                            backgroundColor: "rgba(49, 0, 138, 0.95)",
+                            backdropFilter: "blur(10px)",
+                            color: "white",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "12px",
+                            minWidth: 180,
+                            "& .MuiMenuItem-root": {
+                              fontSize: "0.9rem",
+                              py: 1.5,
+                              "&:hover": {
+                                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                              },
+                            },
+                          },
+                        }}
+                        transformOrigin={{ horizontal: "right", vertical: "top" }}
+                        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                      >
+                        <MenuItem onClick={() => handleMenuNavigate("/profile")}>
+                          Mi perfil / Órdenes
+                        </MenuItem>
+                        <MenuItem onClick={() => handleMenuNavigate("/privacy")}>
+                          Política de Privacidad
+                        </MenuItem>
+                        <MenuItem onClick={() => handleMenuNavigate("/conditions")}>
+                          Términos y Condiciones
+                        </MenuItem>
+                        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
+                        <MenuItem
+                          onClick={() => {
+                            handleLogout();
+                            handleProfileMenuClose();
+                          }}
+                        >
+                          <ExitToAppIcon sx={{ fontSize: 20, mr: 1 }} />
+                          Cerrar Sesión
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  ) : (
+                    <Button
+                      color="#fff"
+                      component={RouterLink}
+                      to="/login"
+                      sx={getNavButtonStyle("/login")}
+                    >
+                      Iniciar Sesión
+                    </Button>
+                  )}
+                  <IconButton
+                    component={RouterLink}
+                    to="/cart"
+                    color="#fff"
+                    sx={{ ml: 2 }}
+                    aria-label={`cart with ${cartItemCount} items`}
+                    className={animate ? "cart-pulse" : ""}
+                  >
+                    <Badge
+                      badgeContent={cartItemCount}
+                      color="success"
+                      componentsProps={{
+                        badge: {
+                          className: animate ? "badge-bounce" : "",
+                        },
+                      }}
+                    >
+                      <ShoppingCartIcon sx={{ color: "#fff" }} />
+                    </Badge>
+                  </IconButton>
+                  <IconButton
+                    color="#fff"
+                    sx={{ ml: 1 }}
+                    aria-label={`wishlist with ${wishlist.length} items`}
+                    onClick={handleWishlistDrawerToggle}
+                  >
+                    <Badge badgeContent={wishlist.length} color="error">
+                      <FavoriteIcon sx={{ color: "#fff" }} />
+                    </Badge>
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+
+            {/* Search Box - Posición diferente según el dispositivo */}
+            {isDesktop ? (
+              /* Desktop: Search box en línea con el resto */
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
                   width: "100%",
-                  mb: 1,
+                  order: 3,
+                  mt: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    mb: 1,
+                  }}
+                >
+                  <Paper
+                    component="form"
+                    onSubmit={handleSearch}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      backgroundColor: alpha(theme.palette.common.white, 0.15),
+                      "&:hover": {
+                        backgroundColor: alpha(theme.palette.common.white, 0.25),
+                      },
+                      borderRadius: 2,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <InputBase
+                      placeholder="Buscar productos..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      sx={{
+                        ml: 2,
+                        flex: 1,
+                        color: "white",
+                        "&::placeholder": {
+                          color: alpha(theme.palette.common.white, 0.7),
+                        },
+                      }}
+                      inputProps={{ "aria-label": "buscar productos" }}
+                    />
+                    {searchTerm && (
+                      <IconButton
+                        size="small"
+                        onClick={handleClearSearch}
+                        sx={{ color: "white" }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    )}
+                    <IconButton
+                      type="submit"
+                      sx={{
+                        p: 1,
+                        color: "white",
+                        backgroundColor: alpha(theme.palette.common.white, 0.2),
+                        "&:hover": {
+                          backgroundColor: alpha(theme.palette.common.white, 0.3),
+                        },
+                      }}
+                      aria-label="buscar"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </Paper>
+                </Box>
+
+                {/* Información de envío debajo de la barra de búsqueda */}
+                {user && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "white",
+                      fontSize: "0.75rem",
+                      opacity: 0.9,
+                      pl: 1,
+                    }}
+                  >
+                    <LocationOnIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 500 }}>
+                      Enviando a: {user.provincia || "Provincia"}, {user.canton || "Cantón"},{" "}
+                      {user.distrito || "Distrito"}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            ) : (
+              /* Mobile y Tablets: Search box full width debajo */
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  width: "100%",
+                  order: 3,
+                  mt: 1,
+                  mb: 2,
+                  px: { xs: 0, sm: 0 },
                 }}
               >
                 <Paper
@@ -639,6 +734,19 @@ const Header = () => {
                   )}
                   <IconButton
                     type="submit"
+                    onTouchStart={(e) => {
+                      // Prevenir que el teclado se cierre y desplace el layout antes del click
+                      if (searchTerm.trim()) {
+                        e.preventDefault();
+                        handleSearch(e);
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      if (searchTerm.trim()) {
+                        e.preventDefault();
+                        handleSearch(e);
+                      }
+                    }}
                     sx={{
                       p: 1,
                       color: "white",
@@ -652,168 +760,67 @@ const Header = () => {
                     <SearchIcon />
                   </IconButton>
                 </Paper>
-              </Box>
 
-              {/* Información de envío debajo de la barra de búsqueda */}
-              {user && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: "0.75rem",
-                    opacity: 0.9,
-                    pl: 1,
-                  }}
-                >
-                  <LocationOnIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                  <Typography variant="caption" sx={{ fontWeight: 500 }}>
-                    Enviando a: {user.provincia || "Provincia"}, {user.canton || "Cantón"},{" "}
-                    {user.distrito || "Distrito"}
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-          ) : (
-            /* Mobile y Tablets: Search box full width debajo */
+                {/* Información de envío debajo de la barra de búsqueda en móvil */}
+                {user && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "white",
+                      fontSize: "0.7rem",
+                      opacity: 0.9,
+                      mt: 1,
+                      pl: 1,
+                    }}
+                  >
+                    <LocationOnIcon sx={{ fontSize: 14, mr: 0.5 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 500, lineHeight: 1 }}>
+                      Enviando a: {user.provincia || "Provincia"}, {user.canton || "Cantón"},{" "}
+                      {user.distrito || "Distrito"}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            )}
+
+            {/* Submenú de Departamentos - Solo Desktop */}
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                alignItems: "center",
                 width: "100%",
-                order: 3,
-                mt: 1,
-                mb: 2,
-                px: { xs: 0, sm: 0 },
+                order: 4,
+                pb: 2,
+                gap: { md: 2, lg: 4 },
+                flexWrap: "wrap",
               }}
             >
-              <Paper
-                component="form"
-                onSubmit={handleSearch}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "100%",
-                  backgroundColor: alpha(theme.palette.common.white, 0.15),
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.common.white, 0.25),
-                  },
-                  borderRadius: 2,
-                  overflow: "hidden",
-                }}
-              >
-                <InputBase
-                  placeholder="Buscar productos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+              {gridItems.slice(0, 6).map((item, index) => (
+                <Button
+                  key={item._id || index}
+                  onClick={() => handleDepartmentClick(item.department)}
                   sx={{
-                    ml: 2,
-                    flex: 1,
                     color: "white",
-                    "&::placeholder": {
-                      color: alpha(theme.palette.common.white, 0.7),
-                    },
-                  }}
-                  inputProps={{ "aria-label": "buscar productos" }}
-                />
-                {searchTerm && (
-                  <IconButton
-                    size="small"
-                    onClick={handleClearSearch}
-                    sx={{ color: "white" }}
-                  >
-                    <ClearIcon fontSize="small" />
-                  </IconButton>
-                )}
-                <IconButton
-                  type="submit"
-                  onTouchStart={(e) => {
-                    // Prevenir que el teclado se cierre y desplace el layout antes del click
-                    if (searchTerm.trim()) {
-                      e.preventDefault();
-                      handleSearch(e);
-                    }
-                  }}
-                  onMouseDown={(e) => {
-                    if (searchTerm.trim()) {
-                      e.preventDefault();
-                      handleSearch(e);
-                    }
-                  }}
-                  sx={{
-                    p: 1,
-                    color: "white",
-                    backgroundColor: alpha(theme.palette.common.white, 0.2),
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    textTransform: "none",
+                    minWidth: "auto",
+                    padding: "4px 8px",
                     "&:hover": {
-                      backgroundColor: alpha(theme.palette.common.white, 0.3),
+                      backgroundColor: alpha(theme.palette.common.white, 0.1),
+                      textDecoration: "underline",
                     },
                   }}
-                  aria-label="buscar"
                 >
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
-
-              {/* Información de envío debajo de la barra de búsqueda en móvil */}
-              {user && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: "0.7rem",
-                    opacity: 0.9,
-                    mt: 1,
-                    pl: 1,
-                  }}
-                >
-                  <LocationOnIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                  <Typography variant="caption" sx={{ fontWeight: 500, lineHeight: 1 }}>
-                    Enviando a: {user.provincia || "Provincia"}, {user.canton || "Cantón"},{" "}
-                    {user.distrito || "Distrito"}
-                  </Typography>
-                </Box>
-              )}
+                  {item.title}
+                </Button>
+              ))}
             </Box>
-          )}
-
-          {/* Submenú de Departamentos - Solo Desktop */}
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              order: 4,
-              pb: 2,
-              gap: { md: 2, lg: 4 },
-              flexWrap: "wrap",
-            }}
-          >
-            {gridItems.slice(0, 6).map((item, index) => (
-              <Button
-                key={item._id || index}
-                onClick={() => handleDepartmentClick(item.department)}
-                sx={{
-                  color: "white",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  textTransform: "none",
-                  minWidth: "auto",
-                  padding: "4px 8px",
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.common.white, 0.1),
-                    textDecoration: "underline",
-                  },
-                }}
-              >
-                {item.title}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
+          </Toolbar>
+        </AppBar>
+      </Box>
 
       {/* --- DRAWER DE WISHLIST --- */}
       <Drawer
@@ -900,7 +907,6 @@ const Header = () => {
 
                         {/* QUANTITY SELECTOR AND ACTION BUTTONS */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
-
                           {/* Quantities */}
                           <Box sx={{
                             display: 'flex',
@@ -998,7 +1004,6 @@ const Header = () => {
                               <DeleteOutlineIcon fontSize="small" sx={{ fontSize: '1.1rem' }} />
                             </IconButton>
                           </Box>
-
                         </Box>
                       </Box>
                     }

@@ -25,6 +25,7 @@ import ChatWidget from "./components/chat/ChatWidget";
 import SearchHistorySection from "./components/home/SearchHistorySection";
 import ContactPage from "./pages/ContactPage";
 import ClaimPage from "./pages/ClaimPage";
+import FloatingCart from "./components/common/FloatingCart";
 
 // PrivateRoute component
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -56,6 +57,7 @@ const MainLayout = ({ children }) => (
     <SearchHistorySection />
     <Footer />
     <ChatWidget />
+    <FloatingCart />
   </AppContainer>
 );
 

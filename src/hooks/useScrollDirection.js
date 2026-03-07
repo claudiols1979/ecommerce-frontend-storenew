@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 /**
  * Hook to track scroll direction and provide a "force show" mechanism
@@ -6,33 +6,36 @@ import { useState, useEffect, useCallback } from "react";
 const useScrollDirection = (threshold = 10, isMobile = true) => {
     const [scrollDir, setScrollDir] = useState("up");
     const [forceShow, setForceShow] = useState(false);
+    const lastScrollY = useRef(0);
 
     const handleScroll = useCallback(() => {
-        if (!isMobile) {
-            setScrollDir("up");
-            return;
-        }
+        // Enable hiding for all screen sizes to ensure it works regardless of media query detection
 
         const scrollY = window.pageYOffset;
-        const lastScrollY = window.lastScrollY || 0;
+        const previousScrollY = lastScrollY.current;
 
-        if (Math.abs(scrollY - lastScrollY) < threshold) {
+        if (scrollY <= 0) {
+            setScrollDir("up");
+            lastScrollY.current = 0;
             return;
         }
 
-        const newDir = scrollY > lastScrollY ? "down" : "up";
+        if (Math.abs(scrollY - previousScrollY) < threshold) {
+            return;
+        }
+
+        const newDir = scrollY > previousScrollY ? "down" : "up";
 
         if (newDir !== scrollDir) {
             setScrollDir(newDir);
-            // When direction changes, we stop forcing show unless clicked again
             setForceShow(false);
         }
 
-        window.lastScrollY = scrollY > 0 ? scrollY : 0;
-    }, [scrollDir, threshold, isMobile]);
+        lastScrollY.current = scrollY;
+    }, [scrollDir, threshold]);
 
     useEffect(() => {
-        window.lastScrollY = window.pageYOffset;
+        lastScrollY.current = window.pageYOffset;
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [handleScroll]);
