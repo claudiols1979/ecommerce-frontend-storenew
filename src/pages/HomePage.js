@@ -143,11 +143,11 @@ const HomePage = () => {
       // Select 5 random products for "Recomendados" exactly once when products load
       if (randomRecomendados.length === 0 && displayProducts.length >= 5) {
         const shuffled1 = [...displayProducts].sort(() => 0.5 - Math.random());
-        setRandomRecomendados(shuffled1.slice(0, 5));
+        setRandomRecomendados(shuffled1.slice(0, 10));
 
         // Pick 5 different ones or just re-shuffle for "Lo más vendido"
         const shuffled2 = [...displayProducts].sort(() => 0.5 - Math.random());
-        setRandomMasVendido(shuffled2.slice(0, 5));
+        setRandomMasVendido(shuffled2.slice(0, 10));
       } else if (randomRecomendados.length === 0) {
         setRandomRecomendados(displayProducts);
         setRandomMasVendido(displayProducts);
@@ -607,7 +607,7 @@ const HomePage = () => {
         {/* Novedades Section  */}
         <ProductMarqueeSection
           title="Novedades"
-          products={groupedProducts.slice(0, 5)}
+          products={groupedProducts.slice(0, 10)}
           onAddToCart={handleAddToCart}
           addingProductId={addingProductId}
           linkTo="/products?sort=createdAt_desc"
