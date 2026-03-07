@@ -82,8 +82,8 @@ const FloatingCart = () => {
         setIsDragging(false);
     };
 
-    // MOBILE ONLY and hide on cart page or if empty
-    if (!isMobile || location.pathname === "/cart" || cartItemCount === 0) {
+    // MOBILE ONLY and hide on cart or checkout pages
+    if (!isMobile || location.pathname === "/cart" || location.pathname === "/checkout") {
         return null;
     }
 
