@@ -85,7 +85,9 @@ const MessageList = styled(List)({
     },
 });
 
-const MessageBubble = styled(Box)(({ isAi, theme }) => ({
+const MessageBubble = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isAi',
+})(({ isAi, theme }) => ({
     backgroundColor: isAi ? "rgba(255,255,255,0.15)" : "#fff",
     color: isAi ? "#fff" : "#31008A",
     padding: "12px 16px",

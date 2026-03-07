@@ -85,7 +85,7 @@ const ProductsPage = () => {
     useState(initialParams.search);
   const [selectedGender, setSelectedGender] = useState("");
   const [priceRange, setPriceRange] = useState([0, 300000]);
-  const [sortOrder, setSortOrder] = useState("updatedAt_desc");
+  const [sortOrder, setSortOrder] = useState("random");
   const [page, setPage] = useState(1);
   const [addingProductId, setAddingProductId] = useState(null);
   const [groupedProducts, setGroupedProducts] = useState([]);
@@ -102,51 +102,6 @@ const ProductsPage = () => {
     ],
     [],
   );
-
-  // --- FUNCIONES DE AGRUPAMIENTO ---
-  const getBaseCode = useCallback((code) => {
-    const firstUnderscoreIndex = code.indexOf("_");
-    return firstUnderscoreIndex === -1
-      ? code
-      : code.substring(0, firstUnderscoreIndex);
-  }, []);
-
-  const getAttributes = useCallback((code) => {
-    const firstUnderscoreIndex = code.indexOf("_");
-    if (firstUnderscoreIndex === -1) return [];
-    return code.substring(firstUnderscoreIndex + 1).split("_");
-  }, []);
-
-  const groupProductsByBase = useCallback(
-    (productsToGroup) => {
-      const groups = {};
-      productsToGroup.forEach((product) => {
-        const baseCode = getBaseCode(product.code);
-        if (!groups[baseCode]) groups[baseCode] = [];
-        groups[baseCode].push({
-          ...product,
-          attributes: getAttributes(product.code),
-        });
-      });
-      return groups;
-    },
-    [getBaseCode, getAttributes],
-  );
-
-  const selectRepresentativeVariantFromEachGroup = useCallback((grouped) => {
-    const displayItems = [];
-    for (const baseCode in grouped) {
-      const variants = grouped[baseCode];
-      // Determinista: siempre elegir la primera variante (que suele ser la base)
-      const selectedVariant = variants[0];
-      displayItems.push({
-        ...selectedVariant,
-        baseCode: baseCode,
-        variantCount: variants.length,
-      });
-    }
-    return displayItems;
-  }, []);
 
   // --- REINICIO AL MONTAR O CAMBIAR RUTA ---
   useEffect(() => {
@@ -230,38 +185,11 @@ const ProductsPage = () => {
     currentFilters,
   ]);
 
-  // --- EFFECT DE AGRUPAMIENTO (DETERMINISTA) ---
+  // --- EFFECT DE AGRUPAMIENTO (SIMPLIFICADO - AHORA VIENE DEL BACKEND) ---
   useEffect(() => {
     if (loading && products.length === 0) return;
-
-    if (products && products.length > 0) {
-      const validProducts = products.filter((p) => p && p.code);
-      if (validProducts.length === 0) {
-        setGroupedProducts([]);
-        return;
-      }
-
-      try {
-        setGroupingProducts(true);
-        const grouped = groupProductsByBase(validProducts);
-        const displayItems = selectRepresentativeVariantFromEachGroup(grouped);
-        setGroupedProducts(displayItems);
-        setGroupingProducts(false);
-      } catch (err) {
-        console.error("❌ Error grouping:", err);
-        setGroupingProducts(false);
-        setGroupedProducts(validProducts); // Fallback
-      }
-    } else {
-      setGroupedProducts([]);
-    }
-  }, [
-    products,
-    loading,
-    isDepartmentalMode,
-    groupProductsByBase,
-    selectRepresentativeVariantFromEachGroup,
-  ]);
+    setGroupedProducts(products || []);
+  }, [products, loading]);
 
   // --- SCROLL INFINITO ---
   const handleScroll = useCallback(() => {

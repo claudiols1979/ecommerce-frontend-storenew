@@ -37,123 +37,54 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import ProductFilters from "../components/common/ProductFilters";
 import PictureGrid from "../components/common/AdGridSystem";
-
-// Helper functions para manejar variantes - SIN HARDCORES
-const getBaseCode = (code) => {
-  const firstUnderscoreIndex = code.indexOf("_");
-  return firstUnderscoreIndex === -1
-    ? code
-    : code.substring(0, firstUnderscoreIndex);
-};
-
-// Helper function to extract base name based on attribute count
-const extractBaseNameFromAttributes = (productName, productCode) => {
-  return productName;
-};
-
-// Function to group products by their base product
-const groupProductsByBase = (products) => {
-  const groups = {};
-
-  products.forEach((product) => {
-    const baseCode = getBaseCode(product.code);
-
-    if (!groups[baseCode]) {
-      groups[baseCode] = [];
-    }
-
-    groups[baseCode].push(product);
-  });
-
-  return groups;
-};
-
-// Function to select one random variant from each product group
-const selectRandomVariantFromEachGroup = (groupedProducts) => {
-  const displayProducts = [];
-
-  for (const baseCode in groupedProducts) {
-    const variants = groupedProducts[baseCode];
-
-    if (variants.length === 1) {
-      const baseName = extractBaseNameFromAttributes(
-        variants[0].name,
-        variants[0].code,
-      );
-      displayProducts.push({
-        ...variants[0],
-        baseCode: baseCode,
-        baseName: baseName,
-        variantCount: 1,
-      });
-    } else {
-      const randomIndex = Math.floor(Math.random() * variants.length);
-      const selectedVariant = variants[randomIndex];
-
-      const baseName = extractBaseNameFromAttributes(
-        selectedVariant.name,
-        selectedVariant.code,
-      );
-
-      displayProducts.push({
-        ...selectedVariant,
-        baseCode: baseCode,
-        baseName: baseName,
-        variantCount: variants.length,
-      });
-    }
-  }
-
-  return displayProducts;
-};
-
 const HomePage = () => {
   const navigate = useNavigate();
   const { products, loading, error, fetchProducts } = useProducts();
   const { addItemToCart } = useOrders();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const [addingProductId, setAddingProductId] = useState(null);
   const [homeSearchTerm, setHomeSearchTerm] = useState("");
   const [groupedProducts, setGroupedProducts] = useState([]);
+  const [novedadesProducts, setNovedadesProducts] = useState([]);
   const [randomRecomendados, setRandomRecomendados] = useState([]);
   const [randomMasVendido, setRandomMasVendido] = useState([]);
 
-  // useEffect(() => {
-  //   fetchProducts(1, 20, 'createdAt_desc');
-  // }, [fetchProducts]);
-
-  // Cambiar el useEffect que carga los productos
+  // Fetch products on mount
   useEffect(() => {
-    // Pedir más productos para compensar la agrupación
-    // Si quieres 20 productos finales y tienes en promedio 2 variantes por producto,
-    // pedir 40 productos (20 * 2)
-    const estimatedVariantsPerProduct = 10; // Ajusta este valor según tu caso
-    const productsToFetch = 20 * estimatedVariantsPerProduct;
+    const fetchAllData = async () => {
+      try {
+        // Fetch featured products with random sort and grouping (backend-side)
+        await fetchProducts(1, 40, "random", "", "", 0, 300000, true);
 
-    fetchProducts(1, productsToFetch, "random");
-  }, [fetchProducts]);
-
-  // Process products when they change
-  useEffect(() => {
-    if (products && products.length > 0) {
-      const grouped = groupProductsByBase(products);
-      const displayProducts = selectRandomVariantFromEachGroup(grouped);
-      setGroupedProducts(displayProducts);
-
-      // Select 5 random products for "Recomendados" exactly once when products load
-      if (randomRecomendados.length === 0 && displayProducts.length >= 5) {
-        const shuffled1 = [...displayProducts].sort(() => 0.5 - Math.random());
-        setRandomRecomendados(shuffled1.slice(0, 10));
-
-        // Pick 5 different ones or just re-shuffle for "Lo más vendido"
-        const shuffled2 = [...displayProducts].sort(() => 0.5 - Math.random());
-        setRandomMasVendido(shuffled2.slice(0, 10));
-      } else if (randomRecomendados.length === 0) {
-        setRandomRecomendados(displayProducts);
-        setRandomMasVendido(displayProducts);
+        // Fetch "Novedades" specifically with chronological sort and grouping
+        const response = await api.get("/api/products/public/filtered", {
+          params: {
+            page: 1,
+            limit: 20,
+            sortOrder: "createdAt_desc",
+            groupVariants: "true",
+          },
+        });
+        setNovedadesProducts(response.data.products || []);
+      } catch (err) {
+        console.error("Error fetching homepage data:", err);
       }
+    };
+
+    fetchAllData();
+  }, [fetchProducts, api]);
+
+  // Simplify groupedProducts - now it comes directly from context as already grouped
+  useEffect(() => {
+    if (loading) return;
+    setGroupedProducts(products || []);
+
+    // Also distribute to random sections if empty
+    if (products.length > 0 && randomRecomendados.length === 0) {
+      setRandomRecomendados(products.slice(0, 10));
+      setRandomMasVendido(products.slice(10, 20));
     }
-  }, [products]);
+  }, [products, loading, randomRecomendados.length]);
 
   const handleFilterAndNavigate = (filters) => {
     const params = new URLSearchParams();
@@ -458,11 +389,7 @@ const HomePage = () => {
                 }}
               >
                 <ProductCard
-                  product={{
-                    ...product,
-                    name: product.baseName || product.name,
-                    variantCount: product.variantCount,
-                  }}
+                  product={product}
                   onAddToCart={() => handleAddToCart(product)}
                   isAdding={addingProductId === product._id}
                 />
@@ -607,7 +534,7 @@ const HomePage = () => {
         {/* Novedades Section  */}
         <ProductMarqueeSection
           title="Novedades"
-          products={groupedProducts.slice(0, 10)}
+          products={novedadesProducts}
           onAddToCart={handleAddToCart}
           addingProductId={addingProductId}
           linkTo="/products?sort=createdAt_desc"

@@ -26,6 +26,9 @@ export const DepartmentalProvider = ({ children }) => {
   const [departmentalHasMore, setDepartmentalHasMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentFilters, setCurrentFilters] = useState({});
+  const [randomSeed, setRandomSeed] = useState(() =>
+    Math.floor(Math.random() * 1000000),
+  );
 
   // Ref para evitar peticiones concurrentes/infinitas
   const requestVersionRef = useRef(0);
@@ -76,7 +79,7 @@ export const DepartmentalProvider = ({ children }) => {
 
   // Función principal para obtener productos
   const fetchDepartmentalProducts = useCallback(
-    async (filters = {}, page = 1, limit = 18) => {
+    async (filters = {}, page = 1, limit = 18, sortOrder = "random", groupVariants = true) => {
       // If page > 1, respect the lock. If page === 1, we always allow (new search)
       if (page > 1 && isLoadingRef.current) return;
 
@@ -94,6 +97,9 @@ export const DepartmentalProvider = ({ children }) => {
         const params = {
           limit: limit.toString(),
           page: page.toString(),
+          sortOrder,
+          randomSeed: randomSeed.toString(),
+          groupVariants: groupVariants.toString(),
           ...filters,
         };
 
@@ -148,7 +154,7 @@ export const DepartmentalProvider = ({ children }) => {
         }
       }
     },
-    [api],
+    [api, randomSeed],
   );
 
   // ✅ Función para cargar más productos
@@ -174,6 +180,7 @@ export const DepartmentalProvider = ({ children }) => {
     setCurrentPage(1);
     setDepartmentalHasMore(false);
     setCurrentFilters({});
+    setRandomSeed(Math.floor(Math.random() * 1000000));
   }, []);
 
   const value = useMemo(
@@ -192,6 +199,8 @@ export const DepartmentalProvider = ({ children }) => {
       fetchTaxonomy,
       currentFilters,
       setCurrentFilters,
+      randomSeed,
+      setRandomSeed,
     }),
     [
       departmentalProducts,
@@ -207,6 +216,7 @@ export const DepartmentalProvider = ({ children }) => {
       taxonomyLoading,
       fetchTaxonomy,
       currentFilters,
+      randomSeed,
     ],
   );
 

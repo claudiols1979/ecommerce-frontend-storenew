@@ -21,6 +21,9 @@ export const ProductProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [randomSeed, setRandomSeed] = useState(() =>
+    Math.floor(Math.random() * 1000000),
+  );
 
   const requestVersionRef = useRef(0);
   const isLoadingRef = useRef(false);
@@ -30,6 +33,7 @@ export const ProductProvider = ({ children }) => {
     setCurrentPage(1);
     setTotalPages(1);
     setTotalProducts(0);
+    setRandomSeed(Math.floor(Math.random() * 1000000));
     requestVersionRef.current += 1; // Invalidate any ongoing request
   }, []);
 
@@ -42,6 +46,7 @@ export const ProductProvider = ({ children }) => {
       selectedGender = "",
       minPrice = 0,
       maxPrice = 300000,
+      groupVariants = true,
     ) => {
       // If page > 1, respect the lock. If page === 1, we always allow (new search)
       if (page > 1 && isLoadingRef.current) return;
@@ -65,6 +70,8 @@ export const ProductProvider = ({ children }) => {
           selectedGender,
           minPrice: minPrice.toString(),
           maxPrice: maxPrice.toString(),
+          randomSeed: randomSeed.toString(),
+          groupVariants: groupVariants.toString(),
           _t: new Date().getTime().toString(),
         }).toString();
 
@@ -104,7 +111,7 @@ export const ProductProvider = ({ children }) => {
         }
       }
     },
-    [api],
+    [api, randomSeed],
   );
 
   const value = useMemo(
@@ -115,6 +122,8 @@ export const ProductProvider = ({ children }) => {
       currentPage,
       totalPages,
       totalProducts,
+      randomSeed,
+      setRandomSeed,
       fetchProducts,
       clearProducts,
     }),
@@ -125,6 +134,7 @@ export const ProductProvider = ({ children }) => {
       currentPage,
       totalPages,
       totalProducts,
+      randomSeed,
       fetchProducts,
       clearProducts,
     ],

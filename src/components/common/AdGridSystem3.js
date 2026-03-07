@@ -32,7 +32,9 @@ const CSSGridContainer = styled(Box)(({ theme }) => ({
     },
 }));
 
-const ImageContainer = styled(Box)(({ theme, isLarge }) => ({
+const ImageContainer = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'isLarge',
+})(({ theme, isLarge }) => ({
     position: "relative",
     overflow: "hidden",
     borderRadius: "12px",
