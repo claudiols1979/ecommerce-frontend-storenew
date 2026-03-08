@@ -45,6 +45,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 import useScrollDirection from "../hooks/useScrollDirection";
+import DepartmentalFilterBar from "./DepartmentalFilterBar";
 
 const Header = () => {
   const { setCurrentFilters, resetSearch, fetchDepartmentalProducts } = useDepartmental();
@@ -53,7 +54,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding, toggleForceShow } = useScrollDirection(15, true);
+  const { isHiding, toggleForceShow } = useScrollDirection(2, true);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
@@ -320,7 +321,7 @@ const Header = () => {
     <Fragment>
       <Box
         sx={{
-          transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           transform: isHiding
             ? (isMobile ? "translateY(-400px)" : "translateY(-46px)")
             : "translateY(0)",
@@ -822,6 +823,7 @@ const Header = () => {
             </Box>
           </Toolbar>
         </AppBar>
+        <DepartmentalFilterBar hide={isHiding} />
       </Box>
 
       {/* --- DRAWER DE WISHLIST --- */}

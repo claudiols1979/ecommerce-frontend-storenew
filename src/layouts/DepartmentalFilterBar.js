@@ -33,7 +33,7 @@ import useClickOutside from "../hooks/useClickOutside";
 
 import useScrollDirection from "../hooks/useScrollDirection";
 
-const DepartmentalFilterBar = () => {
+const DepartmentalFilterBar = ({ hide }) => {
   const {
     taxonomy,
     taxonomyLoading,
@@ -48,7 +48,6 @@ const DepartmentalFilterBar = () => {
   const location = useLocation();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding: scrollHiding } = useScrollDirection(15, true);
 
   const [uiFilters, setUiFilters] = useState({
     department: "",
@@ -64,7 +63,7 @@ const DepartmentalFilterBar = () => {
 
   // Determinar si la barra debe esconderse realmente
   // No se esconde si está expandida o si hay una carga de filtros en curso
-  const isHiding = scrollHiding && !expanded && !filterLoading && !departmentalLoading;
+  const isHiding = hide && !expanded && !filterLoading && !departmentalLoading;
 
   console.log("🔍 Current Filters from Context: ", currentFilters);
   console.log("🎯 UI Filters: ", uiFilters);
@@ -311,21 +310,17 @@ const DepartmentalFilterBar = () => {
         mx: "auto",
         py: 0.5,
         borderRadius: 2,
-        opacity: 0.9,
+        opacity: isHiding ? 0 : 0.9,
         background:
           "linear-gradient(30deg, #A855F7 60%, #F72585 100%) !important",
         backdropFilter: "blur(10px)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         mt: 0.5,
         mb: 3,
-        position: "sticky",
-        top: isSmallScreen ? 5 : 180,
-        zIndex: 1100,
-        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), top 0.4s ease, opacity 0.3s ease",
-        transform: isHiding ? "translateY(-300px)" : "translateY(0)",
-        opacity: isHiding ? 0 : 1,
-        visibility: isHiding ? "hidden" : "visible",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transform: isHiding ? "translateY(-40px)" : "translateY(0)",
         pointerEvents: isHiding ? "none" : "auto",
+        visibility: isHiding ? "hidden" : "visible",
       }}
     >
       {/* Encabezado del acordeón */}

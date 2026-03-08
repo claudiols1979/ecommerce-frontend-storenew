@@ -52,7 +52,6 @@ const MainContent = styled("main")(({ theme }) => ({
 const MainLayout = ({ children }) => (
   <AppContainer>
     <Header />
-    <DepartmentalFilterBar />
     <MainContent>{children}</MainContent>
     <SearchHistorySection />
     <Footer />
