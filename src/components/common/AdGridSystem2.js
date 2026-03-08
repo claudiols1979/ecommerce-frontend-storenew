@@ -70,6 +70,13 @@ const StyledImage = styled("img")({
     transition: "transform 0.5s ease",
 });
 
+const StyledVideo = styled("video")({
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    transition: "transform 0.5s ease",
+});
+
 const Overlay = styled(Box)(({ theme }) => ({
     position: "absolute",
     top: 0,
@@ -158,11 +165,22 @@ const AdGridSystem2 = () => {
                 {processedGridItems.map((item, index) => (
                     <Fade in={true} timeout={800} key={item._id || index}>
                         <ImageContainer sx={{ width: "100%" }}>
-                            <StyledImage
-                                src={item.image}
-                                alt={item.alt || item.title}
-                                onClick={() => handleActionClick(item.buttonLink)}
-                            />
+                            {item.image.includes("/video/upload/") || item.image.match(/\.(mp4|webm|ogg|mov|avi|flv|wmv|mpg|mpeg)$/i) ? (
+                                <StyledVideo
+                                    src={item.image}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    onClick={() => handleActionClick(item.buttonLink)}
+                                />
+                            ) : (
+                                <StyledImage
+                                    src={item.image}
+                                    alt={item.alt || item.title}
+                                    onClick={() => handleActionClick(item.buttonLink)}
+                                />
+                            )}
                             <Overlay
                                 className="image-overlay"
                                 sx={{

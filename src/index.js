@@ -16,6 +16,7 @@ import { HeroCarouselProvider } from "./contexts/HeroCarouselContext";
 import { AdGridProvider } from "./contexts/AdGridContext";
 import { AdGrid2Provider } from "./contexts/AdGrid2Context";
 import { AdGrid3Provider } from "./contexts/AdGrid3Context";
+import { AdGrid4Provider } from "./contexts/AdGrid4Context";
 import { HeroCarouselVideoProvider } from "./contexts/HeroCarouselVideoContext";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
@@ -41,9 +42,11 @@ root.render(
                               <AdGridProvider>
                                 <AdGrid2Provider>
                                   <AdGrid3Provider>
-                                    <HeroCarouselVideoProvider>
-                                      <App />
-                                    </HeroCarouselVideoProvider>
+                                    <AdGrid4Provider>
+                                      <HeroCarouselVideoProvider>
+                                        <App />
+                                      </HeroCarouselVideoProvider>
+                                    </AdGrid4Provider>
                                   </AdGrid3Provider>
                                 </AdGrid2Provider>
                               </AdGridProvider>

@@ -1,15 +1,13 @@
-import React, { Fragment, useState } from "react";
+import React, { Fade } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
     Box,
     Typography,
     Button,
-    Fade,
     useTheme,
-    useMediaQuery,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useAdGrid3 } from "../../contexts/AdGrid3Context";
+import { useAdGrid4 } from "../../contexts/AdGrid4Context";
 
 const Wrapper = styled(Box)(({ theme }) => ({
     width: "100%",
@@ -27,14 +25,14 @@ const CSSGridContainer = styled(Box)(({ theme }) => ({
     maxWidth: "1400px",
     width: "100%",
     [theme.breakpoints.up("md")]: {
-        gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)",
-        gridTemplateRows: "1fr 1fr",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gridTemplateRows: "auto",
     },
 }));
 
 const ImageContainer = styled(Box, {
-    shouldForwardProp: (prop) => prop !== 'isLarge',
-})(({ theme, isLarge }) => ({
+    shouldForwardProp: (prop) => prop !== 'spanFull',
+})(({ theme, spanFull }) => ({
     position: "relative",
     overflow: "hidden",
     borderRadius: "12px",
@@ -45,9 +43,10 @@ const ImageContainer = styled(Box, {
     height: "100%",
     minHeight: "250px",
     backgroundColor: theme.palette.grey[200],
-    ...(isLarge && {
+    ...(spanFull && {
         [theme.breakpoints.up("md")]: {
-            gridRow: "span 2",
+            gridColumn: "span 2",
+            minHeight: "450px",
         },
     }),
     "&:hover": {
@@ -114,9 +113,8 @@ const ActionButton = styled(Button)(({ theme }) => ({
     transition: "all 0.3s ease",
 }));
 
-const AdGridSystem3 = () => {
-    const theme = useTheme();
-    const { gridItems, loading, processCloudinaryUrl, defaultItems } = useAdGrid3();
+const AdGridSystem4 = () => {
+    const { gridItems, loading, processCloudinaryUrl, defaultItems } = useAdGrid4();
     const navigate = useNavigate();
 
     const handleActionClick = (link) => {
@@ -129,9 +127,9 @@ const AdGridSystem3 = () => {
         return (
             <Wrapper>
                 <CSSGridContainer>
-                    <Box sx={{ gridRow: { md: "span 2" }, minHeight: "500px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ minHeight: "240px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ minHeight: "240px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
+                    <Box sx={{ minHeight: "250px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
+                    <Box sx={{ minHeight: "250px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
+                    <Box sx={{ gridColumn: { md: "span 2" }, minHeight: "400px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
                 </CSSGridContainer>
             </Wrapper>
         );
@@ -147,18 +145,18 @@ const AdGridSystem3 = () => {
                     const currentItem = item || (defaultItems && defaultItems[index]);
                     if (!currentItem) return null;
 
-                    const isLarge = index === 0;
+                    const spanFull = index === 2;
                     const isValidImage = (url) => url && typeof url === "string" && url.trim() !== "" && url.length > 50;
 
                     const processedImageUrl = isValidImage(currentItem.image)
-                        ? processCloudinaryUrl(currentItem.image, isLarge)
+                        ? processCloudinaryUrl(currentItem.image, spanFull)
                         : (defaultItems && defaultItems[index] ? defaultItems[index].image : "");
 
                     const isVideo = processedImageUrl.includes("/video/upload/") || processedImageUrl.match(/\.(mp4|webm|ogg|mov|avi|flv|wmv|mpg|mpeg)$/i);
 
                     return (
-                        <Fade in={true} timeout={800} key={currentItem._id || index}>
-                            <ImageContainer isLarge={isLarge} onClick={() => handleActionClick(currentItem.buttonLink)}>
+                        <div key={currentItem._id || index} style={{ width: '100%', height: '100%', gridColumn: spanFull ? 'span 2' : 'auto' }}>
+                            <ImageContainer spanFull={spanFull} onClick={() => handleActionClick(currentItem.buttonLink)}>
                                 {isVideo ? (
                                     <StyledVideo
                                         src={processedImageUrl}
@@ -187,7 +185,7 @@ const AdGridSystem3 = () => {
                                     )}
                                 </Overlay>
                             </ImageContainer>
-                        </Fade>
+                        </div>
                     );
                 })}
             </CSSGridContainer>
@@ -195,4 +193,4 @@ const AdGridSystem3 = () => {
     );
 };
 
-export default AdGridSystem3;
+export default AdGridSystem4;

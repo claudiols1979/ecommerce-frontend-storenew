@@ -84,6 +84,14 @@ export const AdGrid2Provider = ({ children }) => {
 
     const processCloudinaryUrl = (url) => {
         if (url && url.includes("cloudinary.com")) {
+            // Detect if it's a video based on /video/ path or common video extensions
+            const isVideo = url.includes("/video/upload/") || url.match(/\.(mp4|webm|ogg|mov|avi|flv|wmv|mpg|mpeg)$/i);
+
+            if (isVideo) {
+                // Return original URL or basic video optimization for videos
+                return url.includes("?") ? url : `${url}?f_auto=true`;
+            }
+
             const baseUrl = url.split("?")[0];
             return `${baseUrl}?w=800&h=400&c=fill&f=auto`; // Diferente proporción para Grid 2 (horizontal)
         }

@@ -7,17 +7,17 @@ import React, {
 } from "react";
 import { useAuth } from "./AuthContext";
 
-const AdGrid3Context = createContext();
+const AdGrid4Context = createContext();
 
-export const useAdGrid3 = () => {
-    const context = useContext(AdGrid3Context);
+export const useAdGrid4 = () => {
+    const context = useContext(AdGrid4Context);
     if (!context) {
-        throw new Error("useAdGrid3 debe ser usado dentro de un AdGrid3Provider");
+        throw new Error("useAdGrid4 debe ser usado dentro de un AdGrid4Provider");
     }
     return context;
 };
 
-export const AdGrid3Provider = ({ children }) => {
+export const AdGrid4Provider = ({ children }) => {
     const { api } = useAuth();
     const [gridItems, setGridItems] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -29,22 +29,22 @@ export const AdGrid3Provider = ({ children }) => {
             image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=800&fit=crop",
             buttonText: "Ver Todo",
             buttonLink: "/products",
-            title: "Anuncio Principal",
-            alt: "Anuncio promocional principal",
+            title: "Promoción 4 - 1",
+            alt: "Promoción 4 - 1",
         },
         {
             image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=400&fit=crop",
             buttonText: "Comprar",
             buttonLink: "/products",
-            title: "Anuncio Secundario 1",
-            alt: "Anuncio promocional secundario 1",
+            title: "Promoción 4 - 2",
+            alt: "Promoción 4 - 2",
         },
         {
             image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=400&fit=crop",
             buttonText: "Descubrir",
             buttonLink: "/products",
-            title: "Anuncio Secundario 2",
-            alt: "Anuncio promocional secundario 2",
+            title: "Promoción 4 - 3",
+            alt: "Promoción 4 - 3",
         },
     ];
 
@@ -52,7 +52,7 @@ export const AdGrid3Provider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await api.get("/api/ad-grid-3/public");
+            const response = await api.get("/api/ad-grid-4/public");
 
             if (response.data && response.data.length > 0) {
                 const activeItems = response.data.filter((item) => item.isActive);
@@ -73,9 +73,9 @@ export const AdGrid3Provider = ({ children }) => {
                 setGridItems([...defaultItems]);
             }
         } catch (err) {
-            console.error("Error al obtener los items del grid 3:", err);
+            console.error("Error al obtener los items del grid 4:", err);
             setGridItems(defaultItems);
-            setError("Error al cargar el grid promocional 3.");
+            setError("Error al cargar el grid promocional 4.");
         } finally {
             setLoading(false);
         }
@@ -101,9 +101,10 @@ export const AdGrid3Provider = ({ children }) => {
 
             const baseUrl = url.split("?")[0];
             if (isLarge) {
-                return `${baseUrl}?w=800&h=800&c=fill&f=auto`;
+                // Remove fixed height and increase resolution to 1920w to avoid blurriness and reduce zoom feel
+                return `${baseUrl}?w=1920&c=limit&f=auto&q=auto:best`;
             } else {
-                return `${baseUrl}?w=400&h=400&c=fill&f=auto`;
+                return `${baseUrl}?w=1000&c=limit&f=auto&q=auto:best`;
             }
         }
         return url;
@@ -119,6 +120,6 @@ export const AdGrid3Provider = ({ children }) => {
     };
 
     return (
-        <AdGrid3Context.Provider value={value}>{children}</AdGrid3Context.Provider>
+        <AdGrid4Context.Provider value={value}>{children}</AdGrid4Context.Provider>
     );
 };

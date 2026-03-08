@@ -14,6 +14,7 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
+import { keyframes } from "@mui/system";
 import ProductCard from "../components/product/ProductCard";
 import HeroCarousel from "../components/common/HeroCarousel";
 import HeroCarouselVideo from "../components/common/HeroCarouselVideo";
@@ -37,6 +38,31 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import ProductFilters from "../components/common/ProductFilters";
 import PictureGrid from "../components/common/AdGridSystem";
+
+import AdGridSystem4 from "../components/common/AdGridSystem4";
+
+const FeatureCard = ({ icon, title, description }) => (
+  <Box
+    sx={{
+      p: 3,
+      textAlign: "center",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    {icon}
+    <Typography variant="h6" sx={{ mt: 2, fontWeight: 700 }}>
+      {title}
+    </Typography>
+    <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+      {description}
+    </Typography>
+  </Box>
+);
+
 const HomePage = () => {
   const navigate = useNavigate();
   const { products, loading, error, fetchProducts } = useProducts();
@@ -202,33 +228,8 @@ const HomePage = () => {
       description: "Un equipo dedicado a tus necesidades y consultas.",
       icon: <SupportAgentIcon sx={{ fontSize: 40, color: "primary.main" }} />,
     },
-    {
-      title: "Únete a Nuestra Red",
-      description: "Forma parte de nuestro selecto grupo de WhatsApp.",
-      icon: <GroupAddIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-      link: "https://chat.whatsapp.com/KDAzFEvMzpn8MnTBtmntaD",
-    },
   ];
 
-  const features = [
-    {
-      icon: (
-        <LocalShippingIcon sx={{ fontSize: 40, color: "secondary.main" }} />
-      ),
-      title: "Envío Rápido",
-      description: "Entregas eficientes y seguras a todo el país.",
-    },
-    {
-      icon: <SupportAgentIcon sx={{ fontSize: 40, color: "secondary.main" }} />,
-      title: "Soporte 24/7",
-      description: "Atención personalizada para todas tus dudas.",
-    },
-    {
-      icon: <StorefrontIcon sx={{ fontSize: 40, color: "secondary.main" }} />,
-      title: "Amplio Catálogo",
-      description: "Cientos de productos para todos tus gustos.",
-    },
-  ];
 
   return (
     <>
@@ -433,102 +434,26 @@ const HomePage = () => {
         <HeroCarouselVideo />
 
         {/* Middle Widgets Section */}
-        <Box sx={{ my: 8, textAlign: "center", display: { xs: "none", md: "block" } }}>
+        <Box sx={{ my: 10, px: 2, display: { xs: "none", md: "block" } }}>
           <Grid container spacing={4} justifyContent="center">
             {middleWidgetData.map((widget, index) => (
-              <Grid item key={index} xs={12} sm={6} md={3}>
-                <Box
-                  sx={{
-                    p: 3,
-                    bgcolor: "transparent",
-                    boxShadow: "none",
-                    border: "none",
-                    borderRadius: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    textAlign: "center",
-                    cursor: widget.link ? "pointer" : "default",
-                    transition: "transform 0.2s ease-in-out",
-                    "&:hover": {
-                      transform: widget.link ? "translateY(-5px)" : "none",
-                    },
-                  }}
+              <Grid item key={index} xs={12} sm={6} md={4}>
+                <FeatureCard
+                  {...widget}
                   onClick={() => {
                     if (widget.link) {
                       window.open(widget.link, "_blank");
                     }
                   }}
-                >
-                  {widget.icon}
-                  <Typography
-                    variant="h6"
-                    sx={{ mt: 2, fontWeight: 700, color: "primary.main" }}
-                  >
-                    {widget.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {widget.description}
-                  </Typography>
-                </Box>
+                />
               </Grid>
             ))}
           </Grid>
         </Box>
 
-        {/* "Why Choose Us" Section */}
-        <Box
-          sx={{
-            my: 8,
-            textAlign: "center",
-            bgcolor: "background.default",
-            color: "text.primary",
-            p: { xs: 4, sm: 6 },
-            borderRadius: 3,
-            boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
-            display: { xs: "none", md: "block" },
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{ mb: 4, fontWeight: 700, color: "primary.main" }}
-          >
-            Por Qué Elegirnos
-          </Typography>
-          <Grid container spacing={4} justifyContent="center">
-            {features.map((feature, index) => (
-              <Grid item xs={12} sm={4} key={index}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    p: 2,
-                  }}
-                >
-                  {feature.icon}
-                  <Typography
-                    variant="h6"
-                    sx={{ mt: 2, fontWeight: 600, color: "primary.main" }}
-                  >
-                    {feature.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{ mt: 1, color: "text.secondary" }}
-                  >
-                    {feature.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
+        {/* Ad Grid System 4 */}
+        <Box mt={4} mb={8}>
+          <AdGridSystem4 />
         </Box>
 
         {/* Novedades Section  */}
