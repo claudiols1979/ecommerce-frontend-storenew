@@ -115,24 +115,26 @@ const HeroCarouselVideo = () => {
           {currentVideo.subtitle}
         </Typography>
         <Button
-          variant="contained"
+          variant="outlined"
           size="large"
           onClick={() => navigate(currentVideo.buttonLink || "/products")}
           sx={{
             px: { xs: 4, sm: 6 },
             py: { xs: 1.5, sm: 2 },
             borderRadius: "50px",
-            fontWeight: "bold",
-            background:
-              "linear-gradient(90deg, rgba(176, 70, 233, 0.7) 0%, rgba(246, 41, 133, 0.7) 100%) !important",
+            fontWeight: 600,
+            borderColor: "rgba(255, 255, 255, 0.8)",
+            borderWidth: "1.5px",
+            backgroundColor: "transparent",
             color: "white",
             textTransform: "none",
-            boxShadow: 2,
             fontSize: { xs: "0.9rem", sm: "1rem" },
             transition: "all 0.3s ease",
             "&:hover": {
-              transform: "scale(1.05) translateY(-2px)",
-              boxShadow: 6,
+              transform: "translateY(-2px)",
+              borderColor: "white",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 4px 12px rgba(255, 255, 255, 0.1)",
             },
           }}
         >

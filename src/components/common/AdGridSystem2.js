@@ -97,16 +97,21 @@ const Overlay = styled(Box)(({ theme }) => ({
 
 const ActionButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(2),
-    background: "linear-gradient(90deg, rgba(176, 70, 233, 0.7) 0%, rgba(246, 41, 133, 0.7) 100%)",
+    variant: "outlined",
+    borderColor: "rgba(255, 255, 255, 0.8)",
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    backgroundColor: "transparent",
     color: "white",
-    fontWeight: "bold",
+    fontWeight: 600,
     borderRadius: "50px",
     padding: theme.spacing(1, 4),
     textTransform: "none",
-    boxShadow: theme.shadows[2],
     "&:hover": {
         transform: "translateY(-2px)",
-        boxShadow: theme.shadows[6],
+        borderColor: "white",
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        boxShadow: "0 4px 12px rgba(255, 255, 255, 0.1)",
     },
     transition: "all 0.3s ease",
 }));
@@ -194,7 +199,7 @@ const AdGridSystem2 = () => {
                                 onClick={() => handleActionClick(item.buttonLink)}
                             >
                                 <ActionButton
-                                    variant="contained"
+                                    variant="outlined"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleActionClick(item.buttonLink);

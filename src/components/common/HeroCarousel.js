@@ -120,22 +120,24 @@ const HeroCarousel = () => {
                 {slide.description}
               </Typography>
               <Button
-                variant="contained"
+                variant="outlined"
                 size="large"
                 onClick={() => navigate(slide.buttonLink)}
                 sx={{
                   px: { xs: 3, sm: 5 },
                   py: { xs: 1, sm: 1.5 },
                   borderRadius: "50px",
-                  background:
-                    "linear-gradient(90deg, rgba(176, 70, 233, 0.7) 0%, rgba(246, 41, 133, 0.7) 100%) !important",
                   color: "white",
+                  borderColor: "rgba(255, 255, 255, 0.8)",
+                  borderWidth: "1.5px",
+                  backgroundColor: "transparent",
                   textTransform: "none",
-                  boxShadow: "0 4px 15px rgba(247, 37, 133, 0.4) !important",
+                  fontWeight: 600,
                   transition: "all 0.3s ease !important",
                   "&:hover": {
                     transform: "translateY(-2px)",
-                    boxShadow: "0 6px 20px rgba(247, 37, 133, 0.6) !important",
+                    borderColor: "white",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
                   },
                   "& *": {
                     pointerEvents: "none",

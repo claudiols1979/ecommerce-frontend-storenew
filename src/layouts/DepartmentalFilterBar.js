@@ -313,7 +313,7 @@ const DepartmentalFilterBar = () => {
         borderRadius: 2,
         opacity: 0.9,
         background:
-          "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
+          "linear-gradient(30deg, #A855F7 60%, #F72585 100%) !important",
         backdropFilter: "blur(10px)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         mt: 2,
