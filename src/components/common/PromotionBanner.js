@@ -41,16 +41,16 @@ const PromotionalBanner = () => {
     <Box
       sx={{
         background:
-          "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(168, 85, 247, 0.85) 50%, rgba(247, 37, 133, 0.85) 100%) !important",
-        backdropFilter: "blur(8px) !important",
+          "linear-gradient(90deg, rgba(49, 0, 138, 0.85) 10%, rgba(155, 48, 212, 0.85) 85%, rgba(247, 37, 133, 0.85) 100%) !important",
+        backdropFilter: "blur(12px) !important",
         width: "98%",
-        py: 1.5,
+        py: 0.5,
         mx: "auto",
         overflow: "hidden",
         whiteSpace: "whitespace-nowrap",
         boxShadow: "0 4px 12px rgba(0,0,0,0.3) !important",
-        mb: 1,
-        mt: 1,
+        mb: 0.5,
+        mt: 0.5,
         borderRadius: 2,
         zIndex: (theme) => theme.zIndex.drawer + 2,
       }}

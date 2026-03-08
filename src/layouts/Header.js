@@ -322,7 +322,7 @@ const Header = () => {
         sx={{
           transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
           transform: isHiding
-            ? (isMobile ? "translateY(-400px)" : "translateY(-70px)")
+            ? (isMobile ? "translateY(-400px)" : "translateY(-46px)")
             : "translateY(0)",
           position: "sticky",
           top: 0,
