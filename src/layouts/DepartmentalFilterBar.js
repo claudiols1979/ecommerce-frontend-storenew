@@ -33,7 +33,7 @@ import useClickOutside from "../hooks/useClickOutside";
 
 import useScrollDirection from "../hooks/useScrollDirection";
 
-const DepartmentalFilterBar = ({ hide }) => {
+const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }) => {
   const {
     taxonomy,
     taxonomyLoading,
@@ -58,12 +58,11 @@ const DepartmentalFilterBar = ({ hide }) => {
 
   const [activeFilters, setActiveFilters] = useState({});
   const [initialLoad, setInitialLoad] = useState(true);
-  const [expanded, setExpanded] = useState(false);
   const [filterLoading, setFilterLoading] = useState(false);
 
   // Determinar si la barra debe esconderse realmente
   // No se esconde si está expandida o si hay una carga de filtros en curso
-  const isHiding = hide && !expanded && !filterLoading && !departmentalLoading;
+  const isHiding = hide && !isFiltersExpanded && !filterLoading && !departmentalLoading;
 
   console.log("🔍 Current Filters from Context: ", currentFilters);
   console.log("🎯 UI Filters: ", uiFilters);
@@ -76,11 +75,11 @@ const DepartmentalFilterBar = ({ hide }) => {
 
   const containerRef = useClickOutside(
     () => {
-      if (expanded) {
-        setExpanded(false);
+      if (isFiltersExpanded) {
+        setIsFiltersExpanded(false);
       }
     },
-    { enabled: expanded },
+    { enabled: isFiltersExpanded },
   );
 
   // ✅ Cargar taxonomía completa al montar
@@ -189,8 +188,8 @@ const DepartmentalFilterBar = ({ hide }) => {
   const handleManualSearch = useCallback(() => {
     console.log("🔍 Búsqueda manual solicitada");
     applyFiltersToSearch();
-    setExpanded(false);
-  }, [applyFiltersToSearch]);
+    setIsFiltersExpanded(false);
+  }, [applyFiltersToSearch, setIsFiltersExpanded]);
 
   // ✅ Limpiar filtro individual
   const handleClearFilter = useCallback(
@@ -274,9 +273,9 @@ const DepartmentalFilterBar = ({ hide }) => {
       console.error("Error clearing all filters:", error);
     } finally {
       setFilterLoading(false);
-      setExpanded(false);
+      setIsFiltersExpanded(false);
     }
-  }, [fetchTaxonomy, resetSearch]);
+  }, [fetchTaxonomy, resetSearch, setIsFiltersExpanded]);
 
   const hasActiveFilters = Object.values(activeFilters).some(
     (value) => value !== "",
@@ -297,7 +296,7 @@ const DepartmentalFilterBar = ({ hide }) => {
   );
 
   const toggleExpanded = () => {
-    setExpanded(!expanded);
+    setIsFiltersExpanded(!isFiltersExpanded);
   };
 
   return (
@@ -330,7 +329,7 @@ const DepartmentalFilterBar = ({ hide }) => {
           justifyContent: "space-between",
           alignItems: "center",
           cursor: "pointer",
-          mb: expanded ? 2 : 0,
+          mb: isFiltersExpanded ? 2 : 0,
         }}
         onClick={toggleExpanded}
       >
@@ -356,11 +355,11 @@ const DepartmentalFilterBar = ({ hide }) => {
           )}
         </Box>
         <IconButton size="small" sx={{ color: "rgba(255, 255, 255, 0.8)" }}>
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          {isFiltersExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
 
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <Collapse in={isFiltersExpanded} timeout="auto" unmountOnExit>
         <Grid container spacing={2} alignItems="flex-end">
           {/* Departamento */}
           <Grid item xs={12} sm={6} md={3}>

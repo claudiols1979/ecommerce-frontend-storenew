@@ -54,12 +54,14 @@ const Header = () => {
   const { user, logout } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { isHiding, toggleForceShow } = useScrollDirection(2, true);
+  const { isHiding: scrollHiding, toggleForceShow } = useScrollDirection(10, true);
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
+  const isHiding = scrollHiding && !isFiltersExpanded;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -823,7 +825,11 @@ const Header = () => {
             </Box>
           </Toolbar>
         </AppBar>
-        <DepartmentalFilterBar hide={isHiding} />
+        <DepartmentalFilterBar
+          hide={isHiding}
+          isFiltersExpanded={isFiltersExpanded}
+          setIsFiltersExpanded={setIsFiltersExpanded}
+        />
       </Box>
 
       {/* --- DRAWER DE WISHLIST --- */}
