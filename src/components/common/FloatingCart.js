@@ -19,7 +19,7 @@ const FloatingCart = () => {
     // Position state
     const [position, setPosition] = useState({
         x: (typeof window !== 'undefined' ? window.innerWidth : 400) - (isMobile ? 76 : 94),
-        y: isMobile ? 120 : 150
+        y: isMobile ? 210 : 170
     });
     const [isDragging, setIsDragging] = useState(false);
     const dragInfo = useRef({
