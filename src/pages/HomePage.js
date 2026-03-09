@@ -262,7 +262,7 @@ const HomePage = () => {
         </Box>
 
         {/* Explore All Products Button */}
-        <Box sx={{ textAlign: "center", my: 6 }}>
+        {/* <Box sx={{ textAlign: "center", my: 6 }}>
           <Button
             variant="contained"
             size="large"
@@ -290,7 +290,7 @@ const HomePage = () => {
           >
             Explorar Todos los Productos
           </Button>
-        </Box>
+        </Box> */}
 
         {/* Featured Products Section */}
         <Typography
