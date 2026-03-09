@@ -93,6 +93,7 @@ export const UpdateInfoProvider = ({ children }) => {
             tipoIdentificacion: response.data.tipoIdentificacion,
             cedula: response.data.cedula,
             codigoActividadReceptor: response.data.codigoActividadReceptor,
+            wantsFacturaElectronica: response.data.wantsFacturaElectronica,
           });
         }
 

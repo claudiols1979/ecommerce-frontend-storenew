@@ -17,6 +17,8 @@ import {
   MenuItem,
   FormHelperText,
   Alert,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
@@ -48,9 +50,10 @@ const RegisterPage = () => {
     canton: "",
     distrito: "",
     // ✅ NUEVOS CAMPOS PARA DOLIBARR
-    tipoIdentificacion: "",
+    tipoIdentificacion: "Fisica",
     cedula: "",
     codigoActividadReceptor: "",
+    wantsFacturaElectronica: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -90,6 +93,7 @@ const RegisterPage = () => {
     tipoIdentificacion,
     cedula,
     codigoActividadReceptor,
+    wantsFacturaElectronica,
   } = formData;
 
   const onChange = (e) => {
@@ -99,6 +103,20 @@ const RegisterPage = () => {
 
     if (e.target.name === "cedula") {
       processedValue = value.replace(/[-]/g, "");
+    }
+
+    if (e.target.type === "checkbox") {
+      const isChecked = !!e.target.checked;
+      setFormData({ ...formData, [e.target.name]: isChecked });
+      if (e.target.name === "wantsFacturaElectronica" && !isChecked) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          cedula: "",
+          tipoIdentificacion: "",
+          codigoActividadReceptor: "",
+        }));
+      }
+      return;
     }
 
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -127,13 +145,9 @@ const RegisterPage = () => {
     }
 
     // ✅ VALIDACIONES PARA CAMPOS NUEVOS
-    if (!tipoIdentificacion) {
-      errors.tipoIdentificacion =
-        "Por favor seleccione el tipo de identificación.";
-    }
-
-    if (!cedula) {
-      errors.cedula = "La cédula es requerida.";
+    if (cedula && !codigoActividadReceptor) {
+      errors.codigoActividadReceptor =
+        "El código de actividad es requerido si se ingresa la cédula.";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -167,9 +181,10 @@ const RegisterPage = () => {
       provincia,
       canton,
       distrito,
-      tipoIdentificacion,
-      cedula: cedula ? cedula.replace(/[-]/g, "") : "",
-      codigoActividadReceptor,
+      tipoIdentificacion: tipoIdentificacion || null,
+      cedula: cedula ? cedula.replace(/[-]/g, "") : null,
+      codigoActividadReceptor: codigoActividadReceptor || null,
+      wantsFacturaElectronica: !!wantsFacturaElectronica,
     };
 
     const result = await register(userData);
@@ -466,102 +481,141 @@ const RegisterPage = () => {
                   />
                 </Grid>
 
-                {/* ✅ TIPO DE IDENTIFICACIÓN */}
                 <Grid item xs={12}>
-                  <FormControl
-                    fullWidth
-                    variant="outlined"
-                    sx={textFieldStyle}
-                    error={!!fieldErrors.tipoIdentificacion}
-                  >
-                    <InputLabel id="tipoIdentificacion-label">
-                      Tipo de Identificación
-                    </InputLabel>
-                    <Select
-                      labelId="tipoIdentificacion-label"
-                      required
-                      name="tipoIdentificacion"
-                      value={tipoIdentificacion}
-                      onChange={onChange}
-                      label="Tipo de Identificación"
-                      startAdornment={
-                        <BadgeOutlinedIcon sx={{ mr: 1, color: iconColor }} />
-                      }
-                    >
-                      <MenuItem value="">
-                        <em>Seleccionar tipo</em>
-                      </MenuItem>
-                      {tiposIdentificacion.map((tipo) => (
-                        <MenuItem key={tipo.value} value={tipo.value}>
-                          {tipo.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {fieldErrors.tipoIdentificacion && (
-                      <FormHelperText>
-                        {fieldErrors.tipoIdentificacion}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                </Grid>
-                {/* ✅ CÉDULA - Requerido para todos excepto si no hay tipo seleccionado */}
-                <Grid item xs={12}>
-                  <TextField
-                    required={["Fisica", "Juridica"].includes(
-                      tipoIdentificacion,
-                    )}
-                    fullWidth
-                    name="cedula"
-                    label={
-                      tipoIdentificacion === "Juridica"
-                        ? "Cédula Jurídica"
-                        : "Cédula Física"
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={wantsFacturaElectronica}
+                        onChange={onChange}
+                        name="wantsFacturaElectronica"
+                        sx={{
+                          color: "rgba(255, 255, 255, 0.7)",
+                          "&.Mui-checked": {
+                            color: "#ffffff",
+                          },
+                        }}
+                      />
                     }
-                    id="cedula"
-                    value={cedula}
-                    onChange={onChange}
-                    variant="outlined"
-                    sx={textFieldStyle}
-                    error={!!fieldErrors.cedula}
-                    helperText={fieldErrors.cedula}
-                    InputProps={{
-                      startAdornment: (
-                        <BadgeOutlinedIcon sx={{ mr: 1, color: iconColor }} />
-                      ),
-                    }}
-                    placeholder={
-                      tipoIdentificacion === "Juridica"
-                        ? "Ingrese cédula jurídica"
-                        : "Cédula, Dimex o NITE"
+                    label={
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "rgba(255, 255, 255, 0.85)", fontWeight: 500 }}
+                      >
+                        ¿Desea Factura Electrónica para Crédito Fiscal?
+                      </Typography>
                     }
                   />
+                  {!wantsFacturaElectronica && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        ml: 4,
+                        mt: -1,
+                        color: "rgba(255, 255, 255, 0.6)",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      (No marque esta casilla sino esta registrado en el Ministerio de Hacienda como contribuyente)
+                    </Typography>
+                  )}
                 </Grid>
 
-                {/* ✅ CÓDIGO ACTIVIDAD RECEPTOR - Solo requerido para Jurídica */}
-                <Grid item xs={12}>
-                  <TextField
-                    required={tipoIdentificacion === "Juridica"}
-                    fullWidth
-                    name="codigoActividadReceptor"
-                    label="Código Actividad Receptor (Opcional)"
-                    id="codigoActividadReceptor"
-                    value={codigoActividadReceptor}
-                    onChange={onChange}
-                    variant="outlined"
-                    sx={textFieldStyle}
-                    error={!!fieldErrors.codigoActividadReceptor}
-                    helperText={
-                      fieldErrors.codigoActividadReceptor ||
-                      "Requerido solo para persona jurídica"
-                    }
-                    InputProps={{
-                      startAdornment: (
-                        <BusinessCenterIcon sx={{ mr: 1, color: iconColor }} />
-                      ),
-                    }}
-                    placeholder="Ej: 620100, 461000, etc."
-                  />
-                </Grid>
+                {wantsFacturaElectronica && (
+                  <>
+                    {/* ✅ TIPO DE IDENTIFICACIÓN */}
+                    <Grid item xs={12}>
+                      <FormControl
+                        fullWidth
+                        variant="outlined"
+                        sx={textFieldStyle}
+                        error={!!fieldErrors.tipoIdentificacion}
+                      >
+                        <InputLabel id="tipoIdentificacion-label">
+                          Tipo de Identificación
+                        </InputLabel>
+                        <Select
+                          labelId="tipoIdentificacion-label"
+                          required
+                          name="tipoIdentificacion"
+                          value={tipoIdentificacion}
+                          onChange={onChange}
+                          label="Tipo de Identificación"
+                          startAdornment={
+                            <BadgeOutlinedIcon sx={{ mr: 1, color: iconColor }} />
+                          }
+                        >
+                          {tiposIdentificacion.map((tipo) => (
+                            <MenuItem key={tipo.value} value={tipo.value}>
+                              {tipo.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {fieldErrors.tipoIdentificacion && (
+                          <FormHelperText>
+                            {fieldErrors.tipoIdentificacion}
+                          </FormHelperText>
+                        )}
+                      </FormControl>
+                    </Grid>
+                    {/* ✅ CÉDULA */}
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        name="cedula"
+                        label={
+                          tipoIdentificacion === "Juridica"
+                            ? "Cédula Jurídica"
+                            : "Cédula Física"
+                        }
+                        id="cedula"
+                        value={cedula}
+                        onChange={onChange}
+                        variant="outlined"
+                        sx={textFieldStyle}
+                        error={!!fieldErrors.cedula}
+                        helperText={fieldErrors.cedula}
+                        InputProps={{
+                          startAdornment: (
+                            <BadgeOutlinedIcon sx={{ mr: 1, color: iconColor }} />
+                          ),
+                        }}
+                        placeholder={
+                          tipoIdentificacion === "Juridica"
+                            ? "Ingrese cédula jurídica"
+                            : "Cédula, Dimex o NITE"
+                        }
+                      />
+                    </Grid>
+
+                    {/* ✅ CÓDIGO ACTIVIDAD RECEPTOR */}
+                    <Grid item xs={12}>
+                      <TextField
+                        required={tipoIdentificacion === "Juridica"}
+                        fullWidth
+                        name="codigoActividadReceptor"
+                        label="Código Actividad Receptor"
+                        id="codigoActividadReceptor"
+                        value={codigoActividadReceptor}
+                        onChange={onChange}
+                        variant="outlined"
+                        sx={textFieldStyle}
+                        error={!!fieldErrors.codigoActividadReceptor}
+                        helperText={
+                          fieldErrors.codigoActividadReceptor ||
+                          "Necesario para emitir Factura Electrónica"
+                        }
+                        InputProps={{
+                          startAdornment: (
+                            <BusinessCenterIcon sx={{ mr: 1, color: iconColor }} />
+                          ),
+                        }}
+                        placeholder="Ej: 620100, 461000, etc."
+                      />
+                    </Grid>
+                  </>
+                )}
 
                 {/* Campos de Contacto */}
                 <Grid item xs={12}>

@@ -25,6 +25,8 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -84,10 +86,12 @@ const ProfilePage = () => {
     canton: "",
     distrito: "",
     resellerCategory: "",
-    tipoIdentificacion: "",
+    tipoIdentificacion: "Fisica",
     cedula: "",
     codigoActividadReceptor: "",
+    wantsFacturaElectronica: false,
   });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Modern Styles with requested gradients
   const mainGradient =
@@ -235,6 +239,7 @@ const ProfilePage = () => {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
+          timeZone: "America/Costa_Rica",
         };
         return date.toLocaleDateString("es-ES", options);
       }
@@ -275,9 +280,10 @@ const ProfilePage = () => {
       canton: user.canton || "",
       distrito: user.distrito || "",
       resellerCategory: user.resellerCategory || "",
-      tipoIdentificacion: user.tipoIdentificacion || "",
+      tipoIdentificacion: user.tipoIdentificacion || "Fisica",
       cedula: user.cedula || "",
       codigoActividadReceptor: user.codigoActividadReceptor || "",
+      wantsFacturaElectronica: user.wantsFacturaElectronica || false,
     });
     setEditDialogOpen(true);
     clearMessages();
@@ -292,6 +298,27 @@ const ProfilePage = () => {
       processedValue = value.replace(/[-]/g, "");
     }
 
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+
+    if (e.target.type === "checkbox") {
+      const isChecked = !!e.target.checked;
+      setEditFormData((prev) => ({
+        ...prev,
+        [name]: isChecked,
+      }));
+      if (name === "wantsFacturaElectronica" && !isChecked) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          cedula: "",
+          tipoIdentificacion: "",
+          codigoActividadReceptor: "",
+        }));
+      }
+      return;
+    }
+
     setEditFormData((prev) => ({
       ...prev,
       [name]: processedValue,
@@ -303,25 +330,23 @@ const ProfilePage = () => {
 
     // ✅ VALIDACIONES EN FRONTEND
     const errors = {};
-
-    if (!editFormData.tipoIdentificacion) {
-      errors.tipoIdentificacion = "El tipo de identificación es requerido.";
-    }
-
-    if (!editFormData.cedula) {
-      errors.cedula = "La cédula es requerida.";
+    if (editFormData.cedula && !editFormData.codigoActividadReceptor) {
+      errors.codigoActividadReceptor =
+        "El código de actividad es requerido si se ingresa la cédula.";
     }
 
     if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       return;
     }
 
-    // ✅ PROCESAR DATOS ANTES DE ENVIAR - Remover guiones de cédula
+    // ✅ PROCESAR DATOS ANTES DE ENVIAR - Remover guiones de cédula, enviar null si están vacíos
     const processedData = {
       ...editFormData,
-      cedula: editFormData.cedula
-        ? editFormData.cedula.replace(/[-]/g, "")
-        : "",
+      cedula: editFormData.cedula ? editFormData.cedula.replace(/[-]/g, "") : null,
+      tipoIdentificacion: editFormData.tipoIdentificacion || null,
+      codigoActividadReceptor: editFormData.codigoActividadReceptor || null,
+      wantsFacturaElectronica: !!editFormData.wantsFacturaElectronica,
       city: editFormData.canton, // fallback backward compatibility
       province: editFormData.provincia, // fallback backward compatibility
     };
@@ -335,6 +360,7 @@ const ProfilePage = () => {
 
   const handleCloseDialog = () => {
     setEditDialogOpen(false);
+    setFieldErrors({});
     clearMessages();
   };
 
@@ -564,19 +590,12 @@ const ProfilePage = () => {
                     sm: 6,
                     required: true,
                   },
-                  {
-                    label: "Cédula",
-                    name: "cedula",
-                    sm: 6,
-                    placeholder: "Cédula, Dimex o NITE",
-                  },
                   { label: "Teléfono", name: "phoneNumber", sm: 6 },
                   {
-                    label: "Código Actividad Receptor",
-                    name: "codigoActividadReceptor",
-                    sm: 12,
-                    helperText: "Opcional - para fines tributarios",
-                    placeholder: "Ej: 620100, 461000, etc.",
+                    label: "Correo Electrónico (No modificable)",
+                    name: "email",
+                    sm: 6,
+                    disabled: true,
                   },
                 ].map((field) => (
                   <Grid item xs={12} sm={field.sm} key={field.name}>
@@ -587,8 +606,10 @@ const ProfilePage = () => {
                       value={editFormData[field.name]}
                       onChange={handleEditFormChange}
                       required={field.required}
+                      disabled={field.disabled}
+                      error={!!fieldErrors[field.name]}
+                      helperText={fieldErrors[field.name] || field.helperText}
                       placeholder={field.placeholder}
-                      helperText={field.helperText}
                       variant="outlined"
                       InputLabelProps={{
                         sx: {
@@ -622,88 +643,171 @@ const ProfilePage = () => {
                 ))}
 
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Tipo de Identificación"
-                    name="tipoIdentificacion"
-                    value={editFormData.tipoIdentificacion}
-                    onChange={handleEditFormChange}
-                    select
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          sx: {
-                            background: "rgba(30, 0, 80, 0.95)",
-                            backdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            color: "white",
-                            "& .MuiMenuItem-root:hover": {
-                              background: "rgba(255,255,255,0.1)",
-                            },
-                            "& .Mui-selected": {
-                              background: "rgba(168, 85, 247, 0.3) !important",
-                            },
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={editFormData.wantsFacturaElectronica}
+                        onChange={handleEditFormChange}
+                        name="wantsFacturaElectronica"
+                        sx={{
+                          color: "rgba(255, 255, 255, 0.7)",
+                          "&.Mui-checked": {
+                            color: "#A855F7",
                           },
-                        },
-                      },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        color: "rgba(255,255,255,0.7)",
-                        "&.Mui-focused": { color: "#A855F7" },
-                      },
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "16px",
-                        color: "white !important",
-                        background: "rgba(255, 255, 255, 0.05)",
-                        "& fieldset": {
-                          borderColor: "rgba(255, 255, 255, 0.1)",
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "rgba(255, 255, 255, 0.3)",
-                        },
-                        "&.Mui-focused fieldset": { borderColor: "#A855F7" },
-                      },
-                      "& .MuiSelect-select": { color: "white !important" },
-                      "& .MuiSelect-icon": { color: "white !important" },
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>Ninguno</em>
-                    </MenuItem>
-                    <MenuItem value="Fisica">Persona Física</MenuItem>
-                    <MenuItem value="Juridica">Persona Jurídica</MenuItem>
-                  </TextField>
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "rgba(255, 255, 255, 0.85)", fontWeight: 500 }}
+                      >
+                        ¿Desea Factura Electrónica para Crédito Fiscal?
+                      </Typography>
+                    }
+                  />
+                  {!editFormData.wantsFacturaElectronica && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        ml: 4,
+                        mt: -1,
+                        color: "rgba(255, 255, 255, 0.6)",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      (No marque esta casilla sino esta registrado en el Ministerio de Hacienda)
+                    </Typography>
+                  )}
                 </Grid>
 
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    disabled
-                    label="Correo Electrónico (No modificable)"
-                    name="email"
-                    type="email"
-                    value={editFormData.email}
-                    onChange={handleEditFormChange}
-                    required
-                    InputLabelProps={{ sx: { color: "rgba(255,255,255,0.7)" } }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "16px",
-                        background: "rgba(255, 255, 255, 0.02)",
-                        "& fieldset": {
-                          borderColor: "rgba(255, 255, 255, 0.05)",
-                        },
-                        "& .MuiOutlinedInput-input.Mui-disabled": {
-                          color: "white !important",
-                          WebkitTextFillColor: "white !important",
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
+                {editFormData.wantsFacturaElectronica && (
+                  <>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Tipo de Identificación"
+                        name="tipoIdentificacion"
+                        value={editFormData.tipoIdentificacion}
+                        onChange={handleEditFormChange}
+                        select
+                        error={!!fieldErrors.tipoIdentificacion}
+                        helperText={fieldErrors.tipoIdentificacion}
+                        SelectProps={{
+                          MenuProps: {
+                            PaperProps: {
+                              sx: {
+                                background: "rgba(30, 0, 80, 0.95)",
+                                backdropFilter: "blur(10px)",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                color: "white",
+                                "& .MuiMenuItem-root:hover": {
+                                  background: "rgba(255,255,255,0.1)",
+                                },
+                                "& .Mui-selected": {
+                                  background: "rgba(168, 85, 247, 0.3) !important",
+                                },
+                              },
+                            },
+                          },
+                        }}
+                        InputLabelProps={{
+                          sx: {
+                            color: "rgba(255,255,255,0.7)",
+                            "&.Mui-focused": { color: "#A855F7" },
+                          },
+                        }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "16px",
+                            color: "white !important",
+                            background: "rgba(255, 255, 255, 0.05)",
+                            "& fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.1)",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.3)",
+                            },
+                            "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                          },
+                          "& .MuiSelect-select": { color: "white !important" },
+                          "& .MuiSelect-icon": { color: "white !important" },
+                        }}
+                      >
+                        <MenuItem value="Fisica">Persona Física</MenuItem>
+                        <MenuItem value="Juridica">Persona Jurídica</MenuItem>
+                      </TextField>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Número de Cédula"
+                        name="cedula"
+                        value={editFormData.cedula}
+                        onChange={handleEditFormChange}
+                        error={!!fieldErrors.cedula}
+                        helperText={fieldErrors.cedula}
+                        placeholder="Sin guiones, ej: 112340567 o 3101234567"
+                        InputLabelProps={{
+                          sx: {
+                            color: "rgba(255,255,255,0.7)",
+                            "&.Mui-focused": { color: "#A855F7" },
+                          },
+                        }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "16px",
+                            color: "white !important",
+                            background: "rgba(255, 255, 255, 0.05)",
+                            "& fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.1)",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.3)",
+                            },
+                            "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                          },
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Código Actividad Receptor"
+                        name="codigoActividadReceptor"
+                        value={editFormData.codigoActividadReceptor}
+                        onChange={handleEditFormChange}
+                        error={!!fieldErrors.codigoActividadReceptor}
+                        helperText={fieldErrors.codigoActividadReceptor}
+                        placeholder="Código de 6 dígitos de Hacienda"
+                        InputLabelProps={{
+                          sx: {
+                            color: "rgba(255,255,255,0.7)",
+                            "&.Mui-focused": { color: "#A855F7" },
+                          },
+                        }}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "16px",
+                            color: "white !important",
+                            background: "rgba(255, 255, 255, 0.05)",
+                            "& fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.1)",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "rgba(255, 255, 255, 0.3)",
+                            },
+                            "&.Mui-focused fieldset": { borderColor: "#A855F7" },
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </>
+                )}
+
 
                 <Grid item xs={12}>
                   <Typography
