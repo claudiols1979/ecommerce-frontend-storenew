@@ -27,11 +27,7 @@ import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { Helmet } from "react-helmet-async";
 import PromotionalBanner from "../components/common/PromotionBanner";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import DiscountIcon from "@mui/icons-material/Discount";
-import StorefrontIcon from "@mui/icons-material/Storefront";
 import SecurityIcon from "@mui/icons-material/Security";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
@@ -188,24 +184,7 @@ const HomePage = () => {
     }
   };
 
-  // All original data and layout constants remain untouched
-  const topWidgetData = [
-    {
-      title: "Envíos a todo el país",
-      description: "Envío seguro con Correos de Costa Rica",
-      icon: <LocalShippingIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-    {
-      title: "Soporte 24/7",
-      description: "Soporte al cliente disponible",
-      icon: <SupportAgentIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-    {
-      title: "Devolución de Dinero",
-      description: "Garantía de devolución total en tus compras",
-      icon: <MonetizationOnIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-  ];
+
 
   const middleWidgetData = [
     {
@@ -306,51 +285,13 @@ const HomePage = () => {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <Container maxWidth="xl" sx={{ my: 4, flexGrow: 1 }}>
+      <Container maxWidth="xl" sx={{ mt: 0, mb: 4, flexGrow: 1 }}>
         {/* Hero Carousel - Hidden on mobile, visible on tablet and larger */}
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
           <HeroCarousel />
         </Box>
 
-        {/* Top Widgets Section */}
-        <Box sx={{ my: 6, textAlign: "center", display: { xs: "none", md: "block" } }}>
-          <Grid container spacing={4} justifyContent="center">
-            {topWidgetData.map((widget, index) => (
-              <Grid item key={index} xs={12} sm={6} md={4}>
-                <Box
-                  sx={{
-                    p: 3,
-                    bgcolor: "transparent",
-                    boxShadow: "none",
-                    border: "none",
-                    borderRadius: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    textAlign: "center",
-                  }}
-                >
-                  {widget.icon}
-                  <Typography
-                    variant="h6"
-                    sx={{ mt: 2, fontWeight: 700, color: "primary.main" }}
-                  >
-                    {widget.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {widget.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+
 
         {/* ad secion 4 pics in 2x2 frame*/}
         <Box mt={8}>

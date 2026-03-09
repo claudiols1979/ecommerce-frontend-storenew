@@ -315,7 +315,7 @@ const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }
         backdropFilter: "blur(10px)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         mt: 0.5,
-        mb: 3,
+        mb: 0,
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         transform: isHiding ? "translateY(-40px)" : "translateY(0)",
         pointerEvents: isHiding ? "none" : "auto",

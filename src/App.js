@@ -43,8 +43,10 @@ const AppContainer = styled(Box)({
 const MainContent = styled("main")(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
+  paddingTop: theme.spacing(1),
   [theme.breakpoints.down("sm")]: {
     padding: theme.spacing(1.5),
+    paddingTop: theme.spacing(0.5),
   },
 }));
 
