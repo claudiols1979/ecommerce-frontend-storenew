@@ -270,6 +270,62 @@ const ProductsPage = () => {
     return "No hay productos disponibles.";
   };
 
+  // Swipe Indicator Component for mobile
+  const SwipeIndicator = () => (
+    <Box
+      sx={{
+        display: { xs: "flex", sm: "none" },
+        position: "absolute",
+        right: 10,
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 10,
+        pointerEvents: "none",
+        flexDirection: "column",
+        alignItems: "center",
+        opacity: 0.8,
+      }}
+    >
+      <Box
+        sx={{
+          width: 40,
+          height: 40,
+          borderRadius: "50%",
+          backgroundColor: "rgba(0,0,0,0.2)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backdropFilter: "blur(4px)",
+          animation: "swipeHint 2s infinite",
+        }}
+      >
+        <Typography sx={{ color: "white", fontSize: "1.2rem", fontWeight: "bold" }}>
+          →
+        </Typography>
+      </Box>
+      <Typography
+        variant="caption"
+        sx={{
+          color: "text.secondary",
+          mt: 0.5,
+          fontWeight: 700,
+          textShadow: "0 1px 2px rgba(255,255,255,0.8)",
+        }}
+      >
+        Desliza
+      </Typography>
+      <style>
+        {`
+          @keyframes swipeHint {
+            0% { transform: translateX(0); opacity: 0.2; }
+            50% { transform: translateX(-10px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 0.2; }
+          }
+        `}
+      </style>
+    </Box>
+  );
+
   return (
     <>
       <Helmet>
@@ -321,39 +377,48 @@ const ProductsPage = () => {
           <Alert severity="info">{getNoProductsMessage()}</Alert>
         ) : (
           <>
-            <Box
-              sx={{
-                display: { xs: "flex", md: "grid" },
-                gridTemplateColumns: { md: "repeat(4, 1fr)", lg: "repeat(5, 1fr)" },
-                gap: { xs: 1.5, md: 4 },
-                overflowX: { xs: "auto", md: "visible" },
-                scrollSnapType: { xs: "x mandatory", md: "none" },
-                pb: { xs: 2, md: 0 },
-                px: { xs: 2, md: 0 },
-                mx: { xs: -2, md: 0 },
-                "&::-webkit-scrollbar": { display: "none" },
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-                justifyContent: { md: "center" },
-              }}
-            >
-              {groupedProducts.map((product) => (
-                <Box
-                  key={product._id}
-                  sx={{
-                    scrollSnapAlign: { xs: "center", md: "none" },
-                    minWidth: { xs: "240px", sm: "300px", md: "auto" },
-                    flexShrink: { xs: 0, md: 1 },
-                    width: { md: "100%" },
-                  }}
-                >
-                  <ProductCard
-                    product={product}
-                    onAddToCart={() => handleAddToCart(product)}
-                    isAdding={addingProductId === product._id}
-                  />
-                </Box>
-              ))}
+            <Box sx={{ position: "relative" }}>
+              <SwipeIndicator />
+              <Box
+                sx={{
+                  display: { xs: "flex", sm: "grid" },
+                  gridTemplateColumns: {
+                    sm: "repeat(2, 1fr)",
+                    md: "repeat(4, 1fr)",
+                    lg: "repeat(5, 1fr)",
+                  },
+                  gap: { xs: 1.5, md: 2 },
+                  overflowX: { xs: "auto", sm: "visible" },
+                  scrollSnapType: { xs: "x mandatory", sm: "none" },
+                  pb: { xs: 2, md: 0 },
+                  px: { xs: 2, md: 0 },
+                  mx: { xs: -2, md: 0 },
+                  "&::-webkit-scrollbar": { display: "none" },
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  justifyContent: { sm: "center" },
+                }}
+              >
+                {groupedProducts.map((product) => (
+                  <Box
+                    key={product._id}
+                    sx={{
+                      scrollSnapAlign: { xs: "center", sm: "none" },
+                      minWidth: { xs: "240px", sm: "auto" },
+                      flexShrink: { xs: 0, sm: 1 },
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ProductCard
+                      product={product}
+                      onAddToCart={() => handleAddToCart(product)}
+                      isAdding={addingProductId === product._id}
+                    />
+                  </Box>
+                ))}
+              </Box>
             </Box>
             {loading && products.length > 0 && (
               <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>

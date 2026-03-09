@@ -59,7 +59,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                 <Box
                     sx={{
                         display: 'flex',
-                        gap: { xs: 1.5, md: 3 },
+                        gap: { xs: 1.5, md: 2 },
                         paddingX: 2,
                         width: { xs: 'auto', md: shouldAnimate ? 'max-content' : 'auto' },
                         animation: {
@@ -92,8 +92,8 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                             key={`m1-${product._id}-${index}`}
                             sx={{
                                 flexShrink: 0,
-                                scrollSnapAlign: { xs: 'center', md: 'none' },
-                                minWidth: { xs: '260px', md: 'auto' } // Increased from 240px to exceed ProductCard width (250px)
+                                scrollSnapAlign: { xs: 'center', sm: 'none' },
+                                minWidth: { xs: '260px', sm: 'auto' } // Use auto for sm and up to let the parent control spacing
                             }}
                         >
                             <ProductCard
@@ -110,7 +110,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
 
                     {/* Second set of products exactly identical for seamless infinite loop (ONLY if animating AND NOT on mobile) */}
                     {shouldAnimate && (
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
                             {products.map((product, index) => (
                                 <Box key={`m2-${product._id}-${index}`} sx={{ flexShrink: 0 }}>
                                     <ProductCard

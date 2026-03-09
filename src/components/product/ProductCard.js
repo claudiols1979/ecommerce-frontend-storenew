@@ -160,7 +160,8 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
     <Card
       sx={{
         height: "100%",
-        width: 250,
+        width: "100%",
+        maxWidth: 280,
         display: "flex",
         flexDirection: "column",
         borderRadius: 4,
