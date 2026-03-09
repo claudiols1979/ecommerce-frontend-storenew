@@ -300,7 +300,7 @@ const ProductsPage = () => {
         }}
       >
         <Typography sx={{ color: "white", fontSize: "1.2rem", fontWeight: "bold" }}>
-          →
+          ←
         </Typography>
       </Box>
       <Typography
