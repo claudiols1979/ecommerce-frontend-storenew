@@ -205,11 +205,6 @@ const HomePage = () => {
       description: "Garantía de devolución total en tus compras",
       icon: <MonetizationOnIcon sx={{ fontSize: 40, color: "primary.main" }} />,
     },
-    {
-      title: "Descuento en Pedidos",
-      description: "Disfruta de ofertas exclusivas y descuentos",
-      icon: <DiscountIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
   ];
 
   const middleWidgetData = [
@@ -321,7 +316,7 @@ const HomePage = () => {
         <Box sx={{ my: 6, textAlign: "center", display: { xs: "none", md: "block" } }}>
           <Grid container spacing={4} justifyContent="center">
             {topWidgetData.map((widget, index) => (
-              <Grid item key={index} xs={12} sm={6} md={3}>
+              <Grid item key={index} xs={12} sm={6} md={4}>
                 <Box
                   sx={{
                     p: 3,
