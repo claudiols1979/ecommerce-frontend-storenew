@@ -131,26 +131,27 @@ const AdGridSystem4 = () => {
     if (loading) {
         return (
             <Wrapper>
-                <CSSGridContainer>
+                <CSSGridContainer sx={{ gridTemplateColumns: "1fr" }}>
                     <Box sx={{ minHeight: "250px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ minHeight: "250px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ gridColumn: { md: "span 2" }, minHeight: "400px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
                 </CSSGridContainer>
             </Wrapper>
         );
     }
 
-    // Ensure we have exactly 3 items padded with nulls if necessary
-    const items = [...gridItems.slice(0, 3)];
+    const items = gridItems;
 
     return (
         <Wrapper>
-            <CSSGridContainer>
+            <CSSGridContainer sx={{
+                gridTemplateColumns: items.length === 1 ? "1fr" :
+                    items.length === 2 ? "repeat(2, 1fr)" :
+                        { md: "repeat(2, 1fr)" }
+            }}>
                 {items.map((item, index) => {
                     const currentItem = item || (defaultItems && defaultItems[index]);
                     if (!currentItem) return null;
 
-                    const spanFull = index === 2;
+                    const spanFull = index === 2 || items.length === 1;
                     const isValidImage = (url) => url && typeof url === "string" && url.trim() !== "" && url.length > 50;
 
                     const processedImageUrl = isValidImage(currentItem.image)

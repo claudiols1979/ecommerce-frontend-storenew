@@ -26,7 +26,7 @@ export const AdGridProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Items por defecto
+  // Items por defecto (Solo 1 para nuevas instalaciones)
   const defaultItems = [
     {
       image:
@@ -34,41 +34,7 @@ export const AdGridProvider = ({ children }) => {
       department: "Fragancias",
       title: "Fragancias",
       alt: "Fragancias para hombre y mujer",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1483985988355-763728e1935b",
-      department: "Ropa",
-      title: "Ropa",
-      alt: "Ropa para toda la familia",
-    },
-    {
-      image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758213291/cut-collective-u94ywFnPedw-unsplash_z02shc.jpg",
-      department: "Calzado",
-      title: "Calzado",
-      alt: "Calzado de última moda",
-    },
-    {
-      image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758178128/christopher-gower-_aXa21cf7rY-unsplash_wao9x2.jpg",
-      department: "Electrónicos",
-      title: "Electrónicos",
-      alt: "Tecnología y electrónicos",
-    },
-    {
-      image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758478320/air_conditioner_zers0j.jpg",
-      department: "Aires Acondicionados",
-      title: "Aires Acondicionados",
-      alt: "Aires acondicionados y climatización",
-    },
-    {
-      image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758217151/catia-dombaxe-8IlqMcDYKA8-unsplash_jimlbl.jpg",
-      department: "Accesorios",
-      title: "Accesorios",
-      alt: "Accesorios y complementos",
-    },
+    }
   ];
 
   // Fetch grid items from backend - RUTA PÚBLICA
@@ -86,16 +52,14 @@ export const AdGridProvider = ({ children }) => {
           .filter((item) => item.isActive)
           .sort((a, b) => a.order - b.order);
 
-        // Si hay menos de 6 items activos, completar con defaults
-        if (activeItems.length < 6) {
-          const neededItems = 6 - activeItems.length;
-          const additionalItems = defaultItems.slice(0, neededItems);
-          setGridItems([...activeItems, ...additionalItems]);
-        } else {
+        // Si hay items activos, los usamos todos. Si no hay ninguno activo, usamos el default.
+        if (activeItems.length > 0) {
           setGridItems(activeItems);
+        } else {
+          setGridItems(defaultItems);
         }
       } else {
-        // Si no hay datos en la BD, usar todos los defaults
+        // Si no hay datos en la BD, usar el default (1 solo item)
         setGridItems(defaultItems);
       }
     } catch (err) {

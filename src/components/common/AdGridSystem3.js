@@ -133,26 +133,26 @@ const AdGridSystem3 = () => {
     if (loading) {
         return (
             <Wrapper>
-                <CSSGridContainer>
-                    <Box sx={{ gridRow: { md: "span 2" }, minHeight: "500px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ minHeight: "240px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
-                    <Box sx={{ minHeight: "240px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
+                <CSSGridContainer sx={{ gridTemplateColumns: "1fr" }}>
+                    <Box sx={{ minHeight: "400px", borderRadius: "12px", bgcolor: "grey.300", display: "flex", alignItems: "center", justifyContent: "center" }}><Typography color="textSecondary">Cargando...</Typography></Box>
                 </CSSGridContainer>
             </Wrapper>
         );
     }
 
-    // Ensure we have exactly 3 items padded with nulls if necessary
-    const items = [...gridItems.slice(0, 3)];
+    const items = gridItems;
 
     return (
         <Wrapper>
-            <CSSGridContainer>
+            <CSSGridContainer sx={items.length < 3 ? {
+                gridTemplateColumns: items.length === 1 ? "1fr" : { md: "1fr 1fr" },
+                gridTemplateRows: "auto"
+            } : {}}>
                 {items.map((item, index) => {
                     const currentItem = item || (defaultItems && defaultItems[index]);
                     if (!currentItem) return null;
 
-                    const isLarge = index === 0;
+                    const isLarge = index === 0 && items.length >= 3;
                     const isValidImage = (url) => url && typeof url === "string" && url.trim() !== "" && url.length > 50;
 
                     const processedImageUrl = isValidImage(currentItem.image)

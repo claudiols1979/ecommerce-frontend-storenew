@@ -140,8 +140,10 @@ const AdGridSystem2 = () => {
     if (loading) {
         return (
             <PictureGridContainer>
-                <CSSGridContainer>
-                    {[...Array(2)].map((_, index) => (
+                <CSSGridContainer sx={{
+                    gridTemplateColumns: processedGridItems.length === 1 ? "1fr" : { md: "1fr 1fr" }
+                }}>
+                    {[...Array(1)].map((_, index) => (
                         <ImageContainer key={index} sx={{ width: "100%" }}>
                             <Box
                                 sx={{
@@ -166,7 +168,9 @@ const AdGridSystem2 = () => {
 
     return (
         <PictureGridContainer>
-            <CSSGridContainer>
+            <CSSGridContainer sx={{
+                gridTemplateColumns: processedGridItems.length === 1 ? "1fr" : { md: "1fr 1fr" }
+            }}>
                 {processedGridItems.map((item, index) => (
                     <Fade in={true} timeout={800} key={item._id || index}>
                         <ImageContainer sx={{ width: "100%" }}>

@@ -172,7 +172,7 @@ const AdGridSystem = () => {
             justifyContent: "center",
           }}
         >
-          {[...Array(6)].map((_, index) => (
+          {[...Array(1)].map((_, index) => (
             <Grid
               item
               xs={12}
@@ -248,9 +248,14 @@ const AdGridSystem = () => {
           id="department-slider"
           sx={{
             display: { xs: "flex", md: "grid" },
-            gridTemplateColumns: { md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+            gridTemplateColumns: {
+              md: processedGridItems.length === 1 ? "1fr" :
+                processedGridItems.length === 2 ? "repeat(2, 1fr)" :
+                  processedGridItems.length === 3 ? "repeat(3, 1fr)" :
+                    "repeat(auto-fit, minmax(280px, 1fr))"
+            },
             gap: { xs: 1.5, md: 3 },
-            maxWidth: "1200px",
+            maxWidth: "1400px",
             width: "100%",
             margin: "0 auto",
             overflowX: { xs: "auto", md: "visible" },

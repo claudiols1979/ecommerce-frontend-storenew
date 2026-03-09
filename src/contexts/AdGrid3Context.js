@@ -23,7 +23,7 @@ export const AdGrid3Provider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Items por defecto (3 items)
+    // Items por defecto (Solo 1 para nuevas instalaciones)
     const defaultItems = [
         {
             image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=800&fit=crop",
@@ -31,20 +31,6 @@ export const AdGrid3Provider = ({ children }) => {
             buttonLink: "/products",
             title: "Anuncio Principal",
             alt: "Anuncio promocional principal",
-        },
-        {
-            image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=400&fit=crop",
-            buttonText: "Comprar",
-            buttonLink: "/products",
-            title: "Anuncio Secundario 1",
-            alt: "Anuncio promocional secundario 1",
-        },
-        {
-            image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=400&fit=crop",
-            buttonText: "Descubrir",
-            buttonLink: "/products",
-            title: "Anuncio Secundario 2",
-            alt: "Anuncio promocional secundario 2",
         },
     ];
 
@@ -55,20 +41,15 @@ export const AdGrid3Provider = ({ children }) => {
             const response = await api.get("/api/ad-grid-3/public");
 
             if (response.data && response.data.length > 0) {
-                const activeItems = response.data.filter((item) => item.isActive);
+                const activeItems = response.data
+                    .filter((item) => item.isActive)
+                    .sort((a, b) => a.order - b.order);
 
-                // Initialize strictly with default items
-                const newGridItems = Array.from({ length: 3 }, (_, i) => defaultItems[i]);
-
-                // Override specific positions based on 'order'
-                activeItems.forEach(item => {
-                    const orderIndex = Number(item.order);
-                    if (!isNaN(orderIndex) && orderIndex >= 0 && orderIndex < 3) {
-                        newGridItems[orderIndex] = item;
-                    }
-                });
-
-                setGridItems(newGridItems);
+                if (activeItems.length > 0) {
+                    setGridItems(activeItems);
+                } else {
+                    setGridItems(defaultItems);
+                }
             } else {
                 setGridItems([...defaultItems]);
             }

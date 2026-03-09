@@ -23,7 +23,7 @@ export const AdGrid2Provider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Items por defecto (2 items)
+    // Items por defecto (Solo 1 para nuevas instalaciones)
     const defaultItems = [
         {
             image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&h=400&fit=crop",
@@ -31,13 +31,6 @@ export const AdGrid2Provider = ({ children }) => {
             buttonLink: "/products",
             title: "Anuncio 1",
             alt: "Anuncio promocional 1",
-        },
-        {
-            image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&h=400&fit=crop",
-            buttonText: "Comprar Ahora",
-            buttonLink: "/products",
-            title: "Anuncio 2",
-            alt: "Anuncio promocional 2",
         },
     ];
 
@@ -48,20 +41,15 @@ export const AdGrid2Provider = ({ children }) => {
             const response = await api.get("/api/ad-grid-2/public");
 
             if (response.data && response.data.length > 0) {
-                const activeItems = response.data.filter((item) => item.isActive);
+                const activeItems = response.data
+                    .filter((item) => item.isActive)
+                    .sort((a, b) => a.order - b.order);
 
-                // Initialize strictly with default items
-                const newGridItems = Array.from({ length: 2 }, (_, i) => defaultItems[i]);
-
-                // Override specific positions based on 'order'
-                activeItems.forEach(item => {
-                    const orderIndex = Number(item.order);
-                    if (!isNaN(orderIndex) && orderIndex >= 0 && orderIndex < 2) {
-                        newGridItems[orderIndex] = item;
-                    }
-                });
-
-                setGridItems(newGridItems);
+                if (activeItems.length > 0) {
+                    setGridItems(activeItems);
+                } else {
+                    setGridItems(defaultItems);
+                }
             } else {
                 setGridItems([...defaultItems]);
             }
