@@ -79,24 +79,41 @@ const HeroCarousel = () => {
       >
         {displaySlides.map((slide, index) => (
           <Box key={slide._id || index} sx={{ position: "relative" }}>
-            <Box
-              component="img"
-              src={slide.image}
-              alt={slide.alt}
-              sx={{
-                width: "100%",
-                height: { xs: 250, sm: 350, md: 500 },
-                objectFit: "cover",
-                display: "block",
-                boxSizing: "border-box",
-                border: "none",
-                outline: "none",
-              }}
-              onError={(e) => {
-                e.target.src =
-                  "https://via.placeholder.com/1200x500/cccccc/969696?text=Imagen+no+disponible";
-              }}
-            />
+            {slide.video ? (
+              <Box
+                component="video"
+                src={slide.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                sx={{
+                  width: "100%",
+                  height: { xs: 250, sm: 350, md: 500 },
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            ) : (
+              <Box
+                component="img"
+                src={slide.image}
+                alt={slide.alt}
+                sx={{
+                  width: "100%",
+                  height: { xs: 250, sm: 350, md: 500 },
+                  objectFit: "cover",
+                  display: "block",
+                  boxSizing: "border-box",
+                  border: "none",
+                  outline: "none",
+                }}
+                onError={(e) => {
+                  e.target.src =
+                    "https://via.placeholder.com/1200x500/cccccc/969696?text=Imagen+no+disponible";
+                }}
+              />
+            )}
             <CarouselSlideContent>
               <Typography
                 variant="h4"
