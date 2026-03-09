@@ -27,9 +27,6 @@ import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { Helmet } from "react-helmet-async";
 import PromotionalBanner from "../components/common/PromotionBanner";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import SecurityIcon from "@mui/icons-material/Security";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import ProductFilters from "../components/common/ProductFilters";
@@ -37,27 +34,7 @@ import PictureGrid from "../components/common/AdGridSystem";
 
 import AdGridSystem4 from "../components/common/AdGridSystem4";
 
-const FeatureCard = ({ icon, title, description }) => (
-  <Box
-    sx={{
-      p: 3,
-      textAlign: "center",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    {icon}
-    <Typography variant="h6" sx={{ mt: 2, fontWeight: 700 }}>
-      {title}
-    </Typography>
-    <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-      {description}
-    </Typography>
-  </Box>
-);
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -186,23 +163,7 @@ const HomePage = () => {
 
 
 
-  const middleWidgetData = [
-    {
-      title: "Calidad Garantizada",
-      description: "Productos seleccionados con los más altos estándares.",
-      icon: <SecurityIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-    {
-      title: "Innovación Constante",
-      description: "Siempre con las últimas tendencias del mercado.",
-      icon: <EmojiEventsIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-    {
-      title: "Atención Personalizada",
-      description: "Un equipo dedicado a tus necesidades y consultas.",
-      icon: <SupportAgentIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-    },
-  ];
+
 
 
   // Swipe Indicator Component for mobile
@@ -430,23 +391,7 @@ const HomePage = () => {
         {/** Hero Carousel Video**/}
         <HeroCarouselVideo />
 
-        {/* Middle Widgets Section */}
-        <Box sx={{ my: 10, px: 2, display: { xs: "none", md: "block" } }}>
-          <Grid container spacing={4} justifyContent="center">
-            {middleWidgetData.map((widget, index) => (
-              <Grid item key={index} xs={12} sm={6} md={4}>
-                <FeatureCard
-                  {...widget}
-                  onClick={() => {
-                    if (widget.link) {
-                      window.open(widget.link, "_blank");
-                    }
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+
 
         {/* Ad Grid System 4 */}
         <Box mt={4} mb={8}>
