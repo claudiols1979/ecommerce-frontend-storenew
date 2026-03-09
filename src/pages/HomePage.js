@@ -21,6 +21,7 @@ import HeroCarouselVideo from "../components/common/HeroCarouselVideo";
 import AdGridSystem2 from "../components/common/AdGridSystem2";
 import AdGridSystem3 from "../components/common/AdGridSystem3";
 import ProductMarqueeSection from "../components/home/ProductMarqueeSection";
+import HomeDepartmentalSections from "../components/home/HomeDepartmentalSections";
 import { useProducts } from "../contexts/ProductContext";
 import { useNavigate } from "react-router-dom";
 import { useOrders } from "../contexts/OrderContext";
@@ -390,6 +391,12 @@ const HomePage = () => {
 
         {/** Hero Carousel Video**/}
         <HeroCarouselVideo />
+
+        {/* Dynamic Departmental Sections */}
+        <HomeDepartmentalSections
+          onAddToCart={handleAddToCart}
+          addingProductId={addingProductId}
+        />
 
 
 
