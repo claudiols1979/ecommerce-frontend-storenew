@@ -237,19 +237,23 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
 
       <CardMedia
         component="img"
-        height="140"
         image={
           product.imageUrls?.[0]?.secure_url ||
           "https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image"
         }
         alt={product.name}
         sx={{
+          height: { xs: 220, sm: 280 },
           objectFit: "contain",
-          p: 1,
+          p: 0.5,
           bgcolor: "background.default",
           borderRadius: "12px 12px 0 0",
           boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
           cursor: "pointer",
+          transition: "transform 0.5s ease",
+          "&:hover": {
+            transform: "scale(1.05)",
+          },
         }}
         onClick={handleViewDetails}
       />
@@ -257,10 +261,11 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
       <CardContent
         sx={{
           flexGrow: 1,
-          p: 1.5,
+          p: 0.75,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
+          gap: 0.2,
         }}
       >
         <Typography
@@ -269,17 +274,18 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           onClick={handleViewDetails}
           sx={{
             fontWeight: 700,
-            minHeight: 40,
+            minHeight: 28,
             overflow: "hidden",
             textOverflow: "ellipsis",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
-            fontSize: "0.95rem",
+            fontSize: "0.9rem",
             color: "primary.main",
             textDecoration: "none",
             cursor: "pointer",
             "&:hover": { textDecoration: "underline" },
+            mb: 0.2,
           }}
         >
           {product.name}
@@ -292,9 +298,10 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             sx={{
               fontWeight: 600,
               textTransform: "uppercase",
-              mb: 1,
-              mt: -0.5,
+              mb: 0.1,
+              mt: -0.1,
               display: "block",
+              fontSize: "0.6rem",
             }}
           >
             {product.brand}
@@ -311,9 +318,9 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
               handleViewDetails();
             }}
             sx={{
-              mb: 1,
-              fontSize: "0.75rem",
-              height: "20px",
+              mb: 0.2,
+              fontSize: "0.7rem",
+              height: "18px",
               cursor: "pointer",
               background: `linear-gradient(45deg, ${theme.palette.secondary.main} 30%, #d432bb 90%)`,
               color: "white",
@@ -383,21 +390,22 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           variant="body2"
           color="text.secondary"
           sx={{
-            minHeight: 30,
+            minHeight: 24,
             overflow: "hidden",
             textOverflow: "ellipsis",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
-            mb: 1,
-            fontSize: "0.8rem",
+            mb: 0,
+            fontSize: "0.7rem",
+            minHeight: 20,
           }}
         />
 
         {/* --- JSX DE PRECIOS --- */}
         <Box
           sx={{
-            mt: "auto",
+            mt: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -409,7 +417,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
               <Typography
                 variant="h6"
                 color="primary"
-                sx={{ fontWeight: 800, lineHeight: 1.2 }}
+                sx={{ fontWeight: 800, lineHeight: 1.1, fontSize: "1rem" }}
               >
                 {priceWithTax !== null
                   ? formatPrice(priceWithTax)
@@ -466,8 +474,9 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
       </CardContent>
       <CardActions
         sx={{
-          p: 1.5,
-          pt: 1,
+          p: 1,
+          pt: 0.2,
+          pb: 1,
           justifyContent: hasVariants ? "center" : "space-between", // Centrado para variantes
           borderTop: `1px solid ${theme.palette.grey[100]}`,
         }}
