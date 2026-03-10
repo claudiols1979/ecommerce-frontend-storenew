@@ -172,7 +172,7 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           boxShadow: theme.shadows[8],
         },
         bgcolor: "background.default",
-        border: `1px solid ${theme.palette.grey[200]}`,
+        border: "none",
         position: "relative",
         overflow: "hidden",
       }}
@@ -243,11 +243,12 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         }
         alt={product.name}
         sx={{
-          height: { xs: 220, sm: 280 },
+          width: "100%",
+          aspectRatio: "1/1",
+          height: "auto",
           objectFit: "contain",
-          p: 0.5,
+          p: 0,
           bgcolor: "background.default",
-          borderRadius: "12px 12px 0 0",
           boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
           cursor: "pointer",
           transition: "transform 0.5s ease",
@@ -261,11 +262,11 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
       <CardContent
         sx={{
           flexGrow: 1,
-          p: 0.75,
+          p: 0.5,
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",
-          gap: 0.2,
+          gap: 0,
         }}
       >
         <Typography
@@ -274,13 +275,13 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
           onClick={handleViewDetails}
           sx={{
             fontWeight: 700,
-            minHeight: 28,
+            minHeight: 24,
             overflow: "hidden",
             textOverflow: "ellipsis",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
-            fontSize: "0.9rem",
+            fontSize: "0.85rem",
             color: "primary.main",
             textDecoration: "none",
             cursor: "pointer",
