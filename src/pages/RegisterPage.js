@@ -464,7 +464,7 @@ const RegisterPage = () => {
                     required
                     fullWidth
                     id="lastName"
-                    label="Apellido"
+                    label="Apellidos"
                     name="lastName"
                     autoComplete="family-name"
                     value={lastName}

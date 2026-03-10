@@ -585,7 +585,7 @@ const ProfilePage = () => {
                 {[
                   { label: "Nombre", name: "firstName", sm: 6, required: true },
                   {
-                    label: "Apellido",
+                    label: "Apellidos",
                     name: "lastName",
                     sm: 6,
                     required: true,
