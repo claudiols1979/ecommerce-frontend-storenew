@@ -41,7 +41,7 @@ const PromotionalBanner = () => {
     <Box
       sx={{
         background:
-          "linear-gradient(90deg, rgba(49, 0, 138, 0.85) 10%, rgba(155, 48, 212, 0.85) 85%, rgba(247, 37, 133, 0.85) 100%) !important",
+              "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 10%, rgba(49, 0, 138, 0.85) 55%, rgba(168, 85, 247, 0.85) 85%, rgba(247, 37, 133, 0.85) 100%) !important",
         backdropFilter: "blur(12px) !important",
         width: "98%",
         py: 0.5,

@@ -311,7 +311,7 @@ const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }
         borderRadius: 2,
         opacity: isHiding ? 0 : 0.9,
         background:
-          "linear-gradient(30deg, #A855F7 60%, #F72585 100%) !important",
+              "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 10%, rgba(49, 0, 138, 0.85) 55%, rgba(168, 85, 247, 0.85) 85%, rgba(247, 37, 133, 0.85) 100%) !important",
         backdropFilter: "blur(10px)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         mt: 0.5,

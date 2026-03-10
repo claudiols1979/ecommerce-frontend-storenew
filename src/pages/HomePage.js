@@ -372,7 +372,7 @@ const HomePage = () => {
               transition:
                 "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               background:
-                "linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important",
+              "linear-gradient(135deg, rgba(49, 0, 138, 0.85) 10%, rgba(49, 0, 138, 0.85) 55%, rgba(168, 85, 247, 0.85) 85%, rgba(247, 37, 133, 0.85) 100%) !important",
               "&:hover": {
                 transform: "translateY(-3px)",
                 boxShadow: "0 6px 20px rgba(247, 37, 133, 0.6) !important",
