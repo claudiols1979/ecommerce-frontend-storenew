@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Container,
   Box,
@@ -48,6 +48,7 @@ const HomePage = () => {
   const [novedadesProducts, setNovedadesProducts] = useState([]);
   const [randomRecomendados, setRandomRecomendados] = useState([]);
   const [randomMasVendido, setRandomMasVendido] = useState([]);
+  const featuredScrollRef = useRef(null);
 
   // Fetch products on mount
   useEffect(() => {
@@ -81,8 +82,12 @@ const HomePage = () => {
 
     // Also distribute to random sections if empty
     if (products.length > 0 && randomRecomendados.length === 0) {
-      setRandomRecomendados(products.slice(0, 10));
       setRandomMasVendido(products.slice(10, 20));
+    }
+
+    // Reset scroll position when products change (mobile)
+    if (featuredScrollRef.current) {
+      featuredScrollRef.current.scrollLeft = 0;
     }
   }, [products, loading, randomRecomendados.length]);
 
@@ -315,6 +320,7 @@ const HomePage = () => {
           <Box sx={{ position: "relative" }}>
             <SwipeIndicator />
             <Box
+              ref={featuredScrollRef}
               sx={{
                 display: { xs: "flex", sm: "grid" },
                 gridTemplateColumns: {
@@ -325,6 +331,7 @@ const HomePage = () => {
                 gap: { xs: 1.5, md: 2 },
                 overflowX: { xs: "auto", sm: "visible" },
                 scrollSnapType: { xs: "x mandatory", sm: "none" },
+                scrollBehavior: "smooth",
                 pt: { xs: 5, md: 0 },
                 pb: { xs: 5, md: 0 },
                 px: { xs: 2, md: 0 },

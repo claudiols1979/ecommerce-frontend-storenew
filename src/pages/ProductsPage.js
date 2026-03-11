@@ -1,5 +1,5 @@
 // components/ProductsPage.js
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   Container,
   Box,
@@ -90,6 +90,7 @@ const ProductsPage = () => {
   const [addingProductId, setAddingProductId] = useState(null);
   const [groupedProducts, setGroupedProducts] = useState([]);
   const [groupingProducts, setGroupingProducts] = useState(false);
+  const productsScrollRef = useRef(null);
 
   const availableGenders = useMemo(
     () => [
@@ -189,6 +190,11 @@ const ProductsPage = () => {
   useEffect(() => {
     if (loading && products.length === 0) return;
     setGroupedProducts(products || []);
+
+    // Reset scroll position when products change (mobile)
+    if (productsScrollRef.current) {
+      productsScrollRef.current.scrollLeft = 0;
+    }
   }, [products, loading]);
 
   // --- SCROLL INFINITO ---
@@ -380,6 +386,7 @@ const ProductsPage = () => {
             <Box sx={{ position: "relative" }}>
               <SwipeIndicator />
               <Box
+                ref={productsScrollRef}
                 sx={{
                   display: { xs: "flex", sm: "grid" },
                   gridTemplateColumns: {
@@ -390,6 +397,7 @@ const ProductsPage = () => {
                   gap: { xs: 1.5, md: 2 },
                   overflowX: { xs: "auto", sm: "visible" },
                   scrollSnapType: { xs: "x mandatory", sm: "none" },
+                  scrollBehavior: "smooth",
                   pb: { xs: 2, md: 0 },
                   px: { xs: 2, md: 0 },
                   mx: { xs: -2, md: 0 },

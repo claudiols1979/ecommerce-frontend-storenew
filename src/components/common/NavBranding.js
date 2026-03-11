@@ -5,8 +5,15 @@ import { Link as RouterLink } from "react-router-dom";
 const NavBranding = () => {
   const theme = useTheme();
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <RouterLink to="/" style={{ textDecoration: "none" }}>
+    <RouterLink to="/" style={{ textDecoration: "none" }} onClick={handleScrollToTop}>
       <Box
         sx={{
           display: "flex",

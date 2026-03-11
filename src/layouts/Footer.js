@@ -12,6 +12,7 @@ import { useTheme } from "@mui/material/styles";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import { Link as RouterLink } from "react-router-dom";
 import NavBranding from "../components/common/NavBranding"; // Reutilizamos el componente de branding
 
 const Footer = () => {
@@ -84,7 +85,12 @@ const Footer = () => {
             >
               Navegación
             </Typography>
-            <MuiLink href="/" sx={linkStyle}>
+            <MuiLink
+              component={RouterLink}
+              to="/"
+              sx={linkStyle}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               Inicio
             </MuiLink>
             <MuiLink href="/products" sx={linkStyle}>

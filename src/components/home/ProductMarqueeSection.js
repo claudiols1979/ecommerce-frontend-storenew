@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Box, Typography, Container, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from '../product/ProductCard';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, linkTo, reverse = false }) => {
+    const scrollContainerRef = useRef(null);
     const navigate = useNavigate();
+
+    // Reset scroll position when products change
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollLeft = 0;
+        }
+    }, [products]);
 
     if (!products || products.length === 0) return null;
 
@@ -57,6 +65,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                 }}
             >
                 <Box
+                    ref={scrollContainerRef}
                     sx={{
                         display: 'flex',
                         gap: { xs: 1.5, md: 2 },
@@ -69,6 +78,7 @@ const ProductMarqueeSection = ({ title, products, onAddToCart, addingProductId, 
                         py: 5, // Significant vertical padding to prevent clipping of shadows/ribbons
                         overflowX: { xs: 'auto', md: 'visible' },
                         scrollSnapType: { xs: 'x mandatory', md: 'none' },
+                        scrollBehavior: 'smooth',
                         '&::-webkit-scrollbar': { display: 'none' },
                         scrollbarWidth: 'none',
                         msOverflowStyle: 'none',
