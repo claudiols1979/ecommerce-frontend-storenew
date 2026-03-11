@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://oriyina.com/api/seo/sitemap.xml
+Sitemap: https://oriyinal.com/api/seo/sitemap.xml
