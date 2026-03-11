@@ -143,9 +143,11 @@ const AdGridSystem4 = () => {
     return (
         <Wrapper>
             <CSSGridContainer sx={{
-                gridTemplateColumns: items.length === 1 ? "1fr" :
-                    items.length === 2 ? "repeat(2, 1fr)" :
-                        { md: "repeat(2, 1fr)" }
+                gridTemplateColumns: {
+                    xs: "1fr",
+                    md: items.length === 1 ? "1fr" : "repeat(2, 1fr)"
+                },
+                justifyItems: "center"
             }}>
                 {items.map((item, index) => {
                     const currentItem = item || (defaultItems && defaultItems[index]);
@@ -161,7 +163,16 @@ const AdGridSystem4 = () => {
                     const isVideo = processedImageUrl.includes("/video/upload/") || processedImageUrl.match(/\.(mp4|webm|ogg|mov|avi|flv|wmv|mpg|mpeg)$/i);
 
                     return (
-                        <div key={currentItem._id || index} style={{ width: '100%', height: '100%', gridColumn: spanFull ? 'span 2' : 'auto' }}>
+                        <Box
+                            key={currentItem._id || index}
+                            sx={{
+                                width: '100%',
+                                height: '100%',
+                                gridColumn: spanFull ? { xs: 'auto', md: 'span 2' } : 'auto',
+                                display: 'flex',
+                                justifyContent: 'center'
+                            }}
+                        >
                             <ImageContainer spanFull={spanFull} onClick={() => handleActionClick(currentItem.buttonLink)}>
                                 {isVideo ? (
                                     <StyledVideo
@@ -191,7 +202,7 @@ const AdGridSystem4 = () => {
                                     )}
                                 </Overlay>
                             </ImageContainer>
-                        </div>
+                        </Box>
                     );
                 })}
             </CSSGridContainer>
