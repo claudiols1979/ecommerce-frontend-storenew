@@ -95,7 +95,8 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   const isOutOfStock = product.countInStock <= 0;
 
   const handleViewDetails = () => {
-    navigate(`/products/${product._id}`);
+    const identifier = product.slug || product._id;
+    navigate(`/products/${identifier}`);
   };
 
   return (

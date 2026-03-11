@@ -86,7 +86,7 @@ function App() {
                 {/* Rutas públicas dentro del layout principal */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/products" element={<ProductsPage />} />
-                <Route path="/products/:id" element={<ProductDetailsPage />} />
+                <Route path="/products/:idOrSlug" element={<ProductDetailsPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/privacy" element={<PrivacyPolicies />} />

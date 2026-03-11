@@ -137,8 +137,9 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
   const isOutOfStock = product.countInStock <= 0;
 
   const handleViewDetails = () => {
-    // ✅ SOLUCIÓN: Navegar solo con el ID, sin pasar productData
-    navigate(`/products/${product._id}`);
+    // ✅ Navegar usando slug si existe, de lo contrario usar ID
+    const identifier = product.slug || product._id;
+    navigate(`/products/${identifier}`);
   };
 
   const HTMLContent = ({ html, maxLength, ...typographyProps }) => {

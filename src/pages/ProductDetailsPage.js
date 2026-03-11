@@ -120,7 +120,7 @@ const getAttributeType = (index) => {
 };
 
 const ProductDetailsPage = () => {
-  const { id } = useParams();
+  const { idOrSlug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -368,14 +368,14 @@ const ProductDetailsPage = () => {
   // Add this useEffect to clear localStorage when navigating to a different product
   useEffect(() => {
     // Clear previous product's attribute state when switching to a new product
-    if (id && id !== currentProductId) {
+    if (idOrSlug && idOrSlug !== currentProductId) {
       // Remove the specific key for the previous product only if currentProductId exists
       if (currentProductId) {
         localStorage.removeItem(`attributeOptions_${currentProductId}`);
       }
-      setCurrentProductId(id);
+      setCurrentProductId(idOrSlug);
     }
-  }, [id, currentProductId]);
+  }, [idOrSlug, currentProductId]);
 
   const buildAttributeOptionsFromScratch = useCallback(async (
     productData,
@@ -543,7 +543,7 @@ const ProductDetailsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (id && id !== currentProductId) {
+    if (idOrSlug && idOrSlug !== currentProductId) {
       // Clear previous product's attribute state when switching to a new product
       if (currentProductId) {
         setAttributeOptions([]);
@@ -551,12 +551,12 @@ const ProductDetailsPage = () => {
         setSelectedAttributes({});
         setProductVariants([]);
       }
-      setCurrentProductId(id);
+      setCurrentProductId(idOrSlug);
     }
-  }, [id, currentProductId]);
+  }, [idOrSlug, currentProductId]);
 
   const fetchProductDetails = useCallback(async (isRefresh = false) => {
-    if (!id) return;
+    if (!idOrSlug) return;
 
     if (!isRefresh) {
       setLoadingSpecificProduct(true);
@@ -571,7 +571,7 @@ const ProductDetailsPage = () => {
         : {};
       const timestamp = new Date().getTime();
       const { data } = await axios.get(
-        `${API_URL}/api/products/${id}?_t=${timestamp}`,
+        `${API_URL}/api/products/${idOrSlug}?_t=${timestamp}`,
         config,
       );
       setProduct(data);
@@ -620,7 +620,7 @@ const ProductDetailsPage = () => {
       }
 
       // ✅ Cargar reviews
-      fetchReviews(id);
+      fetchReviews(data._id);
 
     } catch (err) {
       setErrorSpecificProduct(
@@ -635,7 +635,7 @@ const ProductDetailsPage = () => {
     }
     // We remove unstable dependencies to break the loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, user?.token, fetchReviews, buildAttributeOptionsFromScratch]);
+  }, [idOrSlug, user?.token, fetchReviews, buildAttributeOptionsFromScratch]);
 
   // useEffect separado para productos relacionados para evitar loops
   useEffect(() => {
@@ -643,24 +643,24 @@ const ProductDetailsPage = () => {
 
     const productsToUse = getProductsToUse();
     if (productsToUse.length > 1) {
-      const filtered = productsToUse.filter((p) => p._id !== id);
+      const filtered = productsToUse.filter((p) => p._id !== product?._id);
       const groupedRelated = groupProductsByBase(filtered);
       const displayRelatedProducts = selectRandomVariantFromEachGroup(groupedRelated);
       const shuffled = [...displayRelatedProducts].sort(() => 0.5 - Math.random());
       setRelatedProducts(shuffled.slice(0, 3));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product, id, getProductsToUse]);
+  }, [product, getProductsToUse]);
 
   useEffect(() => {
     setQuantity(1);
-  }, [id]);
+  }, [idOrSlug]);
 
   useEffect(() => {
-    if (id) {
+    if (idOrSlug) {
       fetchProductDetails();
     }
-  }, [id, fetchProductDetails]);
+  }, [idOrSlug, fetchProductDetails]);
 
   // Guardar en el historial de búsqueda
   useEffect(() => {
@@ -814,7 +814,7 @@ const ProductDetailsPage = () => {
     }
 
     const hasPurchased = myOrders.some((order) =>
-      order.items.some((item) => item.product && item.product._id === id),
+      order.items.some((item) => item.product && item.product._id === product?._id),
     );
 
     if (!hasPurchased) {
@@ -827,7 +827,7 @@ const ProductDetailsPage = () => {
 
     setCanReview(true);
     setReviewDisabledMessage("Tu comentario (opcional)");
-  }, [user, reviews, myOrders, id]);
+  }, [user, reviews, myOrders, product?._id]);
 
   const getSelectedVariantFunction = () => {
     if (attributeOptions.length === 0 || !product) return product;
@@ -935,7 +935,7 @@ const ProductDetailsPage = () => {
     }
     try {
       await createReview({
-        productId: id,
+        productId: product?._id,
         rating: newRating,
         comment: newComment,
       });
@@ -1123,6 +1123,46 @@ const ProductDetailsPage = () => {
     return clean.replace(/\s+/g, " ").trim();
   };
 
+  const structuredData = product
+    ? {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.imageUrls?.map((img) => img.secure_url),
+        "description": getCleanText(product.description),
+        "sku": product.code,
+        "brand": {
+          "@type": "Brand",
+          "name": product.brand || "Oriyina⅃",
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://oriyina.com/products/${product.slug || product._id}`,
+          "priceCurrency": "CRC",
+          "price": priceWithTax,
+          "priceValidUntil": new Date(
+            new Date().setFullYear(new Date().getFullYear() + 1),
+          )
+            .toISOString()
+            .split("T")[0],
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability":
+            product.countInStock > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+        },
+        "aggregateRating":
+          product.numReviews > 0
+            ? {
+                "@type": "AggregateRating",
+                "ratingValue": product.averageRating,
+                "reviewCount": product.numReviews,
+              }
+            : undefined,
+        "keywords": product.searchTags?.join(", "),
+      }
+    : null;
+
   return (
     <>
       <Helmet>
@@ -1135,26 +1175,46 @@ const ProductDetailsPage = () => {
           name="description"
           content={
             product
-              ? `Compra ${baseProductName}, perfumería fina en Costa Rica. ${getCleanText(product.description).substring(0, 120)}...`
+              ? `Compra ${baseProductName}, perfumería fina en Costa Rica. ${getCleanText(product.description).substring(0, 150)}...`
               : "Descubre nuestra colección de perfumes y cosméticos."
           }
         />
+        {product?.searchTags?.length > 0 && (
+          <meta name="keywords" content={product.searchTags.join(", ")} />
+        )}
+        <link rel="canonical" href={product ? `https://oriyina.com/products/${product.slug || product._id}` : "https://oriyina.com/products"} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="product" />
         <meta
           property="og:title"
-          content={product ? baseProductName : "Look & Smell"}
+          content={product ? `${baseProductName} | Oriyina⅃` : "Oriyina⅃"}
         />
         <meta
           property="og:description"
           content={
             product
-              ? getCleanText(product.description).substring(0, 120)
-              : "Tu tienda de confianza."
+              ? getCleanText(product.description).substring(0, 160)
+              : "Tu tienda de confianza en Costa Rica."
           }
         />
         <meta
           property="og:image"
-          content={product?.imageUrls?.[0]?.secure_url}
+          content={product?.imageUrls?.[0]?.secure_url || "https://oriyina.com/logo.png"}
         />
+        <meta property="og:url" content={product ? `https://oriyina.com/products/${product.slug || product._id}` : "https://oriyina.com"} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product ? baseProductName : "Oriyina⅃"} />
+        <meta name="twitter:description" content={product ? getCleanText(product.description).substring(0, 160) : "Tienda de perfumes."} />
+        <meta name="twitter:image" content={product?.imageUrls?.[0]?.secure_url} />
+
+        {structuredData && (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        )}
       </Helmet>
 
       <Container
