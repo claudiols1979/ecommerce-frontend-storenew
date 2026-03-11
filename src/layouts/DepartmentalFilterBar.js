@@ -139,7 +139,7 @@ const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }
     navigate,
   ]);
 
-  // ✅ Manejar cambio de filtros - SIMPLIFICADO
+  // ✅ Manejar cambio de filtros - MEJORADO
   const handleFilterChange = async (filterType, value) => {
     const newValue = value.toString().trim();
 
@@ -149,12 +149,13 @@ const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }
 
     setFilterLoading(true);
 
+    // Creamos los nuevos filtros basados en el cambio
     const newFilters = {
       ...uiFilters,
       [filterType]: newValue,
     };
 
-    // Resetear filtros dependientes
+    // Resetear filtros dependientes (cascada)
     if (filterType === "department") {
       newFilters.brand = "";
       newFilters.category = "";
@@ -166,15 +167,17 @@ const DepartmentalFilterBar = ({ hide, isFiltersExpanded, setIsFiltersExpanded }
       newFilters.subcategory = "";
     }
 
+    // Actualizamos el estado de la UI
     setUiFilters(newFilters);
 
     try {
-      // Actualizar taxonomía contextual
-      const taxonomyFilters = { ...newFilters };
-      if (newValue === "") {
-        delete taxonomyFilters[filterType];
-      }
+      // Obtenemos qué filtros enviar para la taxonomía contextual
+      // Enviamos todos los filtros actuales de la UI
+      const taxonomyFilters = Object.fromEntries(
+        Object.entries(newFilters).filter(([_, v]) => v !== "")
+      );
 
+      console.log("📡 Solicitando taxonomía contextual con:", taxonomyFilters);
       await fetchTaxonomy(taxonomyFilters);
       console.log("📊 Taxonomía actualizada");
     } catch (error) {
