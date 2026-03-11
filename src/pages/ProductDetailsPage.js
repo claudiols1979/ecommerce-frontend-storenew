@@ -1766,12 +1766,11 @@ const ProductDetailsPage = () => {
                       sx={{
                         px: 3,
                         py: 1,
-                        borderRadius: "10px",
-                        background: 'linear-gradient(90deg, #A855F7 0%, #F72585 100%) !important',
-                        color: "#fff",
+                        borderRadius: "15px",
+                        background: 'linear-gradient(90deg, #c6a6c5 0%, #df71e5 100%, #d9a4dc 10%) !important',
+                        color: "#f1e8f1",
                         fontWeight: 700,
-                        fontSize: "0.85rem",
-                        border: "1px solid rgba(38, 60, 92, 0.1)",
+                        fontSize: "0.85rem",                        
                       }}
                     >
                       {tagItem}
