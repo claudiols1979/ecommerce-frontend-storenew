@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/products/:idOrSlug",
+      "has": [
+        {
+          "type": "header",
+          "key": "User-Agent",
+          "value": "(.*WhatsApp.*|.*facebookexternalhit.*|.*Twitterbot.*|.*Slackbot.*|.*LinkedInBot.*|.*Embedly.*|.*Yahoo.*|.*Baiduspider.*|.*Googlebot.*|.*googleweblight.*)"
+        }
+      ],
+      "destination": "https://online-oriyinal-backend-0d1d99a8f153.herokuapp.com/api/seo/product-preview/:idOrSlug"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
