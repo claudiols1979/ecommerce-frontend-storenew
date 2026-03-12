@@ -195,6 +195,17 @@ const PaymentRedirectPage = () => {
                       </Box>
                     )}
 
+                    {orderInfo.discountAmount > 0 && (
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" sx={{ color: "#4ade80", fontWeight: 700 }}>
+                          Descuento Cupón {orderInfo.discountPercentage ? `(${orderInfo.discountPercentage}%)` : ""}:
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "#4ade80", fontWeight: 700 }}>
+                          -{formatPrice(orderInfo.discountAmount)}
+                        </Typography>
+                      </Box>
+                    )}
+
                     <Box display="flex" justifyContent="space-between">
                       <Typography variant="body2" sx={{ opacity: 0.7 }}>
                         {orderInfo.taxRegime === 'simplified' ? 'Costo de Envío' : 'Envío (Sin IVA)'}:

@@ -1267,20 +1267,26 @@ const ProfilePage = () => {
                   {displayOrders.map((order, orderIndex) => {
                     const breakdown =
                       order.taxBreakdown && order.taxBreakdown.itemsSubtotal > 0
-                        ? order.taxBreakdown
+                        ? {
+                          ...order.taxBreakdown,
+                          discountAmount: order.discountAmount || order.taxBreakdown.discountAmount || 0
+                        }
                         : (() => {
                           const iSubtotal = order.items.reduce(
                             (sum, item) =>
                               sum + item.quantity * item.priceAtSale,
                             0,
                           );
+                          const discountPercentage = order.discountPercentage || 0;
+                          const dAmount = Math.round(iSubtotal * (discountPercentage / 100));
+
                           const iTax = order.items.reduce((acc, item) => {
                             const iva = parseFloat(item.product?.iva) || 0;
+                            const discountedItemBase = (item.quantity * item.priceAtSale) * (1 - discountPercentage / 100);
                             return (
                               acc +
                               Math.round(
-                                item.quantity *
-                                item.priceAtSale *
+                                discountedItemBase *
                                 (iva / 100),
                               )
                             );
@@ -1301,8 +1307,9 @@ const ProfilePage = () => {
                             itemsTax: iTax,
                             shippingBase: sBase,
                             shippingTax: sTax,
+                            discountAmount: dAmount,
                             total: Math.round(
-                              iSubtotal + iTax + sBase + sTax,
+                              (iSubtotal - dAmount) + iTax + sBase + sTax
                             ),
                           };
                         })();
@@ -1733,6 +1740,28 @@ const ProfilePage = () => {
                                     </Typography>
                                   </Box>
                                 )}
+                              {breakdown.discountAmount > 0 && (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ color: "#4ade80", fontWeight: 700 }}
+                                  >
+                                    Descuento Cupón {order.coupon?.code ? `(${order.coupon.code})` : ""}:
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ color: "#4ade80", fontWeight: 700 }}
+                                  >
+                                    -{formatPrice(breakdown.discountAmount)}
+                                  </Typography>
+                                </Box>
+                              )}
                               <Box
                                 sx={{
                                   display: "flex",

@@ -72,6 +72,8 @@ const CartPage = () => {
     return acc + item.quantity * priceWithTax;
   }, 0);
 
+  const discountExplanation = "El descuento se aplica únicamente al subtotal de productos (antes de IVA), no incluye el costo de envío.";
+
   useEffect(() => {
     if (!loading && cartItems.length === 0) {
       console.log("Tu carrito está vacío. ¡Añade algunos productos!");
@@ -586,6 +588,21 @@ const CartPage = () => {
                       ? "Acción Restringida"
                       : "Proceder al Checkout"}
                   </Button>
+
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: "block",
+                      textAlign: "center",
+                      mt: 2,
+                      opacity: 0.6,
+                      fontStyle: "italic",
+                      px: 2,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {discountExplanation}
+                  </Typography>
 
                   <Button
                     fullWidth

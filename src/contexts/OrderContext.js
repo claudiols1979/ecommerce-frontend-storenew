@@ -19,6 +19,7 @@ export const OrderProvider = ({ children }) => {
   const [myOrders, setMyOrders] = useState([]); // new
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   const fetchCart = useCallback(async () => {
     if (!user || !user.token) {
@@ -170,9 +171,11 @@ export const OrderProvider = ({ children }) => {
         const response = await api.post("/api/orders/place-order", {
           items: orderItemsToSend,
           whatsappAgentPhoneNumber: whatsappAgentNumber, // *** CORRECCIÓN AQUÍ ***
+          couponCode: appliedCoupon?.code
         });
 
         setCartItems([]);
+        setAppliedCoupon(null);
         return response.data;
       } catch (err) {
         console.error(
@@ -189,7 +192,7 @@ export const OrderProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [api, user, cartItems],
+    [api, user, cartItems, appliedCoupon],
   );
 
   const addItemToCart = useCallback(
@@ -312,6 +315,7 @@ export const OrderProvider = ({ children }) => {
         const response = await api.post("/api/orders/cart/create-payment", {
           shippingDetails: shippingDetails,
           items: itemsForPayment,
+          couponCode: appliedCoupon?.code
         });
 
         const { paymentUrl } = response.data;
@@ -334,8 +338,25 @@ export const OrderProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [api, user, cartItems],
+    [api, user, cartItems, appliedCoupon],
   );
+
+  const applyCoupon = useCallback(async (code, cartSubtotal) => {
+    if (!user || !user.token) return { success: false, message: "Debes iniciar sesión." };
+    setLoading(true);
+    try {
+      const response = await api.post("/api/coupons/validate", { code, cartSubtotal });
+      setAppliedCoupon(response.data);
+      return { success: true, ...response.data };
+    } catch (err) {
+      const msg = err.response?.data?.message || "Error al validar cupón";
+      return { success: false, message: msg };
+    } finally {
+      setLoading(false);
+    }
+  }, [api, user]);
+
+  const removeCoupon = useCallback(() => setAppliedCoupon(null), []);
 
   const value = {
     cartItems,
@@ -350,6 +371,9 @@ export const OrderProvider = ({ children }) => {
     myOrders,
     fetchMyOrders,
     initiateTilopayPayment,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
   };
 
   return (

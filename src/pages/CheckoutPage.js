@@ -20,6 +20,7 @@ import {
   InputLabel,
   alpha,
   Alert,
+  Icon,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useOrders } from "../contexts/OrderContext";
@@ -49,7 +50,7 @@ const glassStyle = {
 };
 
 const CheckoutPage = () => {
-  const { cartItems, loading, initiateTilopayPayment } = useOrders();
+  const { cartItems, loading, initiateTilopayPayment, appliedCoupon, applyCoupon, removeCoupon } = useOrders();
   const { user } = useAuth();
   const { taxRegime } = useConfig();
   const { updateResellerProfile } = useUpdateInfo();
@@ -74,6 +75,9 @@ const CheckoutPage = () => {
   const [provinceTouched, setProvinceTouched] = useState(false);
   const [paymentButtonLoading, setPaymentButtonLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
 
   const [touchedFields, setTouchedFields] = useState({
     name: false,
@@ -91,17 +95,6 @@ const CheckoutPage = () => {
   const shouldShowError = (fieldName, value) => {
     return touchedFields[fieldName] && !value;
   };
-
-  const totalCartPrice = cartItems.reduce((acc, item) => {
-    const priceWithTax = item.product
-      ? taxRegime === "simplified"
-        ? Math.round(item.priceAtSale)
-        : calculatePriceWithTax(item.priceAtSale, item.product.iva)
-      : item.priceAtSale;
-    return acc + item.quantity * priceWithTax;
-  }, 0);
-
-  const finalTotalPrice = totalCartPrice + shippingCost;
 
   const totalWeight = cartItems.reduce(
     (sum, item) => sum + item.quantity * (item.product?.weight || 100),
@@ -218,6 +211,27 @@ const CheckoutPage = () => {
     total: 0,
   });
 
+  // Calcular el total del carrito con IVA incluido
+  const itemsSubtotalRaw = cartItems.reduce((acc, item) => acc + item.quantity * item.priceAtSale, 0);
+  
+  const totalCartPrice = cartItems.reduce((acc, item) => {
+    const priceWithTax = item.product
+      ? taxRegime === "simplified"
+        ? Math.round(item.priceAtSale)
+        : calculatePriceWithTax(item.priceAtSale, item.product.iva)
+      : item.priceAtSale;
+    return acc + item.quantity * priceWithTax;
+  }, 0);
+
+  // Explicación de descuento para evitar confusiones
+  const discountExplanation = "El descuento se aplica únicamente al subtotal de productos (antes de IVA), no incluye el costo de envío.";
+
+  // APLICAR DESCUENTO AL NETO (itemsSubtotalRaw) no al total con IVA (totalCartPrice)
+  const discountAmount = appliedCoupon ? Math.round(itemsSubtotalRaw * (appliedCoupon.discountPercentage / 100)) : 0;
+  
+  // Recalcular el total final sumando netos, restando descuento, sumando IVA recalculado y envío
+  const finalTotalPrice = breakdown.total;
+
   useEffect(() => {
     const iSubtotal = cartItems.reduce(
       (acc, item) => acc + item.quantity * item.priceAtSale,
@@ -241,13 +255,26 @@ const CheckoutPage = () => {
     const sTax = taxRegime === "simplified" ? 0 : Math.round(sBaseRaw * 0.13);
     const sBase =
       taxRegime === "simplified" ? Math.round(sBaseRaw * 1.13) : sBaseRaw;
+
+    // APLICAR DESCUENTO SOLO A PRODUCTOS (NETO)
+    const discountAmount = appliedCoupon 
+      ? Math.round(iSubtotal * (appliedCoupon.discountPercentage / 100)) 
+      : 0;
+    
+    // El IVA de productos debe recalcularse sobre el monto descontado si no es simplificado
+    const discountedITax = taxRegime === "simplified" 
+      ? 0 
+      : Math.round(iTax * (1 - (appliedCoupon?.discountPercentage || 0) / 100));
+
     setBreakdown({
       itemsSubtotal: iSubtotal,
-      itemsTax: iTax,
+      itemsTax: discountedITax,
       shippingBase: sBase,
       shippingTax: sTax,
-      total: Math.round(iSubtotal + iTax + sBase + sTax),
+      discountAmount: discountAmount,
+      total: Math.round(iSubtotal - discountAmount + discountedITax + sBase + sTax),
     });
+
     if (selectedProvince && shippingDetails.city) {
       setShippingCost(sBase + sTax);
       setShippingMessage(
@@ -259,7 +286,18 @@ const CheckoutPage = () => {
       setShippingCost(0);
       setShippingMessage("");
     }
-  }, [selectedProvince, selectedCanton, shippingDetails.city, cartItems]);
+  }, [selectedProvince, selectedCanton, shippingDetails.city, cartItems, appliedCoupon, taxRegime]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError("");
+    const result = await applyCoupon(couponCode, totalCartPrice);
+    if (!result.success) {
+      setCouponError(result.message);
+    }
+    setCouponLoading(false);
+  };
 
   useEffect(() => {
     if (!loading && cartItems.length === 0 && !orderPlaced) {
@@ -670,83 +708,153 @@ const CheckoutPage = () => {
                     </Typography>
                   </Box>
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1.5,
-                      my: 3,
-                    }}
-                  >
-                    {/* Productos */}
-                    <Box display="flex" justifyContent="space-between">
-                      <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                        {taxRegime === "simplified"
-                          ? "Subtotal Productos"
-                          : "Subtotal Productos (Sin IVA)"}
-                        :
+                    {/* Cupón */}
+                    <Box sx={{ mt: 2, mb: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, mb: 1, opacity: 0.8 }}>
+                        ¿Tienes un cupón?
                       </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {formatPrice(breakdown.itemsSubtotal)}
-                      </Typography>
+                      {appliedCoupon ? (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            p: 1.5,
+                            background: "rgba(76, 175, 80, 0.1)",
+                            borderRadius: "12px",
+                            border: "1px solid rgba(76, 175, 80, 0.3)",
+                          }}
+                        >
+                          <Typography variant="body2" sx={{ color: "#81C784", fontWeight: 700 }}>
+                            Cupón {appliedCoupon.code} aplicado (-{appliedCoupon.discountPercentage}%)
+                          </Typography>
+                          <Button size="small" color="error" onClick={removeCoupon} sx={{ minWidth: 0, p: 0.5 }}>
+                            <Icon fontSize="small">close</Icon>
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                          <TextField
+                            size="small"
+                            placeholder="Ej: PRIMERACOMPRA"
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                            sx={{
+                              flex: 1,
+                              "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                background: "rgba(255,255,255,0.05)",
+                                color: "white",
+                              },
+                              "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.7)" },
+                            }}
+                          />
+                          <Button
+                            variant="contained"
+                            disabled={couponLoading || !couponCode.trim()}
+                            onClick={handleApplyCoupon}
+                            sx={{
+                              borderRadius: "12px",
+                              textTransform: "none",
+                              fontWeight: "bold",
+                              background: theme.palette.primary.main,
+                            }}
+                          >
+                            {couponLoading ? <CircularProgress size={20} color="inherit" /> : "Aplicar"}
+                          </Button>
+                        </Box>
+                      )}
+                      {couponError && (
+                        <Typography variant="caption" sx={{ color: "#ef5350", mt: 0.5, display: "block", fontSize: "0.75rem", fontWeight: 600 }}>
+                          {couponError}
+                        </Typography>
+                      )}
                     </Box>
 
-                    {taxRegime !== "simplified" && (
-                      <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                          IVA Productos (13%):
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                          {formatPrice(breakdown.itemsTax)}
-                        </Typography>
-                      </Box>
-                    )}
-
-                    {/* Envío */}
-                    <Box display="flex" justifyContent="space-between">
-                      <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                        {taxRegime === "simplified"
-                          ? `Costo de Envío (${totalWeight} gramos)`
-                          : `Envío (Sin IVA) (${totalWeight} gramos)`}
-                        :
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {formatPrice(breakdown.shippingBase)}
-                      </Typography>
-                    </Box>
-
-                    {taxRegime !== "simplified" && (
-                      <Box display="flex" justifyContent="space-between">
-                        <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                          IVA Envío (13%):
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                          {formatPrice(breakdown.shippingTax)}
-                        </Typography>
-                      </Box>
-                    )}
-
-                    {/* Total */}
+                    {/* Desglose de Precios */}
                     <Box
-                      display="flex"
-                      justifyContent="space-between"
                       sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1.5,
+                        mt: 2,
                         pt: 2,
-                        mt: 1,
-                        borderTop: "1px solid rgba(255,255,255,0.2)",
+                        borderTop: "1px solid rgba(255,255,255,0.1)",
                       }}
                     >
-                      <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                        Total
-                      </Typography>
-                      <Typography
-                        variant="h5"
-                        sx={{ fontWeight: 900, color: "white" }}
+                      {/* Subtotal Productos */}
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                          Subtotal Productos:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                          {formatPrice(breakdown.itemsSubtotal)}
+                        </Typography>
+                      </Box>
+
+                      {/* IVA Productos */}
+                      {taxRegime !== "simplified" && (
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                            IVA Productos:
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                            {formatPrice(breakdown.itemsTax)}
+                          </Typography>
+                        </Box>
+                      )}
+
+                      {/* Descuento Cupón */}
+                      {appliedCoupon && (
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography variant="body2" sx={{ color: "#81C784", fontWeight: 700 }}>
+                            Descuento Cupón ({appliedCoupon.discountPercentage}%):
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: "#81C784", fontWeight: 700 }}>
+                            -{formatPrice(discountAmount)}
+                          </Typography>
+                        </Box>
+                      )}
+
+                      {/* Envío */}
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                          Envío:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                          {formatPrice(breakdown.shippingBase)}
+                        </Typography>
+                      </Box>
+
+                      {taxRegime !== "simplified" && (
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                            IVA Envío (13%):
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                            {formatPrice(breakdown.shippingTax)}
+                          </Typography>
+                        </Box>
+                      )}
+
+                      {/* Total */}
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        sx={{
+                          pt: 2,
+                          mt: 1,
+                          borderTop: "1px solid rgba(255,255,255,0.2)",
+                        }}
                       >
-                        {formatPrice(breakdown.total)}
-                      </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 800 }}>
+                          Total
+                        </Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 900, color: "white" }}>
+                          {formatPrice(finalTotalPrice)}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
                 </CardContent>
               </Card>
             </Box>
