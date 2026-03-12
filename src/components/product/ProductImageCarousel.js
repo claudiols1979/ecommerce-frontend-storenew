@@ -63,16 +63,21 @@ const StyledThumbnail = styled(Box)(({ theme, isSelected }) => ({
   borderRadius: "12px",
   cursor: "pointer",
   background: "#ffffff",
-  border: isSelected ? `2px solid #263C5C` : `1px solid rgba(0, 0, 0, 0.08)`,
+  // Use border for unselected, but inset shadow for selected to avoid clipping
+  border: `1px solid ${isSelected ? "#263C5C" : "rgba(0, 0, 0, 0.08)"}`,
+  boxShadow: isSelected 
+    ? "inset 0 0 0 2px #263C5C, 0 4px 12px rgba(0, 0, 0, 0.1)" 
+    : "none",
   opacity: isSelected ? 1 : 0.7,
   transform: isSelected ? "scale(1.05)" : "scale(1)",
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  boxShadow: isSelected ? "0 4px 12px rgba(0, 0, 0, 0.1)" : "none",
   "&:hover": {
     borderColor: isSelected ? "#263C5C" : "rgba(0, 0, 0, 0.2)",
     opacity: 1,
-    transform: "translateY(-2px)",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.08)",
+    transform: "translateY(-2px) scale(1.05)",
+    boxShadow: isSelected 
+      ? "inset 0 0 0 2px #263C5C, 0 6px 16px rgba(0, 0, 0, 0.08)"
+      : "0 6px 16px rgba(0, 0, 0, 0.08)",
   },
 }));
 
@@ -183,6 +188,9 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
             overflowY: "auto",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
+            // Add padding to allow thumbnails to scale without clipping
+            p: 1,
+            ml: -1, // Offset padding to keep alignment
           }}
         >
           <Grid container direction="column" spacing={1.5}>
