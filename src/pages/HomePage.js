@@ -248,6 +248,7 @@ const HomePage = () => {
           property="og:image"
           content="https://www.oriyinal.com/favicon.png"
         />
+        <meta name="twitter:card" content="summary" />
         <meta property="og:url" content="https://www.oriyinal.com/" />
         <meta property="og:type" content="website" />
       </Helmet>

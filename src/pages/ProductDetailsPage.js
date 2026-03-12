@@ -1205,7 +1205,7 @@ const ProductDetailsPage = () => {
         <meta property="og:url" content={product ? `https://oriyinal.com/products/${product.slug || product._id}` : "https://oriyinal.com"} />
 
         {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={product ? baseProductName : "Oriyina⅃"} />
         <meta name="twitter:description" content={product ? getCleanText(product.description).substring(0, 160) : "Tienda de perfumes."} />
         <meta name="twitter:image" content={product?.imageUrls?.[0]?.secure_url} />
