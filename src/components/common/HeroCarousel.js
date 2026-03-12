@@ -18,16 +18,15 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
   alignItems: "center",
   textAlign: "center",
   color: theme.palette.common.white,
-  background: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
-  padding: theme.spacing(1.5),
+  background: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5))", // Ligero ajuste en la opacidad
+  padding: theme.spacing(1.5), // Reducido de 2 a 1.5
   [theme.breakpoints.up("md")]: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(3), // Reducido de 4 a 3
     alignItems: "flex-start",
     textAlign: "left",
-    // Eliminado: left: "10%",
-    // Eliminado: right: "unset", 
-    // Eliminado: width: "80%",
-    // El contenido sigue alineado a la izquierda pero el gradiente cubre todo
+    left: "0%",
+    right: "unset",
+    width: "100%",
   },
 }));
 
