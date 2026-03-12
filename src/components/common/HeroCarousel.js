@@ -18,10 +18,10 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
   alignItems: "center",
   textAlign: "center",
   color: theme.palette.common.white,
-  background: "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6))",
-  padding: theme.spacing(2),
+  background: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5))", // Ligero ajuste en la opacidad
+  padding: theme.spacing(1.5), // Reducido de 2 a 1.5
   [theme.breakpoints.up("md")]: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(3), // Reducido de 4 a 3
     alignItems: "flex-start",
     textAlign: "left",
     left: "10%",
@@ -39,7 +39,7 @@ const HeroCarousel = () => {
       <Box
         sx={{
           width: "100%",
-          height: { xs: 250, sm: 350, md: 500 },
+          height: { xs: 200, sm: 280, md: 280 },
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -60,7 +60,7 @@ const HeroCarousel = () => {
     <Box
       sx={{
         width: "100%",
-        mb: 4,
+        mb: 2,
         borderRadius: 2,
         overflow: "hidden",
         boxShadow: 3,
@@ -89,7 +89,7 @@ const HeroCarousel = () => {
                 playsInline
                 sx={{
                   width: "100%",
-                  height: { xs: 250, sm: 350, md: 500 },
+                  height: { xs: 200, sm: 280, md: 280 },
                   objectFit: "cover",
                   display: "block",
                 }}
@@ -101,7 +101,7 @@ const HeroCarousel = () => {
                 alt={slide.alt}
                 sx={{
                   width: "100%",
-                  height: { xs: 250, sm: 350, md: 500 },
+                  height: { xs: 200, sm: 280, md: 280 },
                   objectFit: "cover",
                   display: "block",
                   boxSizing: "border-box",
