@@ -23,6 +23,7 @@ import {
   Icon,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
 import { useOrders } from "../contexts/OrderContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useConfig } from "../contexts/ConfigContext";
@@ -728,9 +729,22 @@ const CheckoutPage = () => {
                           <Typography variant="body2" sx={{ color: "#81C784", fontWeight: 700 }}>
                             Cupón {appliedCoupon.code} aplicado (-{appliedCoupon.discountPercentage}%)
                           </Typography>
-                          <Button size="small" color="error" onClick={removeCoupon} sx={{ minWidth: 0, p: 0.5 }}>
-                            <Icon fontSize="small">close</Icon>
-                          </Button>
+                          <IconButton
+                            size="small"
+                            onClick={removeCoupon}
+                            sx={{
+                              color: "#ef5350",
+                              backgroundColor: "rgba(239, 83, 80, 0.1)",
+                              "&:hover": {
+                                backgroundColor: "rgba(239, 83, 80, 0.2)",
+                                transform: "rotate(90deg)",
+                              },
+                              transition: "all 0.3s ease",
+                              p: 0.5,
+                            }}
+                          >
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
                         </Box>
                       ) : (
                         <Box sx={{ display: "flex", gap: 1 }}>
