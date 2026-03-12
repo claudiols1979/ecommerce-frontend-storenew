@@ -1182,7 +1182,7 @@ const ProductDetailsPage = () => {
         {product?.searchTags?.length > 0 && (
           <meta name="keywords" content={product.searchTags.join(", ")} />
         )}
-        <link rel="canonical" href={product ? `https://oriyinal.com/products/${product.slug || product._id}` : "https://oriyinal.com/products"} />
+        <link rel="canonical" href={product ? `https://www.oriyinal.com/products/${product.slug || product._id}` : "https://www.oriyinal.com/products"} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="product" />
@@ -1200,9 +1200,9 @@ const ProductDetailsPage = () => {
         />
         <meta
           property="og:image"
-          content={product?.imageUrls?.[0]?.secure_url || "https://oriyinal.com/logo.png"}
+          content={product?.imageUrls?.[0]?.secure_url || "https://www.oriyinal.com/logo.png"}
         />
-        <meta property="og:url" content={product ? `https://oriyinal.com/products/${product.slug || product._id}` : "https://oriyinal.com"} />
+        <meta property="og:url" content={product ? `https://www.oriyinal.com/products/${product.slug || product._id}` : "https://www.oriyinal.com"} />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary" />
