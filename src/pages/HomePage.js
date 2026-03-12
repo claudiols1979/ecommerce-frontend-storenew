@@ -231,14 +231,14 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Oriyina⅃</title>
+        <title>Oriyina⅃ | Original como vos!</title>
         <meta
           name="description"
-          content="Descubre el catálogo de perfumes y cosméticos en Look & Smell. Accede a precios exclusivos. Envíos a toda Costa Rica."
+          content="Descubre el catálogo de perfumes y cosméticos en Oriyina⅃. Accede a precios exclusivos. Envíos a toda Costa Rica."
         />
         <meta
           property="og:title"
-          content="Look & Smell - Perfumería Fina en Costa Rica"
+          content="Oriyina⅃ - Perfumería Fina en Costa Rica"
         />
         <meta
           property="og:description"
@@ -246,9 +246,9 @@ const HomePage = () => {
         />
         <meta
           property="og:image"
-          content="https://res.cloudinary.com/dl4k0gqfv/image/upload/v1751088623/Gemini_Generated_Image_oscuvxoscuvxoscu_rck3fh.png"
+          content="https://www.oriyinal.com/favicon.png"
         />
-        <meta property="og:url" content="https://www.look-and-smell.com/" />
+        <meta property="og:url" content="https://www.oriyinal.com/" />
         <meta property="og:type" content="website" />
       </Helmet>
 
