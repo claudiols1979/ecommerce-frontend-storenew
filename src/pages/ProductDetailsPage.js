@@ -1581,10 +1581,10 @@ const ProductDetailsPage = () => {
                   </Typography>
                   <IconButton
                     onClick={() =>
-                      setQuantity((q) => Math.min(product.countInStock, q + 1))
+                      setQuantity((q) => Math.min(getSelectedVariant.countInStock, q + 1))
                     }
                     disabled={
-                      quantity >= product.countInStock ||
+                      quantity >= getSelectedVariant.countInStock ||
                       cartLoading ||
                       isOutOfStock
                     }
