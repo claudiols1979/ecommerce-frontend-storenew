@@ -18,10 +18,11 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
   alignItems: "center",
   textAlign: "center",
   color: theme.palette.common.white,
-  background: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5))", // Ligero ajuste en la opacidad
+  background: "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6))", // Ligero ajuste en la opacidad
   padding: theme.spacing(1.5), // Reducido de 2 a 1.5
   [theme.breakpoints.up("md")]: {
     padding: theme.spacing(3), // Reducido de 4 a 3
+    paddingLeft: "5%", 
     alignItems: "flex-start",
     textAlign: "left",
     left: "0%",
