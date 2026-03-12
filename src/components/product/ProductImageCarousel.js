@@ -65,8 +65,9 @@ const StyledThumbnail = styled(Box)(({ theme, isSelected }) => ({
   position: "relative",
   zIndex: isSelected ? 2 : 1,
   boxSizing: "border-box", // Ensure border is included in dimensions
-  border: isSelected ? `2px solid #263C5C` : `1px solid rgba(0, 0, 0, 0.08)`,
-  boxShadow: isSelected ? "0 4px 12px rgba(0, 0, 0, 0.1)" : "none",
+  // Reduced to 1px for a cleaner look as requested
+  border: isSelected ? `1.5px solid #263C5C` : `1px solid rgba(0, 0, 0, 0.08)`,
+  boxShadow: isSelected ? "0 4px 12px rgba(0, 0, 0, 0.08)" : "none",
   opacity: isSelected ? 1 : 0.7,
   transform: isSelected ? "scale(1.05)" : "scale(1)",
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
