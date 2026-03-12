@@ -43,6 +43,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ShareIcon from "@mui/icons-material/Share";
 import { Helmet } from "react-helmet-async";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../contexts/ProductContext";
@@ -170,6 +171,33 @@ const ProductDetailsPage = () => {
   const handleToggleWishlist = (e) => {
     e.stopPropagation();
     if (product) toggleWishlist(product);
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+    
+    // Use the native share sheet if available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${product.name} | Oriyina⅃`,
+          text: `¡Mira lo que encontré en Oriyina⅃! Original como vos. ✨`,
+          url: `https://www.oriyinal.com/products/${product.slug || product._id}`,
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error("Error sharing:", err);
+        }
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(`https://www.oriyinal.com/products/${product.slug || product._id}`);
+        alert("Enlace copiado al portapapeles");
+      } catch (err) {
+        console.error("Error copying to clipboard:", err);
+      }
+    }
   };
 
   const getProductsToUse = useCallback(() => {
@@ -1309,6 +1337,25 @@ const ProductDetailsPage = () => {
                   ) : (
                     <FavoriteBorderIcon sx={{ color: "grey.500" }} fontSize="medium" />
                   )}
+                </IconButton>
+
+                <IconButton
+                  onClick={handleShare}
+                  aria-label="share product"
+                  sx={{
+                    ml: 1,
+                    mt: { xs: 0.5, md: 1 },
+                    backgroundColor: "rgba(255,255,255,0.6)",
+                    "&:hover": { 
+                      backgroundColor: "rgba(255,255,255,1)",
+                      transform: "scale(1.1)",
+                    },
+                    padding: { xs: "8px", md: "12px" },
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                    transition: "all 0.2s ease-in-out",
+                  }}
+                >
+                  <ShareIcon sx={{ color: "grey.700" }} fontSize="medium" />
                 </IconButton>
               </Box>
               <Typography
