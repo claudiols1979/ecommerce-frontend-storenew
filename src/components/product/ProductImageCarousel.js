@@ -59,25 +59,23 @@ const StyledThumbnail = styled(Box)(({ theme, isSelected }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  overflow: "hidden",
   borderRadius: "12px",
   cursor: "pointer",
   background: "#ffffff",
-  // Use border for unselected, but inset shadow for selected to avoid clipping
-  border: `1px solid ${isSelected ? "#263C5C" : "rgba(0, 0, 0, 0.08)"}`,
-  boxShadow: isSelected 
-    ? "inset 0 0 0 2px #263C5C, 0 4px 12px rgba(0, 0, 0, 0.1)" 
-    : "none",
+  position: "relative",
+  zIndex: isSelected ? 2 : 1,
+  boxSizing: "border-box", // Ensure border is included in dimensions
+  border: isSelected ? `2px solid #263C5C` : `1px solid rgba(0, 0, 0, 0.08)`,
+  boxShadow: isSelected ? "0 4px 12px rgba(0, 0, 0, 0.1)" : "none",
   opacity: isSelected ? 1 : 0.7,
   transform: isSelected ? "scale(1.05)" : "scale(1)",
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   "&:hover": {
-    borderColor: isSelected ? "#263C5C" : "rgba(0, 0, 0, 0.2)",
     opacity: 1,
-    transform: "translateY(-2px) scale(1.05)",
-    boxShadow: isSelected 
-      ? "inset 0 0 0 2px #263C5C, 0 6px 16px rgba(0, 0, 0, 0.08)"
-      : "0 6px 16px rgba(0, 0, 0, 0.08)",
+    transform: "translateY(-4px) scale(1.05)",
+    zIndex: 3,
+    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.12)",
+    borderColor: isSelected ? "#263C5C" : "rgba(0, 0, 0, 0.2)",
   },
 }));
 
@@ -182,18 +180,18 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
       {imageUrls.length > 1 && (
         <Box
           sx={{
-            width: "80px",
+            width: "140px", // Widen to provide more horizontal space
             flexShrink: 0,
-            maxHeight: "500px",
+            maxHeight: "600px",
             overflowY: "auto",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
-            // Add padding to allow thumbnails to scale without clipping
-            p: 1,
-            ml: -1, // Offset padding to keep alignment
+            // Substantial padding to ensure zero clipping on all 4 sides
+            px: 4, 
+            py: 4,
           }}
         >
-          <Grid container direction="column" spacing={1.5}>
+          <Grid container direction="column" spacing={3} alignItems="center">
             {imageUrls.map((img, index) => (
               <Grid item key={index}>
                 <StyledThumbnail
