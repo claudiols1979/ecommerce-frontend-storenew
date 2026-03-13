@@ -298,7 +298,7 @@ const HomePage = () => {
         {/* Featured Products Section */}
         <Typography
           variant="h5"
-          sx={{ mb: 3, fontWeight: 700, textAlign: "center" }}
+          sx={{ mb: 3, mt: 3,fontWeight: 700, textAlign: "center" }}
         >
           Nuestros Productos Destacados
         </Typography>
