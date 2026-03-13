@@ -254,17 +254,13 @@ const HomePage = () => {
       </Helmet>
 
       <Container maxWidth="xl" sx={{ mt: 0, mb: 4, flexGrow: 1 }}>
-        {/* Hero Carousel - Hidden on mobile, visible on tablet and larger */}
-        <Box sx={{ display: { xs: "none", sm: "block" } }}>
-          <HeroCarousel />
-        </Box>
-
-
-
-        {/* ad secion 4 pics in 2x2 frame*/}
-        <Box mt={8}>
+        {/* Ad Section 3 - Now at the top */}
+        <Box mt={0}>
           <AdGridSystem3 />
-          {/* Sección de Grid de Categorías Original (Departamentos) */}
+        </Box>
+        
+        {/* Sección de Grid de Categorías Original (Departamentos) */}
+        <Box mt={6}>
           <PictureGrid />
         </Box>
 
@@ -365,6 +361,11 @@ const HomePage = () => {
             </Box>
           </Box>
         )}
+
+        {/* Hero Carousel - Now positioned above the bottom Explore button */}
+        <Box sx={{ display: { xs: "none", sm: "block" }, my: 4 }}>
+          <HeroCarousel />
+        </Box>
 
         {/* Call to action button */}
         <Box sx={{ textAlign: "center", my: 6 }}>

@@ -15,7 +15,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
     width: "100%",
     display: "flex",
     justifyContent: "center",
-    margin: theme.spacing(6, 0),
+    margin: 0,
     padding: theme.spacing(0, 2),
     boxSizing: "border-box",
 }));

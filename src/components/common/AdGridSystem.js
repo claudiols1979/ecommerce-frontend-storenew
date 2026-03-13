@@ -20,7 +20,7 @@ const PictureGridContainer = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  margin: theme.spacing(6, 0),
+  margin: 0,
   padding: theme.spacing(0, 2),
   boxSizing: "border-box",
 }));
@@ -243,7 +243,7 @@ const AdGridSystem = () => {
           ))}
         </Box>
       )}
-      <PictureGridContainer sx={{ mt: isMobile ? 0 : 6 }}>
+      <PictureGridContainer>
         <Box
           id="department-slider"
           sx={{
