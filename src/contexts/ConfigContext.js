@@ -21,22 +21,16 @@ export const ConfigProvider = ({ children }) => {
   const token = user?.token;
 
   const fetchConfigs = useCallback(async () => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/api/config`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(`${API_URL}/api/config/public`);
       setConfigs(res.data);
     } catch (error) {
       console.error("Error fetching configs:", error);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchConfigs();

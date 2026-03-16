@@ -1494,42 +1494,24 @@ const ProductDetailsPage = () => {
               ) : null}
 
               <Box sx={{ mb: 4 }}>
-                {isAuthenticated ? (
-                  <>
-                    <Typography
-                      variant="h4"
-                      sx={{ mb: 1, fontWeight: 900, color: "#263C5C" }}
-                    >
-                      {priceWithTax !== null
-                        ? formatPrice(priceWithTax)
-                        : "Precio no disponible"}
-                    </Typography>
-                    {taxRegime !== "simplified" && (
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "#999", fontWeight: 500 }}
-                      >
-                        IVA INCLUIDO
-                      </Typography>
-                    )}
-                  </>
-                ) : (
+                <>
                   <Typography
-                    onClick={() => navigate("/login")}
-                    variant="body1"
-                    sx={{
-                      color: "text.primary",
-                      fontWeight: 700,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      cursor: "pointer",
-                      "&:hover": { color: "primary.main", textDecoration: "underline" }
-                    }}
+                    variant="h4"
+                    sx={{ mb: 1, fontWeight: 900, color: "#263C5C" }}
                   >
-                    <LoginIcon sx={{ fontSize: "1.2rem" }} color="primary" /> Inicia sesión para ver precio
+                    {priceWithTax !== null
+                      ? formatPrice(priceWithTax)
+                      : "Precio no disponible"}
                   </Typography>
-                )}
+                  {taxRegime !== "simplified" && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#999", fontWeight: 500 }}
+                    >
+                      IVA INCLUIDO
+                    </Typography>
+                  )}
+                </>
               </Box>
 
               <Typography

@@ -414,55 +414,34 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
             width: "100%",
           }}
         >
-          {isAuthenticated ? (
-            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
-              <Typography
-                variant="h6"
-                color="primary"
-                sx={{ fontWeight: 800, lineHeight: 1.1, fontSize: "1rem" }}
-              >
-                {priceWithTax !== null
-                  ? formatPrice(priceWithTax)
-                  : "Precio no disponible"}
-              </Typography>
-              {taxRegime !== "simplified" && (
-                <Typography variant="body2" color="text.secondary">
-                  IVA incluido
-                </Typography>
-              )}
-              {originalPrice && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "text.secondary",
-                    textDecoration: "line-through",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {formatPrice(originalPrice)}
-                </Typography>
-              )}
-            </Box>
-          ) : (
+          <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
             <Typography
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate("/login");
-              }}
-              variant="caption"
-              sx={{
-                color: "text.primary",
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                cursor: "pointer",
-                "&:hover": { color: "primary.main", textDecoration: "underline" }
-              }}
+              variant="h6"
+              color="primary"
+              sx={{ fontWeight: 800, lineHeight: 1.1, fontSize: "1rem" }}
             >
-              <LoginIcon sx={{ fontSize: "1rem" }} color="primary" /> Inicia sesión para ver precio
+              {priceWithTax !== null
+                ? formatPrice(priceWithTax)
+                : "Precio no disponible"}
             </Typography>
-          )}
+            {taxRegime !== "simplified" && (
+              <Typography variant="body2" color="text.secondary">
+                IVA incluido
+              </Typography>
+            )}
+            {originalPrice && (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  textDecoration: "line-through",
+                  lineHeight: 1.1,
+                }}
+              >
+                {formatPrice(originalPrice)}
+              </Typography>
+            )}
+          </Box>
           {isOutOfStock && (
             <Typography
               variant="body2"
