@@ -400,7 +400,9 @@ const HomePage = () => {
         </Box>
 
         {/** Hero Carousel Video**/}
-        <HeroCarouselVideo />
+        <Box sx={{ mx: { xs: -2, sm: 0 } }}>
+          <HeroCarouselVideo />
+        </Box>
 
         {/* Dynamic Departmental Sections */}
         <HomeDepartmentalSections
