@@ -23,6 +23,9 @@ const PictureGridContainer = styled(Box)(({ theme }) => ({
   margin: 0,
   padding: theme.spacing(0, 2),
   boxSizing: "border-box",
+  [theme.breakpoints.down("sm")]: {
+    padding: 0,
+  },
 }));
 
 const ImageContainer = styled(Box)(({ theme }) => ({
@@ -51,6 +54,7 @@ const ImageContainer = styled(Box)(({ theme }) => ({
   },
   [theme.breakpoints.down("sm")]: {
     minHeight: "200px",
+    borderRadius: 0,
   },
 }));
 
@@ -261,7 +265,7 @@ const AdGridSystem = () => {
             overflowX: { xs: "auto", md: "visible" },
             scrollSnapType: { xs: "x mandatory", md: "none" },
             pb: { xs: 2, md: 0 },
-            px: { xs: 2, md: 0 },
+            px: { xs: 0, md: 0 },
             "&::-webkit-scrollbar": { display: "none" },
             scrollbarWidth: "none",
             msOverflowStyle: "none",

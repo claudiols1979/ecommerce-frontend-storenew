@@ -16,6 +16,9 @@ const Wrapper = styled(Box)(({ theme }) => ({
     margin: theme.spacing(6, 0),
     padding: theme.spacing(0, 2),
     boxSizing: "border-box",
+    [theme.breakpoints.down("sm")]: {
+        padding: 0,
+    },
 }));
 
 const CSSGridContainer = styled(Box)(({ theme }) => ({
@@ -43,6 +46,9 @@ const ImageContainer = styled(Box, {
     height: "100%",
     minHeight: "250px",
     backgroundColor: theme.palette.grey[200],
+    [theme.breakpoints.down("sm")]: {
+        borderRadius: 0,
+    },
     ...(spanFull && {
         [theme.breakpoints.up("md")]: {
             gridColumn: "span 2",

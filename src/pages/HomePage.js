@@ -256,12 +256,12 @@ const HomePage = () => {
 
       <Container maxWidth="xl" sx={{ mt: 0, mb: 4, flexGrow: 1 }}>
         {/* Ad Section 3 - Now at the top */}
-        <Box mt={0}>
+        <Box mt={0} sx={{ mx: { xs: -2, sm: 0 } }}>
           <AdGridSystem3 />
         </Box>
         
         {/* Sección de Grid de Categorías Original (Departamentos) */}
-        <Box mt={6}>
+        <Box mt={6} sx={{ mx: { xs: -2, sm: 0 } }}>
           <PictureGrid />
         </Box>
 
@@ -411,7 +411,7 @@ const HomePage = () => {
 
 
         {/* Ad Grid System 4 */}
-        <Box mt={4} mb={8}>
+        <Box mt={4} mb={8} sx={{ mx: { xs: -2, sm: 0 } }}>
           <AdGridSystem4 />
         </Box>
 
@@ -440,7 +440,7 @@ const HomePage = () => {
           addingProductId={addingProductId}
         />
 
-        <Box mt={4} mb={0}>
+        <Box mt={4} mb={0} sx={{ mx: { xs: -2, sm: 0 } }}>
           <AdGridSystem2 />
         </Box>
 

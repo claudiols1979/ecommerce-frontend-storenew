@@ -21,6 +21,9 @@ const PictureGridContainer = styled(Box)(({ theme }) => ({
     margin: theme.spacing(6, 0),
     padding: theme.spacing(0, 2),
     boxSizing: "border-box",
+    [theme.breakpoints.down("sm")]: {
+        padding: 0,
+    },
 }));
 
 const CSSGridContainer = styled(Box)(({ theme }) => ({
@@ -60,6 +63,7 @@ const ImageContainer = styled(Box)(({ theme }) => ({
     },
     [theme.breakpoints.down("sm")]: {
         minHeight: "200px",
+        borderRadius: 0,
     },
 }));
 
