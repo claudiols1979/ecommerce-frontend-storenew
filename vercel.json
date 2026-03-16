@@ -12,6 +12,10 @@
       "destination": "https://online-oriyinal-backend-0d1d99a8f153.herokuapp.com/api/seo/product-preview/:idOrSlug"
     },
     {
+      "source": "/api/seo/sitemap.xml",
+      "destination": "https://online-oriyinal-backend-0d1d99a8f153.herokuapp.com/api/seo/sitemap.xml"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
