@@ -336,6 +336,7 @@ const ProductsPage = () => {
     <>
       <Helmet>
         <title>Catálogo - Oriyina⅃</title>
+        <link rel="canonical" href="https://www.oriyinal.com/products" />
       </Helmet>
 
       <Container maxWidth="xl" sx={{ my: 1, flexGrow: 1 }}>

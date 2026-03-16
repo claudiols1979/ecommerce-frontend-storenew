@@ -251,6 +251,7 @@ const HomePage = () => {
         <meta name="twitter:card" content="summary" />
         <meta property="og:url" content="https://www.oriyinal.com/" />
         <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://www.oriyinal.com/" />
       </Helmet>
 
       <Container maxWidth="xl" sx={{ mt: 0, mb: 4, flexGrow: 1 }}>
