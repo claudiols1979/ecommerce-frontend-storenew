@@ -247,7 +247,62 @@ const AdGridSystem = () => {
           ))}
         </Box>
       )}
-      <PictureGridContainer>
+      <PictureGridContainer sx={{ position: "relative" }}>
+        {isMobile && processedGridItems.length > 1 && (
+          <Box
+            sx={{
+              display: "flex",
+              position: "absolute",
+              right: 15,
+              top: "55%", 
+              transform: "translateY(-50%)",
+              zIndex: 10,
+              pointerEvents: "none",
+              flexDirection: "column",
+              alignItems: "center",
+              opacity: activeDepartmentIndex === 1 ? 0.9 : 0,
+              transition: "opacity 0.4s ease",
+            }}
+          >
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                backgroundColor: "rgba(0,0,0,0.4)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backdropFilter: "blur(4px)",
+                animation: "swipeHintDept 2s infinite",
+              }}
+            >
+              <Typography sx={{ color: "white", fontSize: "1.4rem", fontWeight: "bold" }}>
+                ←
+              </Typography>
+            </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "white",
+                mt: 0.5,
+                fontWeight: 800,
+                textShadow: "0 1px 3px rgba(0,0,0,0.9)",
+              }}
+            >
+              Desliza
+            </Typography>
+            <style>
+              {`
+                @keyframes swipeHintDept {
+                  0% { transform: translateX(0); opacity: 0; }
+                  50% { transform: translateX(-15px); opacity: 1; }
+                  100% { transform: translateX(0); opacity: 0; }
+                }
+              `}
+            </style>
+          </Box>
+        )}
         <Box
           id="department-slider"
           sx={{
