@@ -1165,7 +1165,7 @@ const ProductDetailsPage = () => {
         },
         "offers": {
           "@type": "Offer",
-          "url": `https://oriyinal.com/products/${product.slug || product._id}`,
+          "url": `https://www.oriyinal.com/products/${product.slug || product._id}`,
           "priceCurrency": "CRC",
           "price": priceWithTax,
           "priceValidUntil": new Date(
