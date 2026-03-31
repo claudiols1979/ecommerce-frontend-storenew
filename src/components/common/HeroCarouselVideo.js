@@ -32,11 +32,6 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
 const HeroCarouselVideo = () => {
   const navigate = useNavigate();
   const { videoData, loading, error, defaultVideo } = useHeroCarouselVideo();
-  const currentVideo = videoData || defaultVideo;
-  
-  // Proactive check: if the video is from the known restricted account, fail immediately
-  const isRestricted = currentVideo?.video?.includes("dl4k0gqfv");
-  const [videoError, setVideoError] = React.useState(isRestricted);
 
   // Si está cargando o no hay datos, mostrar un estado de carga o el video por defecto
   if (loading) {
@@ -62,7 +57,8 @@ const HeroCarouselVideo = () => {
     );
   }
 
-  // Ya inicializamos currentVideo arriba para el check de videoError
+  // Usar los datos del video del contexto (pueden ser del backend o por defecto)
+  const currentVideo = videoData || defaultVideo;
 
   return (
     <Box
@@ -77,43 +73,29 @@ const HeroCarouselVideo = () => {
         backgroundColor: "black",
       }}
     >
-      {!videoError ? (
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={`https://placehold.co/1200x650/000000/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Cargando...")}`}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1,
-          }}
-          onError={() => setVideoError(true)}
-        >
-          <source src={currentVideo?.video} type="video/mp4" />
-          Tu navegador no soporta la etiqueta de video.
-        </video>
-      ) : (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage: `url(https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video no disponible")})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            zIndex: 1,
-          }}
-        />
-      )}
+      <video
+        key={currentVideo?.video}
+        src={currentVideo?.video}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        crossOrigin="anonymous"
+        width="100%"
+        height="100%"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 1,
+        }}
+      >
+        Tu navegador no soporta la etiqueta de video.
+      </video>
 
       <CarouselSlideContent sx={{ zIndex: 2 }}>
         <Typography
