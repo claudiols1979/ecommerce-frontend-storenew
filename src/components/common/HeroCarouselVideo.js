@@ -77,28 +77,21 @@ const HeroCarouselVideo = () => {
       }}
     >
       <video
-        key={currentVideo?.video}
+        src={currentVideo?.video}
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
-        crossOrigin="anonymous"
-        poster={`https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Cargando...")}`}
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          transform: "translate(-50%, -50%)",
+          position: "absolute",
+          top: 0,
+          left: 0,
           zIndex: 1,
         }}
-      >
-        <source src={currentVideo?.video} type="video/mp4" />
-        Tu navegador no soporta la etiqueta de video.
-      </video>
+      />
 
       <CarouselSlideContent sx={{ zIndex: 2 }}>
         <Typography
