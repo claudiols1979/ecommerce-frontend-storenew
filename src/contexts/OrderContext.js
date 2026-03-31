@@ -38,7 +38,7 @@ export const OrderProvider = ({ children }) => {
         image:
           item.product?.imageUrls && item.product.imageUrls.length > 0
             ? item.product.imageUrls[0].secure_url
-            : "https://placehold.co/100x100/1E88E5/FFFFFF?text=No+Image",
+            : "/placeholder.png",
       }));
 
       setCartItems(formattedCartItems);

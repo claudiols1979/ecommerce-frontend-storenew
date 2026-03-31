@@ -88,7 +88,7 @@ const HeroCarouselVideo = () => {
         muted
         playsInline
         preload="auto"
-        poster={`https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video")}`}
+        poster="/placeholder.png"
         style={{
           width: "100%",
           height: "100%",

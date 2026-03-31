@@ -113,7 +113,7 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
   }, [imageUrls, selectedImageIndex]);
 
   if (!imageUrls || imageUrls.length === 0) {
-    const placeholder = "https://placehold.co/600x600/FFFFFF/E0E0E0?text=No+Image";
+    const placeholder = "/placeholder.png";
     return (
       <MainImageContainer>
         <StyledMainImage src={placeholder} alt="No disponible" />
@@ -166,42 +166,61 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
     );
   }
 
-  // Desktop View: Sidebar Thumbnails + Main Image
+  // Desktop/Tablet View: Sidebar or Bottom Thumbnails + Main Image
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
-        gap: 3,
+        flexDirection: { sm: "column-reverse", lg: "row" },
+        gap: { sm: 2, lg: 3 },
         width: "100%",
-        alignItems: "flex-start",
+        alignItems: "center",
       }}
     >
-      {/* Thumbnails Sidebar */}
+      {/* Thumbnails Container */}
       {imageUrls.length > 1 && (
         <Box
           sx={{
-            width: "140px", // Widen to provide more horizontal space
+            width: { sm: "100%", lg: "140px" },
             flexShrink: 0,
-            maxHeight: "600px",
-            overflowY: "auto",
+            maxHeight: { sm: "120px", lg: "600px" },
+            overflowX: { sm: "auto", lg: "hidden" },
+            overflowY: { sm: "hidden", lg: "auto" },
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
-            // Substantial padding to ensure zero clipping on all 4 sides
-            px: 4, 
-            py: 4,
+            px: { sm: 2, lg: 4 },
+            py: { sm: 2, lg: 4 },
           }}
         >
-          <Grid container direction="column" spacing={3} alignItems="center">
+          <Grid
+            container
+            direction={{ sm: "row", lg: "column" }}
+            spacing={2}
+            justifyContent={{ sm: "center", lg: "flex-start" }}
+            alignItems="center"
+            wrap="nowrap"
+            sx={{
+              overflowX: { sm: "auto", lg: "visible" },
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+          >
             {imageUrls.map((img, index) => (
-              <Grid item key={index}>
+              <Grid item key={index} sx={{ flexShrink: 0 }}>
                 <StyledThumbnail
                   isSelected={index === selectedImageIndex}
                   onClick={() => setSelectedImageIndex(index)}
+                  sx={{
+                    width: { sm: "60px", lg: "70px" },
+                    height: { sm: "60px", lg: "70px" },
+                  }}
                 >
                   <StyledThumbnailImage
-                    src={img.secure_url}
+                    src={img.secure_url || "/placeholder.png"}
                     alt={`Thumbnail ${index + 1}`}
+                    onError={(e) => {
+                      e.target.src = "/placeholder.png";
+                    }}
                   />
                 </StyledThumbnail>
               </Grid>
@@ -215,8 +234,11 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
         <MainImageContainer>
           <StyledMainImage
             key={selectedImageIndex}
-            src={imageUrls[selectedImageIndex]?.secure_url}
+            src={imageUrls[selectedImageIndex]?.secure_url || "/placeholder.png"}
             alt={productName}
+            onError={(e) => {
+              e.target.src = "/placeholder.png";
+            }}
             sx={{
               animation: "fadeIn 0.4s ease-in-out",
               "@keyframes fadeIn": {

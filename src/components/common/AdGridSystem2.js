@@ -187,7 +187,7 @@ const AdGridSystem2 = () => {
                                     playsInline
                                     onClick={() => handleActionClick(item.buttonLink)}
                                     onError={(e) => {
-                                        e.target.src = "https://placehold.co/800x400/E0E0E0/333333?text=Video+Error";
+                                        e.target.src = "/placeholder.png";
                                     }}
                                 />
                             ) : (
@@ -196,7 +196,7 @@ const AdGridSystem2 = () => {
                                     alt={item.alt || item.title}
                                     onClick={() => handleActionClick(item.buttonLink)}
                                     onError={(e) => {
-                                        e.target.src = "https://placehold.co/800x400/E0E0E0/333333?text=" + encodeURIComponent(item.title || "No Image");
+                                        e.target.src = "/placeholder.png";
                                     }}
                                 />
                             )}

@@ -161,9 +161,12 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         height="140"
         image={
           product.imageUrls?.[0]?.secure_url ||
-          "https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image"
+          "/placeholder.png"
         }
         alt={product.name}
+        onError={(e) => {
+          e.target.src = "/placeholder.png";
+        }}
         sx={{
           objectFit: "contain",
           p: 1,

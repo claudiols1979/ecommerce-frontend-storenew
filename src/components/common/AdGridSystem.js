@@ -347,7 +347,7 @@ const AdGridSystem = () => {
                     onLoad={() => handleImageLoad(index)}
                     onClick={() => handleViewProducts(item.department)}
                     onError={(e) => {
-                      e.target.src = "https://placehold.co/600x600/E0E0E0/333333?text=" + encodeURIComponent(item.title || "No Image");
+                      e.target.src = "/placeholder.png";
                     }}
                   />
                   <Overlay

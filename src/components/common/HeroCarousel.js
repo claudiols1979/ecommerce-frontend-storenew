@@ -98,7 +98,7 @@ const HeroCarousel = () => {
             ) : (
               <Box
                 component="img"
-                src={slide.image}
+                src={slide.image || "/placeholder.png"}
                 alt={slide.alt}
                 sx={{
                   width: "100%",
@@ -111,7 +111,7 @@ const HeroCarousel = () => {
                 }}
                 onError={(e) => {
                   e.target.src =
-                    "https://placehold.co/1200x500/cccccc/969696?text=Imagen+no+disponible";
+                    "/placeholder.png";
                 }}
               />
             )}

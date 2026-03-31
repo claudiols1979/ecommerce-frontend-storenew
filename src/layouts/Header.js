@@ -893,7 +893,10 @@ const Header = () => {
                 <ListItem alignItems="flex-start" sx={{ px: 0, py: 1 }}>
                   <Box
                     component="img"
-                    src={item.imageUrls?.[0]?.secure_url || "https://placehold.co/60x60/E0E0E0/FFFFFF?text=No+Image"}
+                    src={item.imageUrls?.[0]?.secure_url || "/placeholder.png"}
+                    onError={(e) => {
+                      e.target.src = "/placeholder.png";
+                    }}
                     sx={{ width: 60, height: 60, objectFit: 'contain', borderRadius: 1, mr: 2, cursor: 'pointer', border: '1px solid #eee' }}
                     onClick={() => {
                       navigate(`/products/${item._id}`);

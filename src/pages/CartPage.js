@@ -343,9 +343,12 @@ const CartPage = () => {
                             component="img"
                             src={
                               item.image ||
-                              "https://placehold.co/100x100/E0E0E0/FFFFFF?text=No+Image"
+                              "/placeholder.png"
                             }
                             alt={item.name}
+                            onError={(e) => {
+                              e.target.src = "/placeholder.png";
+                            }}
                             sx={{
                               maxWidth: "100%",
                               maxHeight: "100%",

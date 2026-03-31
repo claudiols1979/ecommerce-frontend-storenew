@@ -1282,9 +1282,9 @@ const ProductDetailsPage = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: { xs: 4, md: 8 },
-            alignItems: "flex-start",
+            flexDirection: { xs: "column", lg: "row" },
+            gap: { xs: 4, lg: 8 },
+            alignItems: { xs: "center", lg: "flex-start" },
             mb: 5,
             p: { xs: 0, sm: 4 },
             bgcolor: { xs: "transparent", sm: "#ffffff" },
@@ -1293,7 +1293,7 @@ const ProductDetailsPage = () => {
             boxShadow: { xs: "none", sm: "0 4px 20px rgba(0, 0, 0, 0.02)" },
           }}
         >
-          <Box sx={{ flex: { xs: "1 1 100%", sm: "0 0 50%" }, width: "100%" }}>
+          <Box sx={{ flex: { xs: "1 1 100%", lg: "0 0 50%" }, width: "100%" }}>
             <ProductImageCarousel
               imageUrls={getSelectedVariantFunction().imageUrls}
               productName={baseProductName}

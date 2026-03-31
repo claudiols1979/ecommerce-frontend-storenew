@@ -240,9 +240,12 @@ const ProductCard = ({ product, onAddToCart, isAdding }) => {
         component="img"
         image={
           product.imageUrls?.[0]?.secure_url ||
-          "https://placehold.co/600x400/E0E0E0/FFFFFF?text=No+Image"
+          "/placeholder.png"
         }
         alt={product.name}
+        onError={(e) => {
+          e.target.src = "/placeholder.png";
+        }}
         sx={{
           width: "100%",
           aspectRatio: "1/1",
