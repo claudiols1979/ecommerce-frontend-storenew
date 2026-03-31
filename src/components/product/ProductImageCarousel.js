@@ -172,7 +172,7 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
       sx={{
         display: "flex",
         flexDirection: { sm: "column-reverse", lg: "row" },
-        gap: { sm: 2, lg: 3 },
+        gap: { sm: 3, lg: 3 },
         width: "100%",
         alignItems: "center",
       }}
@@ -183,13 +183,13 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
           sx={{
             width: { sm: "100%", lg: "140px" },
             flexShrink: 0,
-            maxHeight: { sm: "120px", lg: "600px" },
+            maxHeight: { sm: "160px", lg: "600px" }, // Increased maxHeight for md to fit selected frame
             overflowX: { sm: "auto", lg: "hidden" },
             overflowY: { sm: "hidden", lg: "auto" },
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
             px: { sm: 2, lg: 4 },
-            py: { sm: 2, lg: 4 },
+            py: { sm: 3, lg: 4 }, // Increased py to ensure selection border isn't clipped
           }}
         >
           <Grid
@@ -203,16 +203,17 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
               overflowX: { sm: "auto", lg: "visible" },
               scrollbarWidth: "none",
               "&::-webkit-scrollbar": { display: "none" },
+              pb: { sm: 1, lg: 0 }, // Extra padding bottom for horizontal scroll
             }}
           >
             {imageUrls.map((img, index) => (
-              <Grid item key={index} sx={{ flexShrink: 0 }}>
+              <Grid item key={index} sx={{ flexShrink: 0, p: { sm: "12px !important", lg: "8px !important" } }}>
                 <StyledThumbnail
                   isSelected={index === selectedImageIndex}
                   onClick={() => setSelectedImageIndex(index)}
                   sx={{
-                    width: { sm: "60px", lg: "70px" },
-                    height: { sm: "60px", lg: "70px" },
+                    width: { sm: "75px", lg: "70px" }, // Slightly larger for tablet
+                    height: { sm: "75px", lg: "70px" },
                   }}
                 >
                   <StyledThumbnailImage
@@ -230,21 +231,16 @@ const ProductImageCarousel = ({ imageUrls = [], productName }) => {
       )}
 
       {/* Main Image View */}
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <MainImageContainer>
+      <Box sx={{ flex: 1, minWidth: 0, width: "100%" }}>
+        <MainImageContainer sx={{ minHeight: { sm: "400px", md: "500px", lg: "500px" } }}>
           <StyledMainImage
-            key={selectedImageIndex}
             src={imageUrls[selectedImageIndex]?.secure_url || "/placeholder.png"}
             alt={productName}
             onError={(e) => {
               e.target.src = "/placeholder.png";
             }}
             sx={{
-              animation: "fadeIn 0.4s ease-in-out",
-              "@keyframes fadeIn": {
-                from: { opacity: 0 },
-                to: { opacity: 1 },
-              },
+              transition: "opacity 0.3s ease-in-out",
             }}
           />
         </MainImageContainer>
