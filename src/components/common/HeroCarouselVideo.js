@@ -59,6 +59,7 @@ const HeroCarouselVideo = () => {
 
   // Usar los datos del video del contexto (pueden ser del backend o por defecto)
   const currentVideo = videoData || defaultVideo;
+  const [videoError, setVideoError] = React.useState(false);
 
   return (
     <Box
@@ -73,24 +74,43 @@ const HeroCarouselVideo = () => {
         backgroundColor: "black",
       }}
     >
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          width: "100%",
-          height: "auto",
-          transform: "translate(-50%, -50%)",
-          zIndex: 1,
-        }}
-      >
-        <source src={currentVideo.video} type="video/mp4" />
-        Tu navegador no soporta la etiqueta de video.
-      </video>
+      {!videoError ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={`https://placehold.co/1200x650/000000/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Cargando...")}`}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1,
+          }}
+          onError={() => setVideoError(true)}
+        >
+          <source src={currentVideo?.video} type="video/mp4" />
+          Tu navegador no soporta la etiqueta de video.
+        </video>
+      ) : (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video no disponible")})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 1,
+          }}
+        />
+      )}
 
       <CarouselSlideContent sx={{ zIndex: 2 }}>
         <Typography
