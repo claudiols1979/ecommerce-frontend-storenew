@@ -32,7 +32,11 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
 const HeroCarouselVideo = () => {
   const navigate = useNavigate();
   const { videoData, loading, error, defaultVideo } = useHeroCarouselVideo();
-  const [videoError, setVideoError] = React.useState(false);
+  const currentVideo = videoData || defaultVideo;
+  
+  // Proactive check: if the video is from the known restricted account, fail immediately
+  const isRestricted = currentVideo?.video?.includes("dl4k0gqfv");
+  const [videoError, setVideoError] = React.useState(isRestricted);
 
   // Si está cargando o no hay datos, mostrar un estado de carga o el video por defecto
   if (loading) {
@@ -58,8 +62,7 @@ const HeroCarouselVideo = () => {
     );
   }
 
-  // Usar los datos del video del contexto (pueden ser del backend o por defecto)
-  const currentVideo = videoData || defaultVideo;
+  // Ya inicializamos currentVideo arriba para el check de videoError
 
   return (
     <Box
