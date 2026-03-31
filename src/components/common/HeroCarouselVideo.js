@@ -32,6 +32,7 @@ const CarouselSlideContent = styled(Box)(({ theme }) => ({
 const HeroCarouselVideo = () => {
   const navigate = useNavigate();
   const { videoData, loading, error, defaultVideo } = useHeroCarouselVideo();
+  const [videoError, setVideoError] = React.useState(false);
 
   // Si está cargando o no hay datos, mostrar un estado de carga o el video por defecto
   if (loading) {
@@ -59,7 +60,6 @@ const HeroCarouselVideo = () => {
 
   // Usar los datos del video del contexto (pueden ser del backend o por defecto)
   const currentVideo = videoData || defaultVideo;
-  const [videoError, setVideoError] = React.useState(false);
 
   return (
     <Box
