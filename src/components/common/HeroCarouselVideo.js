@@ -59,6 +59,9 @@ const HeroCarouselVideo = () => {
 
   // Usar los datos del video del contexto (pueden ser del backend o por defecto)
   const currentVideo = videoData || defaultVideo;
+  console.log("📺 DEBUG: Current Video Data:", currentVideo);
+  console.log("📺 DEBUG: videoData:", videoData);
+  console.log("📺 DEBUG: defaultVideo:", defaultVideo);
 
   return (
     <Box
@@ -75,25 +78,25 @@ const HeroCarouselVideo = () => {
     >
       <video
         key={currentVideo?.video}
-        src={currentVideo?.video}
         autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         crossOrigin="anonymous"
-        width="100%"
-        height="100%"
+        poster={`https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Cargando...")}`}
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
+          top: "50%",
+          left: "50%",
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          transform: "translate(-50%, -50%)",
           zIndex: 1,
         }}
       >
+        <source src={currentVideo?.video} type="video/mp4" />
         Tu navegador no soporta la etiqueta de video.
       </video>
 
