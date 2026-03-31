@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
   const api = useMemo(() => {
     const instance = axios.create({
       baseURL: API_URL,
+      timeout: 15000,
       headers: {
         "Content-Type": "application/json",
       },

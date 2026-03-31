@@ -111,7 +111,7 @@ const HeroCarousel = () => {
                 }}
                 onError={(e) => {
                   e.target.src =
-                    "https://via.placeholder.com/1200x500/cccccc/969696?text=Imagen+no+disponible";
+                    "https://placehold.co/1200x500/cccccc/969696?text=Imagen+no+disponible";
                 }}
               />
             )}

@@ -186,12 +186,18 @@ const AdGridSystem2 = () => {
                                     muted
                                     playsInline
                                     onClick={() => handleActionClick(item.buttonLink)}
+                                    onError={(e) => {
+                                        e.target.src = "https://placehold.co/800x400/E0E0E0/333333?text=Video+Error";
+                                    }}
                                 />
                             ) : (
                                 <StyledImage
                                     src={item.image}
                                     alt={item.alt || item.title}
                                     onClick={() => handleActionClick(item.buttonLink)}
+                                    onError={(e) => {
+                                        e.target.src = "https://placehold.co/800x400/E0E0E0/333333?text=" + encodeURIComponent(item.title || "No Image");
+                                    }}
                                 />
                             )}
                             <Overlay

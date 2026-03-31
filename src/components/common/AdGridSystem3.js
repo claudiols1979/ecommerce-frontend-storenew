@@ -182,6 +182,9 @@ const AdGridSystem3 = () => {
                                     <StyledImage
                                         src={processedImageUrl}
                                         alt={currentItem.alt || currentItem.title || ""}
+                                        onError={(e) => {
+                                            e.target.src = "https://placehold.co/800x600/E0E0E0/333333?text=" + encodeURIComponent(currentItem.title || "No Image");
+                                        }}
                                     />
                                 )}
                                 <Overlay className="image-overlay">
