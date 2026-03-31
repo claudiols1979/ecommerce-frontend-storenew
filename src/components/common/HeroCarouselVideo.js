@@ -59,6 +59,14 @@ const HeroCarouselVideo = () => {
 
   // Usar los datos del video del contexto (pueden ser del backend o por defecto)
   const currentVideo = videoData || defaultVideo;
+  
+  // Helper para asegurar HTTPS (evita bloqueo por Mixed Content en Vercel)
+  const ensureHttps = (url) => {
+    if (!url) return url;
+    return url.replace(/^http:\/\//i, "https://");
+  };
+
+  const videoUrl = ensureHttps(currentVideo?.video);
   console.log("📺 DEBUG: Current Video Data:", currentVideo);
   console.log("📺 DEBUG: videoData:", videoData);
   console.log("📺 DEBUG: defaultVideo:", defaultVideo);
@@ -77,11 +85,14 @@ const HeroCarouselVideo = () => {
       }}
     >
       <video
-        src={currentVideo?.video}
+        key={videoUrl}
+        src={videoUrl}
         autoPlay
         loop
         muted
         playsInline
+        preload="auto"
+        poster={`https://placehold.co/1200x650/1A237E/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video")}`}
         style={{
           width: "100%",
           height: "100%",
