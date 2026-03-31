@@ -26,11 +26,13 @@ export const AdGridProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "dryzziijr";
+
   // Items por defecto (Solo 1 para nuevas instalaciones)
   const defaultItems = [
     {
       image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1754589040/syed-muhammad-baqir-zaidi-3qNVEa7SN_8-unsplash_jrfvpr.jpg",
+        `https://res.cloudinary.com/${cloudName}/image/upload/v1754589040/syed-muhammad-baqir-zaidi-3qNVEa7SN_8-unsplash_jrfvpr.jpg`,
       department: "Fragancias",
       title: "Fragancias",
       alt: "Fragancias para hombre y mujer",

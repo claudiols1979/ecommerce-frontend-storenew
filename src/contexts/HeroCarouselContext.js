@@ -28,11 +28,13 @@ export const HeroCarouselProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "dryzziijr";
+
   // Slides por defecto
   const defaultSlides = [
     {
       image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758209893/erik-mclean-nfoRa6NHTbU-unsplash_cthnfk.jpg",
+        `https://res.cloudinary.com/${cloudName}/image/upload/v1758209893/erik-mclean-nfoRa6NHTbU-unsplash_cthnfk.jpg`,
       alt: "Nuevas Colecciónes",
       title: "Descubre las nuevas colecciones",
       description:
@@ -42,7 +44,7 @@ export const HeroCarouselProvider = ({ children }) => {
     },
     {
       image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758218247/cardmapr-nl-pwxESDWRwDE-unsplash_lny8bk.jpg",
+        `https://res.cloudinary.com/${cloudName}/image/upload/v1758218247/cardmapr-nl-pwxESDWRwDE-unsplash_lny8bk.jpg`,
       alt: "Ofertas Exclusivas",
       title: "Ofertas Exclusivas",
       description: "Precios especiales que no querrás perder!",
@@ -51,7 +53,7 @@ export const HeroCarouselProvider = ({ children }) => {
     },
     {
       image:
-        "https://res.cloudinary.com/dl4k0gqfv/image/upload/v1758213151/charlesdeluvio-FK81rxilUXg-unsplash_xrs3ih.jpg",
+        `https://res.cloudinary.com/${cloudName}/image/upload/v1758213151/charlesdeluvio-FK81rxilUXg-unsplash_xrs3ih.jpg`,
       alt: "Calidad Garantizada",
       title: "Productos 100% originales",
       description: "Comprometidos con la excelencia en cada artículo.",

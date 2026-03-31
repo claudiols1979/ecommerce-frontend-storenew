@@ -67,9 +67,6 @@ const HeroCarouselVideo = () => {
   };
 
   const videoUrl = ensureHttps(currentVideo?.video);
-  console.log("📺 DEBUG: Current Video Data:", currentVideo);
-  console.log("📺 DEBUG: videoData:", videoData);
-  console.log("📺 DEBUG: defaultVideo:", defaultVideo);
 
   return (
     <Box
@@ -86,13 +83,12 @@ const HeroCarouselVideo = () => {
     >
       <video
         key={videoUrl}
-        src={videoUrl}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        poster={`https://placehold.co/1200x650/1A237E/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video")}`}
+        poster={`https://placehold.co/1200x650/263C5C/FFFFFF?text=${encodeURIComponent(currentVideo?.title || "Video")}`}
         style={{
           width: "100%",
           height: "100%",
@@ -102,7 +98,9 @@ const HeroCarouselVideo = () => {
           left: 0,
           zIndex: 1,
         }}
-      />
+      >
+        <source src={videoUrl} type="video/mp4" />
+      </video>
 
       <CarouselSlideContent sx={{ zIndex: 2 }}>
         <Typography

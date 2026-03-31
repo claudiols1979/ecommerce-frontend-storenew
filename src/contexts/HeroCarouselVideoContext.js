@@ -32,7 +32,7 @@ export const HeroCarouselVideoProvider = ({ children }) => {
   // Video por defecto
   const defaultVideo = {
     video:
-      "https://res.cloudinary.com/dl4k0gqfv/video/upload/v1758212825/video_promocion_erp_ecommerce_pifbth.mp4",
+      `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || "dryzziijr"}/video/upload/v1758212825/video_promocion_erp_ecommerce_pifbth.mp4`,
     title: "Tu estilo, a un clic de distancia.",
     subtitle: "Las mejores marcas. El mejor precio. Todo para ti.",
     buttonText: "Explorar Productos",
