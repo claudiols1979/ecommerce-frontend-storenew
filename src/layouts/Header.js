@@ -369,58 +369,63 @@ const Header = () => {
               <NavBranding />
 
               {isMobile ? (
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                  {/* Icons row: cart, wishlist, hamburger */}
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <IconButton
+                      component={RouterLink}
+                      to="/cart"
+                      color="inherit"
+                      sx={{ mr: 0.5, color: "#fff" }}
+                      aria-label={`cart with ${cartItemCount} items`}
+                      className={animate ? "cart-pulse" : ""}
+                    >
+                      <Badge
+                        badgeContent={cartItemCount}
+                        color="success"
+                        componentsProps={{
+                          badge: {
+                            className: animate ? "badge-bounce" : "",
+                          },
+                        }}
+                      >
+                        <ShoppingCartIcon />
+                      </Badge>
+                    </IconButton>
+                    <IconButton
+                      color="inherit"
+                      sx={{ mr: 0.5, color: "#fff" }}
+                      aria-label={`wishlist with ${wishlist.length} items`}
+                      onClick={handleWishlistDrawerToggle}
+                    >
+                      <Badge badgeContent={wishlist.length} color="error">
+                        <FavoriteIcon />
+                      </Badge>
+                    </IconButton>
+                    <IconButton
+                      color="inherit"
+                      aria-label="open drawer"
+                      edge="end"
+                      onClick={handleMobileMenuToggle}
+                    >
+                      <MenuIcon sx={{ color: "#fff" }} />
+                    </IconButton>
+                  </Box>
+                  {/* User greeting below icons */}
                   {user && (
                     <Typography
                       variant="caption"
                       sx={{
                         color: "white",
                         fontWeight: 700,
-                        mr: 1,
-                        display: { xs: "block", sm: "block" },
+                        mt: 0.25,
+                        fontSize: "0.7rem",
+                        opacity: 0.9,
                       }}
                     >
                       Hola, {user.firstName || "Usuario"}
                     </Typography>
                   )}
-                  <IconButton
-                    component={RouterLink}
-                    to="/cart"
-                    color="inherit"
-                    sx={{ mr: 1, color: "#fff" }}
-                    aria-label={`cart with ${cartItemCount} items`}
-                    className={animate ? "cart-pulse" : ""}
-                  >
-                    <Badge
-                      badgeContent={cartItemCount}
-                      color="success"
-                      componentsProps={{
-                        badge: {
-                          className: animate ? "badge-bounce" : "",
-                        },
-                      }}
-                    >
-                      <ShoppingCartIcon />
-                    </Badge>
-                  </IconButton>
-                  <IconButton
-                    color="inherit"
-                    sx={{ mr: 1, color: "#fff" }}
-                    aria-label={`wishlist with ${wishlist.length} items`}
-                    onClick={handleWishlistDrawerToggle}
-                  >
-                    <Badge badgeContent={wishlist.length} color="error">
-                      <FavoriteIcon />
-                    </Badge>
-                  </IconButton>
-                  <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    edge="end"
-                    onClick={handleMobileMenuToggle}
-                  >
-                    <MenuIcon sx={{ color: "#fff" }} />
-                  </IconButton>
                   <Drawer
                     anchor="right"
                     open={mobileMenuOpen}
