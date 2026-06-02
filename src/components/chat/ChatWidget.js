@@ -57,10 +57,11 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
     color: "#fff",
     [theme.breakpoints.down("sm")]: {
         width: "100vw",
-        height: "100vh",
-        maxHeight: "100vh",
+        height: "100dvh",
+        maxHeight: "100dvh",
         marginBottom: 0,
         borderRadius: 0,
+        paddingTop: "env(safe-area-inset-top, 0px)",
     },
 }));
 
