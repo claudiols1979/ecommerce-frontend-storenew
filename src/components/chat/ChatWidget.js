@@ -434,13 +434,13 @@ const ChatWidget = () => {
                             <StyledTextField
                                 fullWidth
                                 size="small"
-                                placeholder="Escriba su consulta aquí..."
+                                placeholder={isMobile ? "Escriba y presione Enter..." : "Escriba su consulta aquí..."}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 variant="outlined"
                                 InputProps={{
-                                    endAdornment: (
+                                    endAdornment: !isMobile ? (
                                         <IconButton
                                             size="small"
                                             onClick={handleSend}
@@ -452,7 +452,7 @@ const ChatWidget = () => {
                                         >
                                             <SendIcon fontSize="small" />
                                         </IconButton>
-                                    ),
+                                    ) : null,
                                 }}
                             />
                         </InputContainer>
