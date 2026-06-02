@@ -33,7 +33,7 @@
     "eject": "react-scripts eject"
   },
   "engines": {
-  "node": "24.x"
+    "node": "24.x"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +54,7 @@
     ]
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "sharp": "^0.34.5"
   }
 }
