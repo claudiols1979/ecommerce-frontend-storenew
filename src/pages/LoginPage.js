@@ -116,7 +116,7 @@ const LoginPage = () => {
   const textFieldStyle = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "12px",
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
+      backgroundColor: "transparent",
       backdropFilter: "blur(4px)",
       color: "#fff",
       "& fieldset": {
