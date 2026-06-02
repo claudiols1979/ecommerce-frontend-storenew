@@ -131,6 +131,11 @@ const LoginPage = () => {
       "& input::placeholder": {
         color: "rgba(255, 255, 255, 0.5)",
       },
+      "& input:-webkit-autofill": {
+        WebkitBoxShadow: "0 0 0 100px transparent inset",
+        WebkitTextFillColor: "#fff",
+        transition: "background-color 5000s ease-in-out 0s",
+      },
     },
     "& .MuiInputLabel-root": {
       color: "rgba(255, 255, 255, 0.7)",
