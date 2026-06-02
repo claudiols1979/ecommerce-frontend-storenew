@@ -56,12 +56,18 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
     border: "1px solid rgba(255,255,255,0.1)",
     color: "#fff",
     [theme.breakpoints.down("sm")]: {
-        width: "100vw",
+        width: "100%",
         height: "100dvh",
         maxHeight: "100dvh",
         marginBottom: 0,
         borderRadius: 0,
         paddingTop: "env(safe-area-inset-top, 0px)",
+        paddingLeft: "env(safe-area-inset-left, 0px)",
+        paddingRight: "env(safe-area-inset-right, 0px)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        boxSizing: "border-box",
     },
 }));
 
