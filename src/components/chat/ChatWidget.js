@@ -20,6 +20,7 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import config from "../../config";
 
@@ -230,6 +231,7 @@ const ChatWidget = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
     // Initialize history with a personalized message if user data exists
@@ -324,14 +326,31 @@ const ChatWidget = () => {
         }
     };
 
-    const handleKeyPress = (e) => {
+    const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend();
         }
     };
 
-    if (!user) return null;
+    // Always render the button — if not logged in, clicking just shows a nudge
+    const handleToggle = () => {
+        if (!user) {
+            navigate("/login");
+            return;
+        }
+        setIsOpen(!isOpen);
+    };
+
+    if (!user) {
+        return (
+            <ChatContainer ref={chatContainerRef}>
+                <GradientButton onClick={handleToggle} aria-label="Iniciar sesión para chatear">
+                    <SmartToyIcon sx={{ fontSize: "28px" }} />
+                </GradientButton>
+            </ChatContainer>
+        );
+    }
 
     return (
         <ChatContainer ref={chatContainerRef}>
@@ -407,7 +426,7 @@ const ChatWidget = () => {
                                 placeholder="Escriba su consulta aquí..."
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                onKeyPress={handleKeyPress}
+                                onKeyDown={handleKeyDown}
                                 variant="outlined"
                                 InputProps={{
                                     endAdornment: (
