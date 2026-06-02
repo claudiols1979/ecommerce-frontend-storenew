@@ -57,7 +57,6 @@ const MainLayout = ({ children }) => (
     <MainContent>{children}</MainContent>
     <SearchHistorySection />
     <Footer />
-    <ChatWidget />
     <FloatingCart />
   </AppContainer>
 );
@@ -105,6 +104,7 @@ function App() {
           }
         />
       </Routes>
+      <ChatWidget />
     </>
   );
 }
