@@ -85,11 +85,13 @@ const ChatHeader = styled(Box)(({ theme }) => ({
 const MessageList = styled(List)({
     flexGrow: 1,
     overflowY: "auto",
+    overflowX: "hidden",
     padding: "20px",
     backgroundColor: "transparent",
     display: "flex",
     flexDirection: "column",
     gap: "12px",
+    minHeight: 0,
     "&::-webkit-scrollbar": {
         width: "4px",
     },
@@ -106,11 +108,13 @@ const MessageBubble = styled(Box, {
     color: isAi ? "#fff" : "#31008A",
     padding: "12px 16px",
     borderRadius: isAi ? "18px 18px 18px 4px" : "18px 18px 4px 18px",
-    maxWidth: "85%",
+    maxWidth: isAi ? "92%" : "85%",
     boxShadow: isAi ? "none" : "0 4px 12px rgba(0,0,0,0.1)",
     fontSize: "0.95rem",
     lineHeight: 1.5,
     wordWrap: "break-word",
+    overflowWrap: "anywhere",
+    overflow: "hidden",
 }));
 
 const InputContainer = styled(Box)({
