@@ -36,8 +36,8 @@ const ChatContainer = styled(Box)(({ theme }) => ({
     alignItems: "flex-end",
     fontFamily: "'Inter', sans-serif",
     [theme.breakpoints.down("sm")]: {
-        bottom: 80, // Above mobile footer/nav and FloatingCart (which is at y:240 top area)
-        right: 15,
+        bottom: 16,
+        right: 12,
     },
 }));
 
@@ -56,9 +56,11 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
     border: "1px solid rgba(255,255,255,0.1)",
     color: "#fff",
     [theme.breakpoints.down("sm")]: {
-        width: "calc(100vw - 30px)",
-        height: "calc(100vh - 200px)", // More room at the top (lowest top edge)
-        maxHeight: "500px",
+        width: "100vw",
+        height: "100vh",
+        maxHeight: "100vh",
+        marginBottom: 0,
+        borderRadius: 0,
     },
 }));
 
