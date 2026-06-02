@@ -18,6 +18,8 @@ import SmartToyIcon from "@mui/icons-material/SmartToy";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAuth } from "../../contexts/AuthContext";
 import config from "../../config";
 
@@ -139,6 +141,85 @@ const GradientButton = styled(IconButton)(({ theme }) => ({
         boxShadow: "0 8px 25px rgba(247, 37, 133, 0.6)",
     },
 }));
+
+// --- Markdown renderer for AI messages ---
+const MarkdownContent = styled(Box)({
+    "& p": { margin: "6px 0", lineHeight: 1.6 },
+    "& strong": { color: "#fff", fontWeight: 700 },
+    "& em": { color: "rgba(255,255,255,0.85)", fontStyle: "italic" },
+    "& h1, & h2, & h3, & h4": {
+        color: "#fff",
+        fontWeight: 700,
+        margin: "12px 0 4px 0",
+        lineHeight: 1.3,
+    },
+    "& h2": { fontSize: "1.05rem", borderBottom: "1px solid rgba(255,255,255,0.15)", paddingBottom: 4 },
+    "& h3": { fontSize: "0.95rem" },
+    "& ul, & ol": { margin: "4px 0", paddingLeft: 20 },
+    "& li": { margin: "2px 0", lineHeight: 1.5 },
+    "& code": {
+        backgroundColor: "rgba(0,0,0,0.3)",
+        padding: "1px 6px",
+        borderRadius: 4,
+        fontSize: "0.85rem",
+        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+        color: "#F72585",
+    },
+    "& pre": {
+        backgroundColor: "rgba(0,0,0,0.4)",
+        padding: "10px 14px",
+        borderRadius: 8,
+        overflowX: "auto",
+        margin: "8px 0",
+        fontSize: "0.85rem",
+    },
+    "& pre code": {
+        backgroundColor: "transparent",
+        padding: 0,
+        color: "#e0e0e0",
+    },
+    "& table": {
+        width: "100%",
+        borderCollapse: "collapse",
+        margin: "8px 0",
+        fontSize: "0.85rem",
+        borderRadius: 8,
+        overflow: "hidden",
+    },
+    "& thead": {
+        background: "linear-gradient(90deg, #A855F7 0%, #F72585 100%)",
+    },
+    "& th": {
+        padding: "8px 10px",
+        textAlign: "left",
+        fontWeight: 700,
+        color: "#fff",
+        borderBottom: "2px solid rgba(255,255,255,0.2)",
+    },
+    "& td": {
+        padding: "7px 10px",
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        color: "rgba(255,255,255,0.9)",
+    },
+    "& tr:last-child td": { borderBottom: "none" },
+    "& tr:hover td": { backgroundColor: "rgba(255,255,255,0.05)" },
+    "& hr": {
+        border: "none",
+        borderTop: "1px solid rgba(255,255,255,0.15)",
+        margin: "10px 0",
+    },
+    "& blockquote": {
+        borderLeft: "3px solid #A855F7",
+        paddingLeft: 12,
+        margin: "8px 0",
+        color: "rgba(255,255,255,0.75)",
+        fontStyle: "italic",
+    },
+    "& a": {
+        color: "#F72585",
+        textDecoration: "underline",
+    },
+});
 
 const ChatWidget = () => {
     const theme = useTheme();
@@ -290,9 +371,17 @@ const ChatWidget = () => {
                                     }}
                                 >
                                     <MessageBubble isAi={msg.role === "assistant"}>
-                                        <Typography variant="body2" sx={{ fontWeight: msg.role === "assistant" ? 400 : 500 }}>
-                                            {msg.content}
-                                        </Typography>
+                                        {msg.role === "assistant" ? (
+                                            <MarkdownContent>
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {msg.content}
+                                                </ReactMarkdown>
+                                            </MarkdownContent>
+                                        ) : (
+                                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                                {msg.content}
+                                            </Typography>
+                                        )}
                                     </MessageBubble>
                                 </ListItem>
                             ))}
