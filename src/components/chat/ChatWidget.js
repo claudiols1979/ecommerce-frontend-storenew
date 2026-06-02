@@ -29,13 +29,13 @@ const ChatContainer = styled(Box)(({ theme }) => ({
     position: "fixed",
     bottom: 25,
     right: 25,
-    zIndex: 2000, // Increased to be on top of Header (drawer is usually 1200, header 1100)
+    zIndex: 13000, // Above FloatingCart (zIndex: drawer+9999 ≈ 11199)
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-end",
     fontFamily: "'Inter', sans-serif",
     [theme.breakpoints.down("sm")]: {
-        bottom: 15,
+        bottom: 80, // Above mobile footer/nav and FloatingCart (which is at y:240 top area)
         right: 15,
     },
 }));
@@ -139,6 +139,11 @@ const GradientButton = styled(IconButton)(({ theme }) => ({
     "&:hover": {
         transform: "scale(1.1)",
         boxShadow: "0 8px 25px rgba(247, 37, 133, 0.6)",
+    },
+    [theme.breakpoints.down("sm")]: {
+        width: 56,
+        height: 56,
+        "& .MuiSvgIcon-root": { fontSize: "30px" },
     },
 }));
 
