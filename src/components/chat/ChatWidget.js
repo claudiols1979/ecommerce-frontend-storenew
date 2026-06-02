@@ -434,13 +434,13 @@ const ChatWidget = () => {
                             <StyledTextField
                                 fullWidth
                                 size="small"
-                                placeholder={isMobile ? "Escriba y presione Enter..." : "Escriba su consulta aquí..."}
+                                placeholder="Escriba su consulta aquí..."
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 variant="outlined"
                                 InputProps={{
-                                    endAdornment: !isMobile ? (
+                                    endAdornment: (
                                         <IconButton
                                             size="small"
                                             onClick={handleSend}
@@ -452,7 +452,7 @@ const ChatWidget = () => {
                                         >
                                             <SendIcon fontSize="small" />
                                         </IconButton>
-                                    ) : null,
+                                    ),
                                 }}
                             />
                         </InputContainer>
@@ -460,12 +460,14 @@ const ChatWidget = () => {
                 </Box>
             </Fade>
 
-            <GradientButton
-                onClick={() => setIsOpen(!isOpen)}
-                aria-label="Abrir Asistente"
-            >
-                {isOpen ? <CloseIcon /> : <SmartToyIcon sx={{ fontSize: "28px" }} />}
-            </GradientButton>
+            {!(isMobile && isOpen) && (
+                <GradientButton
+                    onClick={() => setIsOpen(!isOpen)}
+                    aria-label="Abrir Asistente"
+                >
+                    {isOpen ? <CloseIcon /> : <SmartToyIcon sx={{ fontSize: "28px" }} />}
+                </GradientButton>
+            )}
         </ChatContainer>
     );
 };
