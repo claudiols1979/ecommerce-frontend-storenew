@@ -61,9 +61,6 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
         maxHeight: "100dvh",
         marginBottom: 0,
         borderRadius: 0,
-        paddingTop: "env(safe-area-inset-top, 0px)",
-        paddingLeft: "env(safe-area-inset-left, 0px)",
-        paddingRight: "env(safe-area-inset-right, 0px)",
         position: "fixed",
         top: 0,
         left: 0,
@@ -72,12 +69,17 @@ const ChatWindow = styled(Paper)(({ theme }) => ({
 }));
 
 const ChatHeader = styled(Box)(({ theme }) => ({
-    padding: "20px",
+    padding: "16px 20px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     borderBottom: "1px solid rgba(255,255,255,0.1)",
     background: "rgba(255,255,255,0.05)",
+    gap: "12px",
+    [theme.breakpoints.down("sm")]: {
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
+        minHeight: "56px",
+    },
 }));
 
 const MessageList = styled(List)({
