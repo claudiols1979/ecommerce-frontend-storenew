@@ -366,12 +366,14 @@ const Header = () => {
                 order: 1,
               }}
             >
-              <Box sx={{ maxWidth: "55%", minWidth: 0, flexShrink: 0 }}>
+              <Box sx={{ maxWidth: "55%", minWidth: 0, flexShrink: 1 }}>
                 <NavBranding />
               </Box>
 
+              <Box sx={{ flexGrow: 1 }} />
+
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)", ml: "auto" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
                   <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <IconButton
