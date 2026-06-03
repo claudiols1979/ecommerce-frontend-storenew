@@ -330,7 +330,7 @@ const Header = () => {
           position: "sticky",
           top: 0,
           zIndex: (theme) => theme.zIndex.drawer + 2,
-          paddingTop: "env(safe-area-inset-top, 0px)",
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 6px)",
         }}
       >
         {!isMobile && <PromotionalBanner />}
