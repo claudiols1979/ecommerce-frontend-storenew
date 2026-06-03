@@ -379,7 +379,7 @@ const Header = () => {
                       component={RouterLink}
                       to="/cart"
                       color="inherit"
-                      sx={{ mr: 0.5, color: "#fff" }}
+                      sx={{ mr: 0.25, color: "#fff" }}
                       aria-label={`cart with ${cartItemCount} items`}
                       className={animate ? "cart-pulse" : ""}
                     >
@@ -397,7 +397,7 @@ const Header = () => {
                     </IconButton>
                     <IconButton
                       color="inherit"
-                      sx={{ mr: 0.5, color: "#fff" }}
+                      sx={{ mr: 0.25, color: "#fff" }}
                       aria-label={`wishlist with ${wishlist.length} items`}
                       onClick={handleWishlistDrawerToggle}
                     >
