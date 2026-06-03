@@ -81,6 +81,10 @@ const Overlay = styled(Box)(({ theme }) => ({
   transition: "opacity 0.3s ease, background-color 0.3s ease",
   color: "white",
   textAlign: "center",
+  [theme.breakpoints.down("sm")]: {
+    opacity: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
 }));
 
 const ShopButton = styled(Button)(({ theme }) => ({
