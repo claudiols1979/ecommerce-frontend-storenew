@@ -344,18 +344,18 @@ const AdGridSystem = () => {
               }}
             >
               <Fade in={true} timeout={800}>
-                <ImageContainer>
+                <ImageContainer onClick={isMobile ? () => handleViewProducts(item.department) : undefined}>
                   <StyledImage
                     src={item.image || item.url}
                     alt={item.alt || item.title}
                     onLoad={() => handleImageLoad(index)}
-                    onClick={() => handleViewProducts(item.department)}
+                    onClick={!isMobile ? () => handleViewProducts(item.department) : undefined}
                     onError={(e) => {
                       e.target.src = "/placeholder.png";
                     }}
                   />
                   <Overlay
-                    sx={{
+                    sx={isMobile ? undefined : {
                       "&:hover": {
                         opacity: 1,
                         backgroundColor: "rgba(0, 0, 0, 0.6)",
@@ -375,7 +375,16 @@ const AdGridSystem = () => {
                       {item.title}
                     </Typography>
                     <ShopButton
-                      variant="contained"
+                      variant={isMobile ? "outlined" : "contained"}
+                      sx={isMobile ? {
+                        borderColor: "white",
+                        color: "white",
+                        borderWidth: "1.5px",
+                        "&:hover": {
+                          borderColor: "white",
+                          backgroundColor: "rgba(255,255,255,0.1)",
+                        },
+                      } : undefined}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleViewProducts(item.department);
