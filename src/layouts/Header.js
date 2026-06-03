@@ -367,7 +367,9 @@ const Header = () => {
                 order: 1,
               }}
             >
-              <NavBranding />
+              <Box sx={{ maxWidth: { xs: "60%", sm: "none" }, minWidth: 0 }}>
+                <NavBranding />
+              </Box>
 
               {isMobile ? (
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "calc(12px + env(safe-area-inset-right, 0px))" }}>
