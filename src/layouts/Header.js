@@ -367,12 +367,12 @@ const Header = () => {
                 order: 1,
               }}
             >
-              <Box sx={{ maxWidth: { xs: "60%", sm: "none" }, minWidth: 0 }}>
+              <Box sx={{ maxWidth: { xs: "55%", sm: "none" }, minWidth: 0 }}>
                 <NavBranding />
               </Box>
 
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "calc(12px + env(safe-area-inset-right, 0px))" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
                   <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <IconButton
