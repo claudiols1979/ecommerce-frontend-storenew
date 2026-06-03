@@ -365,14 +365,17 @@ const Header = () => {
                 justifyContent: "space-between",
                 width: "100%",
                 order: 1,
+                gap: 1,
               }}
             >
-              <NavBranding />
+              <Box sx={{ flex: "1 1 auto", minWidth: 0, overflow: "hidden" }}>
+                <NavBranding />
+              </Box>
 
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: 1 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "calc(12px + env(safe-area-inset-right, 0px))" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <IconButton
                       component={RouterLink}
                       to="/cart"
