@@ -330,6 +330,7 @@ const Header = () => {
           position: "sticky",
           top: 0,
           zIndex: (theme) => theme.zIndex.drawer + 2,
+          paddingTop: "env(safe-area-inset-top, 0px)",
         }}
       >
         {!isMobile && <PromotionalBanner />}
@@ -371,7 +372,7 @@ const Header = () => {
               {isMobile ? (
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
                     <IconButton
                       component={RouterLink}
                       to="/cart"
