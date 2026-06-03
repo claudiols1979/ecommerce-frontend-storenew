@@ -398,7 +398,7 @@ const Header = () => {
                     </IconButton>
                     <IconButton
                       color="inherit"
-                      sx={{ mr: 0.25, color: "#fff" }}
+                      sx={{ mr: 0.10, color: "#fff" }}
                       aria-label={`wishlist with ${wishlist.length} items`}
                       onClick={handleWishlistDrawerToggle}
                     >
@@ -410,7 +410,7 @@ const Header = () => {
                       color="inherit"
                       aria-label="open drawer"
                       onClick={handleMobileMenuToggle}
-                      sx={{ color: "#fff" }}
+                      sx={{ mr: -0.99, color: "#fff" }}
                     >
                       <MenuIcon sx={{ color: "#fff" }} />
                     </IconButton>
