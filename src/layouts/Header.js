@@ -362,19 +362,18 @@ const Header = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
                 width: "100%",
                 order: 1,
               }}
             >
-              <Box sx={{ maxWidth: { xs: "55%", sm: "none" }, minWidth: 0 }}>
+              <Box sx={{ maxWidth: "55%", minWidth: 0, flexShrink: 0 }}>
                 <NavBranding />
               </Box>
 
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)", ml: "auto" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
-                  <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0, ml: 1 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <IconButton
                       component={RouterLink}
                       to="/cart"
