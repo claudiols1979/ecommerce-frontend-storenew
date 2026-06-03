@@ -373,7 +373,7 @@ const Header = () => {
               <Box sx={{ flexGrow: 1 }} />
 
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 2px)" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
                   <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <IconButton
