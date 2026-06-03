@@ -374,7 +374,7 @@ const Header = () => {
               {isMobile ? (
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: "env(safe-area-inset-right, 8px)" }}>
                   {/* Icons row: cart, wishlist, hamburger */}
-                  <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0, ml: 1 }}>
                     <IconButton
                       component={RouterLink}
                       to="/cart"
