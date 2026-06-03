@@ -377,12 +377,13 @@ const AdGridSystem = () => {
                     <ShopButton
                       variant={isMobile ? "outlined" : "contained"}
                       sx={isMobile ? {
-                        borderColor: "white",
-                        color: "white",
+                        borderColor: "white !important",
+                        color: "white !important",
+                        backgroundColor: "transparent !important",
                         borderWidth: "1.5px",
                         "&:hover": {
                           borderColor: "white",
-                          backgroundColor: "rgba(255,255,255,0.1)",
+                          backgroundColor: "rgba(255,255,255,0.15)",
                         },
                       } : undefined}
                       onClick={(e) => {
