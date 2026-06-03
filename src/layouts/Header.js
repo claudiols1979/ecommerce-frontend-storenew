@@ -370,9 +370,9 @@ const Header = () => {
               <NavBranding />
 
               {isMobile ? (
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", pr: 1 }}>
                   {/* Icons row: cart, wishlist, hamburger */}
-                  <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <IconButton
                       component={RouterLink}
                       to="/cart"
@@ -406,8 +406,8 @@ const Header = () => {
                     <IconButton
                       color="inherit"
                       aria-label="open drawer"
-                      edge="end"
                       onClick={handleMobileMenuToggle}
+                      sx={{ color: "#fff" }}
                     >
                       <MenuIcon sx={{ color: "#fff" }} />
                     </IconButton>
