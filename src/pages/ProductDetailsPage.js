@@ -1047,10 +1047,10 @@ const ProductDetailsPage = () => {
   const baseProductName = extractBaseProductName(product.name, product.code);
 
   const contentSectionStyle = {
-    my: 5,
-    p: { xs: 3, sm: 5 },
+    my: { xs: 3, sm: 5 },
+    p: { xs: 2, sm: 5 },
     bgcolor: "#ffffff",
-    borderRadius: "32px",
+    borderRadius: { xs: "20px", sm: "32px" },
     border: "1px solid rgba(0, 0, 0, 0.05)",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.02)",
     transition: "all 0.3s ease",
@@ -1246,12 +1246,15 @@ const ProductDetailsPage = () => {
       </Helmet>
 
       <Container
-        maxWidth="lg"
+        maxWidth={false}
         sx={{
           position: "relative",
           minHeight: "100vh",
           pb: 8,
           bgcolor: "#ffffff",
+          px: { xs: 1.5, sm: 3, md: 4, lg: 6 },
+          maxWidth: { sm: "100%", md: "1200px", lg: "1400px" },
+          mx: "auto",
         }}
       >
         <Box sx={{ mb: 3 }}>
@@ -1622,24 +1625,121 @@ const ProductDetailsPage = () => {
           </Box>
         </Box>
 
-        <Box sx={contentSectionStyle}>
-          <Typography
-            variant="h5"
-            component="h2"
-            gutterBottom
-            sx={sectionTitleStyle}
-          >
-            Descripción del Producto
-          </Typography>
-          {/* <Typography variant="body1" color="text.primary" sx={{ lineHeight: 1.7 }}>{product.description || 'No hay descripción detallada disponible para este producto.'}</Typography> */}
-          <HTMLContent
-            html={getSelectedVariantFunction().description}
-            fallback="No hay descripción detallada disponible para este producto."
-            variant="body1"
-            color="text.primary"
-            sx={{ lineHeight: 1.7 }}
+        <Box sx={{ ...contentSectionStyle, position: "relative", overflow: "hidden" }}>
+          {/* Decorative background pattern */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: -40,
+              right: -40,
+              width: 200,
+              height: 200,
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: -30,
+              left: -30,
+              width: 160,
+              height: 160,
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(247, 37, 133, 0.05) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
           />
 
+          {/* Header with icon and accent */}
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "14px",
+                background: "linear-gradient(135deg, #A855F7 0%, #F72585 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mr: 2,
+                boxShadow: "0 8px 20px rgba(168, 85, 247, 0.25)",
+                flexShrink: 0,
+              }}
+            >
+              <Typography sx={{ fontSize: "1.3rem", color: "#fff", lineHeight: 1 }}>
+                ✦
+              </Typography>
+            </Box>
+            <Box>
+              <Typography
+                variant="h5"
+                component="h2"
+                sx={{ ...sectionTitleStyle, mb: 0, fontSize: "1.35rem" }}
+              >
+                Descripción del Producto
+              </Typography>
+              <Box
+                sx={{
+                  mt: 0.5,
+                  width: 60,
+                  height: 3,
+                  borderRadius: "4px",
+                  background: "linear-gradient(90deg, #A855F7 0%, #F72585 100%)",
+                }}
+              />
+            </Box>
+          </Box>
+
+          {/* Content area with enhanced styling */}
+          <Box
+            sx={{
+              mt: 3,
+              p: { xs: 2.5, sm: 3.5 },
+              bgcolor: "#fafafa",
+              borderRadius: "20px",
+              border: "1px solid rgba(0, 0, 0, 0.04)",
+              position: "relative",
+              "& .rich-text-content": {
+                "& p": { mb: 2, "&:last-child": { mb: 0 } },
+                "& ul, & ol": { pl: 3, mb: 2 },
+                "& li": { mb: 0.5 },
+                "& strong, & b": { color: "#1A1A1A", fontWeight: 700 },
+                "& h1, & h2, & h3, & h4, & h5, & h6": {
+                  color: "#1A1A1A",
+                  fontWeight: 700,
+                  mt: 3,
+                  mb: 1.5,
+                },
+              },
+            }}
+          >
+            <HTMLContent
+              html={getSelectedVariantFunction().description}
+              fallback="No hay descripción detallada disponible para este producto."
+              variant="body1"
+              color="text.primary"
+              sx={{
+                lineHeight: 1.85,
+                color: "#444",
+                fontSize: "1rem",
+                letterSpacing: "0.01em",
+              }}
+            />
+          </Box>
+
+          {/* Bottom decorative line */}
+          <Box
+            sx={{
+              mt: 3,
+              mx: "auto",
+              width: "40%",
+              height: 2,
+              borderRadius: "2px",
+              background: "linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.3) 30%, rgba(247, 37, 133, 0.3) 70%, transparent 100%)",
+            }}
+          />
         </Box>
 
         <Box sx={contentSectionStyle}>
@@ -1781,33 +1881,324 @@ const ProductDetailsPage = () => {
         </Box>
 
         {getSelectedVariantFunction().tags &&
-          getSelectedVariantFunction().tags.filter(t => t && t.trim() !== "").length > 0 && (
-            <Box sx={contentSectionStyle}>
-              <Typography variant="h5" sx={sectionTitleStyle}>
-                Notas Aromáticas
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
-                {getSelectedVariantFunction().tags
-                  .filter(tag => tag && tag.trim() !== "")
-                  .map((tagItem, tagIndex) => (
-                    <Box
-                      key={tagIndex}
-                      sx={{
-                        px: 3,
-                        py: 1,
-                        borderRadius: "15px",
-                        background: 'linear-gradient(90deg, #c6a6c5 0%, #df71e5 100%, #d9a4dc 10%) !important',
-                        color: "#f1e8f1",
-                        fontWeight: 700,
-                        fontSize: "0.85rem",                        
-                      }}
+          getSelectedVariantFunction().tags.filter(t => t && t.trim() !== "").length > 0 && (() => {
+            const filteredTags = getSelectedVariantFunction().tags.filter(t => t && t.trim() !== "");
+            const total = filteredTags.length;
+            
+            // Split into 3 perfume pyramid groups: Top Notes → Heart Notes → Base Notes
+            const topCount = Math.max(1, Math.ceil(total * 0.35));
+            const heartCount = Math.max(1, Math.ceil(total * 0.35));
+            const baseCount = total - topCount - heartCount > 0 ? total - topCount - heartCount : 0;
+            
+            const topNotes = filteredTags.slice(0, topCount);
+            const heartNotes = baseCount > 0 ? filteredTags.slice(topCount, topCount + heartCount) : filteredTags.slice(topCount);
+            const baseNotes = baseCount > 0 ? filteredTags.slice(topCount + heartCount) : [];
+            
+            // Color palettes for each note type (gradients)
+            const topPalette = [
+              { gradient: "linear-gradient(135deg, #a8e063 0%, #56ab2f 100%)", color: "#f0faf0" },
+              { gradient: "linear-gradient(135deg, #fdc830 0%, #f37335 100%)", color: "#fff8f0" },
+              { gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)", color: "#f0fdfa" },
+              { gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)", color: "#fffaf0" },
+            ];
+            const heartPalette = [
+              { gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)", color: "#fdf0f5" },
+              { gradient: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", color: "#fef5fc" },
+              { gradient: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)", color: "#fff5f8" },
+              { gradient: "linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)", color: "#fef5fc" },
+            ];
+            const basePalette = [
+              { gradient: "linear-gradient(135deg, #434343 0%, #6b4c3b 100%)", color: "#f5f0ed" },
+              { gradient: "linear-gradient(135deg, #4a1942 0%, #893168 100%)", color: "#f8f0f6" },
+              { gradient: "linear-gradient(135deg, #3c1053 0%, #ad5389 100%)", color: "#faf0f8" },
+              { gradient: "linear-gradient(135deg, #2c1b4d 0%, #6d3b8c 100%)", color: "#f6f0fa" },
+              { gradient: "linear-gradient(135deg, #1a1a2e 0%, #4a2c5e 100%)", color: "#f5f0f8" },
+            ];
+            
+            const getPaletteColor = (index, palette) => palette[index % palette.length];
+            
+            return (
+              <Box sx={{ ...contentSectionStyle, position: "relative", overflow: "hidden" }}>
+                {/* Decorative perfume bottle silhouette */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: -30,
+                    right: -20,
+                    width: 180,
+                    height: 180,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, rgba(247, 37, 133, 0.04) 50%, transparent 70%)",
+                    pointerEvents: "none",
+                  }}
+                />
+                
+                {/* Header with icon */}
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <Box
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "14px",
+                      background: "linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mr: 2,
+                      boxShadow: "0 8px 20px rgba(139, 92, 246, 0.25)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Typography sx={{ fontSize: "1.2rem", color: "#fff", lineHeight: 1 }}>
+                      🌸
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      sx={{ ...sectionTitleStyle, mb: 0, fontSize: "1.35rem" }}
                     >
-                      {tagItem}
+                      Notas Aromáticas
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#888", fontWeight: 500, fontSize: "0.8rem", mt: 0.3 }}
+                    >
+                      Pirámide olfativa del perfume
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                {/* Pyramide olfativa visual structure */}
+                <Box sx={{ mt: 4, position: "relative" }}>
+                  {/* Top Notes - Salida */}
+                  {topNotes.length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: "linear-gradient(135deg, #a8e063, #56ab2f)",
+                            mr: 1,
+                            boxShadow: "0 2px 8px rgba(168, 224, 99, 0.4)",
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.78rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            color: "#666",
+                          }}
+                        >
+                          Notas de Salida
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2, pl: 1 }}>
+                        {topNotes.map((tagItem, idx) => {
+                          const { gradient, color } = getPaletteColor(idx, topPalette);
+                          return (
+                            <Box
+                              key={`top-${idx}`}
+                              sx={{
+                                px: 2.5,
+                                py: 0.9,
+                                borderRadius: "20px",
+                                background: `${gradient} !important`,
+                                color: color,
+                                fontWeight: 700,
+                                fontSize: "0.82rem",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                  transform: "translateY(-2px)",
+                                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                                },
+                              }}
+                            >
+                              {tagItem}
+                            </Box>
+                          );
+                        })}
+                      </Box>
                     </Box>
-                  ))}
+                  )}
+                  
+                  {/* Connector line */}
+                  {topNotes.length > 0 && heartNotes.length > 0 && (
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
+                      <Box
+                        sx={{
+                          width: 1,
+                          height: 20,
+                          background: "linear-gradient(180deg, rgba(168, 85, 247, 0.2), rgba(247, 37, 133, 0.2))",
+                        }}
+                      />
+                    </Box>
+                  )}
+                  
+                  {/* Heart Notes - Corazón */}
+                  {heartNotes.length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: "linear-gradient(135deg, #f093fb, #f5576c)",
+                            mr: 1,
+                            boxShadow: "0 2px 8px rgba(240, 147, 251, 0.4)",
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.78rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            color: "#666",
+                          }}
+                        >
+                          Notas de Corazón
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2, pl: 1 }}>
+                        {heartNotes.map((tagItem, idx) => {
+                          const { gradient, color } = getPaletteColor(idx, heartPalette);
+                          return (
+                            <Box
+                              key={`heart-${idx}`}
+                              sx={{
+                                px: 2.5,
+                                py: 0.9,
+                                borderRadius: "20px",
+                                background: `${gradient} !important`,
+                                color: color,
+                                fontWeight: 700,
+                                fontSize: "0.82rem",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                  transform: "translateY(-2px)",
+                                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                                },
+                              }}
+                            >
+                              {tagItem}
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    </Box>
+                  )}
+                  
+                  {/* Connector line */}
+                  {heartNotes.length > 0 && baseNotes.length > 0 && (
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 1 }}>
+                      <Box
+                        sx={{
+                          width: 1,
+                          height: 20,
+                          background: "linear-gradient(180deg, rgba(247, 37, 133, 0.2), rgba(74, 25, 66, 0.3))",
+                        }}
+                      />
+                    </Box>
+                  )}
+                  
+                  {/* Base Notes - Fondo */}
+                  {baseNotes.length > 0 && (
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: "linear-gradient(135deg, #434343, #6b4c3b)",
+                            mr: 1,
+                            boxShadow: "0 2px 8px rgba(67, 67, 67, 0.4)",
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.78rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            color: "#666",
+                          }}
+                        >
+                          Notas de Fondo
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2, pl: 1 }}>
+                        {baseNotes.map((tagItem, idx) => {
+                          const { gradient, color } = getPaletteColor(idx, basePalette);
+                          return (
+                            <Box
+                              key={`base-${idx}`}
+                              sx={{
+                                px: 2.5,
+                                py: 0.9,
+                                borderRadius: "20px",
+                                background: `${gradient} !important`,
+                                color: color,
+                                fontWeight: 700,
+                                fontSize: "0.82rem",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                  transform: "translateY(-2px)",
+                                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                                },
+                              }}
+                            >
+                              {tagItem}
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    </Box>
+                  )}
+                  
+                  {/* If no base notes (only 1-2 tags), show all as heart notes without categories */}
+                  {baseNotes.length === 0 && heartNotes.length > 0 && topNotes.length === 0 && (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2, mt: 2 }}>
+                      {filteredTags.map((tagItem, idx) => {
+                        const { gradient, color } = getPaletteColor(idx, heartPalette);
+                        return (
+                          <Box
+                            key={`all-${idx}`}
+                            sx={{
+                              px: 2.5,
+                              py: 0.9,
+                              borderRadius: "20px",
+                              background: `${gradient} !important`,
+                              color: color,
+                              fontWeight: 700,
+                              fontSize: "0.82rem",
+                              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                              transition: "all 0.3s ease",
+                              "&:hover": {
+                                transform: "translateY(-2px)",
+                                boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                              },
+                            }}
+                          >
+                            {tagItem}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  )}
+                </Box>
               </Box>
-            </Box>
-          )}
+            );
+          })()}
 
         {/* --- 4. SECCIÓN DE PREGUNTAS FRECUENTES (FAQ) DINÁMICA --- */}
         {faqs && faqs.length > 0 && (
