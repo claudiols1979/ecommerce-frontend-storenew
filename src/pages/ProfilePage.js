@@ -104,7 +104,7 @@ const ProfilePage = () => {
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
-    borderRadius: "24px",
+    borderRadius: "5%",
     color: "white",
     boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
     transition:
@@ -455,6 +455,7 @@ const ProfilePage = () => {
         pb: { xs: 6, sm: 10 },
         position: "relative",
         overflow: "hidden",
+        borderRadius: "16px",
       }}
     >
       {/* Background patterns */}
@@ -485,7 +486,7 @@ const ProfilePage = () => {
         }}
       />
 
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+      <Container maxWidth={false} sx={{ position: "relative", zIndex: 1, px: { xs: 2, sm: 3 } }}>
         <style>
           {`
             @keyframes fadeInUp {

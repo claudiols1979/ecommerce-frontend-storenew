@@ -52,58 +52,17 @@ const TermsAndConditionsPage = () => {
         />
       </Helmet>
 
-      <Box
-        sx={{
-          minHeight: "100vh",
-          width: "100%",
-          background:
-            "linear-gradient(135deg, rgba(49, 0, 138, 0.9) 0%, rgba(168, 85, 247, 0.9) 50%, rgba(247, 37, 133, 0.9) 100%)",
-          py: { xs: 4, md: 10 },
-          px: 0,
-          display: "flex",
-          alignItems: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative Blur Orbs */}
-        <Box
+      <Container maxWidth={false} sx={{ py: { xs: 2, sm: 6 }, px: 0 }}>
+        <Paper
+          elevation={0}
           sx={{
-            position: "absolute",
-            top: -100,
-            left: -100,
-            width: 400,
-            height: 400,
-            borderRadius: "50%",
-            background: "rgba(168, 85, 247, 0.3)",
-            filter: "blur(100px)",
-            zIndex: 0,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: -150,
-            right: -150,
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background: "rgba(247, 37, 133, 0.2)",
-            filter: "blur(120px)",
-            zIndex: 0,
-          }}
-        />
-
-        <Container maxWidth={false} sx={{ position: "relative", zIndex: 1, px: 0 }}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: { xs: 1.5, sm: 6 },
-              borderRadius: { xs: "20px", sm: "40px" },
-              backgroundColor: "rgba(255, 255, 255, 0.12)",
-              backdropFilter: "blur(40px) saturate(180%)",
-              border: "1px solid rgba(255, 255, 255, 0.25)",
-              boxShadow: "0 40px 100px rgba(0, 0, 0, 0.25)",
+            p: { xs: 1.5, sm: 6 },
+            borderRadius: { xs: "20px", sm: "40px" },
+            background:
+              "linear-gradient(135deg, rgba(49, 0, 138, 0.9) 0%, rgba(168, 85, 247, 0.9) 50%, rgba(247, 37, 133, 0.9) 100%)",
+            backdropFilter: "blur(40px) saturate(180%)",
+            border: "1px solid rgba(255, 255, 255, 0.25)",
+            boxShadow: "0 40px 100px rgba(0, 0, 0, 0.25)",
               animation: "fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
               "@keyframes fadeInUp": {
                 from: { opacity: 0, transform: "translateY(40px)" },
@@ -330,7 +289,6 @@ const TermsAndConditionsPage = () => {
             </Box>
           </Paper>
         </Container>
-      </Box>
     </>
   );
 };
