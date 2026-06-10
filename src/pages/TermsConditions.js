@@ -59,7 +59,7 @@ const TermsAndConditionsPage = () => {
           background:
             "linear-gradient(135deg, rgba(49, 0, 138, 0.9) 0%, rgba(168, 85, 247, 0.9) 50%, rgba(247, 37, 133, 0.9) 100%)",
           py: { xs: 4, md: 10 },
-          px: 1,
+          px: 0,
           display: "flex",
           alignItems: "center",
           position: "relative",
@@ -94,7 +94,7 @@ const TermsAndConditionsPage = () => {
           }}
         />
 
-        <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
+        <Container maxWidth={false} sx={{ position: "relative", zIndex: 1, px: 0 }}>
           <Paper
             elevation={0}
             sx={{
