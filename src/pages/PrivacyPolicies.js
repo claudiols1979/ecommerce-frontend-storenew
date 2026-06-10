@@ -59,7 +59,7 @@ const PrivacyPolicyPage = () => {
           background:
             "linear-gradient(135deg, rgba(49, 0, 138, 0.9) 0%, rgba(168, 85, 247, 0.9) 50%, rgba(247, 37, 133, 0.9) 100%)",
           py: { xs: 4, md: 10 },
-          px: 2,
+          px: 1,
           display: "flex",
           alignItems: "center",
           position: "relative",
@@ -98,8 +98,8 @@ const PrivacyPolicyPage = () => {
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 3, sm: 6 },
-              borderRadius: "40px",
+              p: { xs: 1.5, sm: 6 },
+              borderRadius: { xs: "20px", sm: "40px" },
               backgroundColor: "rgba(255, 255, 255, 0.12)",
               backdropFilter: "blur(40px) saturate(180%)",
               border: "1px solid rgba(255, 255, 255, 0.25)",
@@ -263,7 +263,7 @@ const PrivacyPolicyPage = () => {
                         sx={{ color: "#F72585", fontSize: "2rem" }}
                       />
                     }
-                    sx={{ px: 4, py: 1 }}
+                    sx={{ px: { xs: 2, sm: 4 }, py: 1 }}
                   >
                     <Typography
                       sx={{
@@ -275,7 +275,7 @@ const PrivacyPolicyPage = () => {
                       {section.title}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails sx={{ px: 4, pb: 4 }}>
+                  <AccordionDetails sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
                     <Typography
                       variant="body1"
                       sx={{
