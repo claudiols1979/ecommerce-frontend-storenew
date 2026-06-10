@@ -1047,10 +1047,10 @@ const ProductDetailsPage = () => {
   const baseProductName = extractBaseProductName(product.name, product.code);
 
   const contentSectionStyle = {
-    my: { xs: 3, sm: 5 },
-    p: { xs: 2, sm: 5 },
+    my: { xs: 2, sm: 5 },
+    p: { xs: 1.5, sm: 5 },
     bgcolor: "#ffffff",
-    borderRadius: { xs: "20px", sm: "32px" },
+    borderRadius: { xs: "12px", sm: "32px" },
     border: "1px solid rgba(0, 0, 0, 0.05)",
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.02)",
     transition: "all 0.3s ease",
@@ -1252,7 +1252,7 @@ const ProductDetailsPage = () => {
           minHeight: "100vh",
           pb: 8,
           bgcolor: "#ffffff",
-          px: { xs: 1.5, sm: 3, md: 4, lg: 6 },
+          px: { xs: 1, sm: 3, md: 4, lg: 6 },
           maxWidth: { sm: "100%", md: "1200px", lg: "1400px" },
           mx: "auto",
         }}
@@ -1695,8 +1695,8 @@ const ProductDetailsPage = () => {
           {/* Content area with enhanced styling */}
           <Box
             sx={{
-              mt: 3,
-              p: { xs: 2.5, sm: 3.5 },
+              mt: 2,
+              p: { xs: 1.5, sm: 3.5 },
               bgcolor: "#fafafa",
               borderRadius: "20px",
               border: "1px solid rgba(0, 0, 0, 0.04)",
@@ -2207,7 +2207,7 @@ const ProductDetailsPage = () => {
               ...contentSectionStyle,
               background: 'linear-gradient(135deg, rgba(49, 0, 138, 0.85) 0%, rgba(49, 0, 138, 0.85) 35%, rgba(168, 85, 247, 0.85) 65%, rgba(247, 37, 133, 0.85) 100%) !important',
               borderRadius: "24px",
-              p: { xs: 3, md: 5 },
+              p: { xs: 1.5, md: 5 },
               border: "1px solid rgba(255, 255, 255, 0.1)",
               color: "common.white"
             }}

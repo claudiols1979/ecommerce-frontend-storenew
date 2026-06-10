@@ -10,6 +10,7 @@ import {
     Fade,
     CircularProgress,
     Avatar,
+    Badge,
     styled,
     useMediaQuery,
     useTheme,
@@ -248,6 +249,8 @@ const ChatWidget = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(true);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
     const [message, setMessage] = useState("");
     // Initialize history with a personalized message if user data exists
     const [history, setHistory] = useState(() => {
@@ -274,6 +277,21 @@ const ChatWidget = () => {
             sessionStorage.setItem("chat_session_id", sId);
         }
         setSessionId(sId);
+    }, []);
+
+    // Show tooltip with a small delay after mount, then auto-hide
+    useEffect(() => {
+        const showTimer = setTimeout(() => {
+            setTooltipVisible(true);
+        }, 800);
+        const hideTimer = setTimeout(() => {
+            setTooltipVisible(false);
+            setTimeout(() => setShowTooltip(false), 400);
+        }, 5000);
+        return () => {
+            clearTimeout(showTimer);
+            clearTimeout(hideTimer);
+        };
     }, []);
 
     useEffect(() => {
@@ -360,9 +378,115 @@ const ChatWidget = () => {
     if (!user) {
         return (
             <ChatContainer ref={chatContainerRef}>
-                <GradientButton onClick={handleToggle} aria-label="Iniciar sesión para chatear">
-                    <SmartToyIcon sx={{ fontSize: "28px" }} />
-                </GradientButton>
+                {showTooltip && (
+                    <Fade in={tooltipVisible} timeout={400}>
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                bottom: 75,
+                                right: 0,
+                                bgcolor: "#ffffff",
+                                color: "#31008A",
+                                px: 2.5,
+                                py: 1.5,
+                                borderRadius: "18px 18px 4px 18px",
+                                boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+                                fontWeight: 600,
+                                fontSize: "0.9rem",
+                                whiteSpace: "nowrap",
+                                zIndex: 13100,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                "&::after": {
+                                    content: '""',
+                                    position: "absolute",
+                                    bottom: -8,
+                                    right: 24,
+                                    width: 0,
+                                    height: 0,
+                                    borderLeft: "10px solid transparent",
+                                    borderRight: "10px solid transparent",
+                                    borderTop: "10px solid #ffffff",
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: 9,
+                                    height: 9,
+                                    borderRadius: "50%",
+                                    background: "linear-gradient(135deg, #22c55e, #16a34a)",
+                                    boxShadow: "0 0 8px rgba(34, 197, 94, 0.6)",
+                                    animation: "pulse-dot 2s ease-in-out infinite",
+                                    "@keyframes pulse-dot": {
+                                        "0%, 100%": { opacity: 1, transform: "scale(1)" },
+                                        "50%": { opacity: 0.6, transform: "scale(1.3)" },
+                                    },
+                                }}
+                            />
+                            ¿Hola, tienes alguna consulta?
+                        </Box>
+                    </Fade>
+                )}
+                <Badge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    variant="dot"
+                    sx={{
+                        "& .MuiBadge-dot": {
+                            backgroundColor: "#22c55e",
+                            width: 12,
+                            height: 12,
+                            borderRadius: "50%",
+                            border: "2px solid #ffffff",
+                            boxShadow: "0 0 8px rgba(34, 197, 94, 0.6)",
+                            animation: "pulse-dot 2s ease-in-out infinite",
+                        },
+                    }}
+                >
+                    <GradientButton onClick={handleToggle} aria-label="Iniciar sesión para chatear">
+                        <SmartToyIcon sx={{ fontSize: "28px" }} />
+                    </GradientButton>
+                </Badge>
+                {showTooltip && (
+                    <Box
+                        sx={{
+                            mt: 0.5,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 0.5,
+                            bgcolor: "rgba(255,255,255,0.12)",
+                            backdropFilter: "blur(6px)",
+                            borderRadius: "12px",
+                            px: 1.2,
+                            py: 0.4,
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: 6,
+                                height: 6,
+                                borderRadius: "50%",
+                                bgcolor: "#22c55e",
+                                boxShadow: "0 0 6px rgba(34, 197, 94, 0.6)",
+                                animation: "pulse-dot 2s ease-in-out infinite",
+                            }}
+                        />
+                        <Typography
+                            sx={{
+                                fontSize: "0.65rem",
+                                fontWeight: 700,
+                                color: "#ffffff",
+                                letterSpacing: "0.05em",
+                                textTransform: "uppercase",
+                            }}
+                        >
+                            En línea
+                        </Typography>
+                    </Box>
+                )}
             </ChatContainer>
         );
     }
@@ -465,12 +589,82 @@ const ChatWidget = () => {
             </Fade>
 
             {!(isMobile && isOpen) && (
-                <GradientButton
-                    onClick={() => setIsOpen(!isOpen)}
-                    aria-label="Abrir Asistente"
-                >
-                    {isOpen ? <CloseIcon /> : <SmartToyIcon sx={{ fontSize: "28px" }} />}
-                </GradientButton>
+                <>
+                    {showTooltip && (
+                        <Fade in={tooltipVisible} timeout={400}>
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 78,
+                                    right: 0,
+                                    bgcolor: "#ffffff",
+                                    color: "#31008A",
+                                    px: 2.5,
+                                    py: 1.5,
+                                    borderRadius: "18px 18px 4px 18px",
+                                    boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                    whiteSpace: "nowrap",
+                                    zIndex: 13100,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                    "&::after": {
+                                        content: '""',
+                                        position: "absolute",
+                                        bottom: -8,
+                                        right: 24,
+                                        width: 0,
+                                        height: 0,
+                                        borderLeft: "10px solid transparent",
+                                        borderRight: "10px solid transparent",
+                                        borderTop: "10px solid #ffffff",
+                                    },
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: 9,
+                                        height: 9,
+                                        borderRadius: "50%",
+                                        background: "linear-gradient(135deg, #22c55e, #16a34a)",
+                                        boxShadow: "0 0 8px rgba(34, 197, 94, 0.6)",
+                                        animation: "pulse-dot 2s ease-in-out infinite",
+                                        "@keyframes pulse-dot": {
+                                            "0%, 100%": { opacity: 1, transform: "scale(1)" },
+                                            "50%": { opacity: 0.6, transform: "scale(1.3)" },
+                                        },
+                                    }}
+                                />
+                                ¿Hola, tienes alguna consulta?
+                            </Box>
+                        </Fade>
+                    )}
+                    <Badge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                        variant="dot"
+                        sx={{
+                            "& .MuiBadge-dot": {
+                                backgroundColor: "#22c55e",
+                                width: 12,
+                                height: 12,
+                                borderRadius: "50%",
+                                border: "2px solid #ffffff",
+                                boxShadow: "0 0 8px rgba(34, 197, 94, 0.6)",
+                                animation: "pulse-dot 2s ease-in-out infinite",
+                            },
+                        }}
+                    >
+                        <GradientButton
+                            onClick={() => setIsOpen(!isOpen)}
+                            aria-label="Abrir Asistente"
+                        >
+                            {isOpen ? <CloseIcon /> : <SmartToyIcon sx={{ fontSize: "28px" }} />}
+                        </GradientButton>
+                    </Badge>
+                </>
             )}
         </ChatContainer>
     );
