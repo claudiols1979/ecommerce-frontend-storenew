@@ -104,7 +104,7 @@ const ProfilePage = () => {
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
-    borderRadius: "5%",
+    borderRadius: "16px",
     color: "white",
     boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
     transition:
